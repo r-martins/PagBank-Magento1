@@ -1,0 +1,25 @@
+<?php
+/** @var RicardoMartins_PagBank_Block_Form_Billet $this */
+$_code = $this->getMethodCode();
+?>
+<ul class="form-list ricardomartins-pagbank ricardomartins-pagbank-billet" id="payment_form_<?php echo $_code ?>" style="display:none;">
+    <li class="ricardomartins-pagbank-payment-info-row">
+        <div class="payment-info billet-info">
+            <p>
+                <?php echo $this->__('After completing your order, print or copy the barcode of your bill to pay at the bank or lottery outlet before the due date.') ?>
+                <br>
+                <?php echo $this->__('Your billet expires in %s day(s).', $this->getExpiration()) ?>
+            </p>
+        </div>
+    </li>
+    <?php if ($this->isDocumentFieldVisible()): ?>
+    <li class="ricardomartins-pagbank-billet-document-row">
+        <div>
+            <label for="<?php echo $_code ?>_document" class="required"><?php echo $this->__('CPF/CNPJ') ?></label>
+            <div class="input-box">
+                <input type="text" id="<?php echo $_code ?>_document" name="payment[data_tax_id]" title="<?php echo $this->__('CPF/CNPJ') ?>" class="input-text validate-length" />
+            </div>
+        </div>
+    </li>
+    <?php endif; ?>
+</ul>

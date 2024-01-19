@@ -1,0 +1,31 @@
+<?php
+/**
+ * @var $this RicardoMartins_PagBank_Block_Form_Info_Billet
+ */
+?>
+<p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (PagBank - Ricardo Martins)</strong></p>
+<?php if($info = $this->getBilletAdditionalData()): ?>
+    <div class="code-container">
+        <label for="barcode">
+            <?= $this->__('Barcode:') ?>
+        </label>
+        <div class="code-content">
+            <span>
+                <input type="text" id="barcode" class="payment-code" value="<?= $this->escapeHtml($info['formatted_barcode']) ?>" readonly="readonly"/>
+                <img src="<?= $this->getSkinUrl('images/ricardomartins/pagbank/copy-icon.svg'); ?>" alt="<?= $this->__('Copy') ?>" title="<?= $this->__('Copy') ?>" class="copy-btn"/>
+            </span>
+            <p class="copied" style="display: none"><?= $this->__('Copied ✔') ?></p>
+        </div>
+    </div>
+    <p><b><?= $this->__('Your billet expires in %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
+    <p>
+        <a href="<?= $this->escapeUrl($info['payment_link_boleto_pdf']);?>" target="_blank">
+            <?= $this->__('Download billet file') ?>
+        </a>
+    </p>
+    <p>
+        <a href="<?= $this->escapeUrl($info['payment_link_boleto_image']);?>" target="_blank">
+            <?= $this->__('Print billet file') ?>
+        </a>
+    </p>
+<?php endif; ?>

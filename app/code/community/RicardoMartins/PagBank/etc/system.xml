@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <sections>
+        <payment>
+            <groups>
+                <ricardomartins_pagbank translate="label comment" module="ricardomartins_pagbank">
+                    <label>PagBank - Ricardo Martins</label>
+                    <comment><![CDATA[A forma mais fácil e segura de receber pagamentos. Uma solução completa para que você ofereça de forma simples e transparente o processamento dos pedidos em seu site. <br>
+                            Para utilizar o PagBank Connect, você precisa autorizar nossa aplicação e obter suas credenciais connect.<br />
+                            <a href="https://pagseguro.ricardomartins.net.br/connect/autorizar.html?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter Connect Key</a>
+                            <a href="https://pagseguro.ricardomartins.net.br/connect/sandbox.html?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter Connect Key para Testes</a>
+                            <a href="https://pagsegurotransparente.zendesk.com/hc/pt-br/?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter ajuda</a>]]></comment>
+                    <sort_order>6</sort_order>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <connect_key translate="label">
+                            <label>Connect Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </connect_key>
+                        <document_from translate="label">
+                            <label>Get Document From</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>ricardomartins_pagbank/system_config_source_customer_document</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </document_from>
+                        <debug translate="label">
+                            <label>Enable Debug</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Veja a saída de log em var/log/pagbank.log. É recomendável habilitar o log para obter informações sobre eventuais problemas.</comment>
+                        </debug>
+                    </fields>
+                </ricardomartins_pagbank>
+                <ricardomartins_pagbank_cc translate="label comment" module="ricardomartins_pagbank">
+                    <label>PagBank - Cartão de Crédito - Ricardo Martins</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>7</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Active</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </title>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <comment>Adjust this to move the payment method above or below other payment methods</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </sort_order>
+                        <soft_descriptor translate="label">
+                            <label>Soft Descriptor</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </soft_descriptor>
+                        <installments_options translate="label">
+                            <label>Installment Options</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>ricardomartins_pagbank/system_config_source_order_installments</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </installments_options>
+                        <installments_options_fixed translate="label">
+                            <label>Number of Interest-Free Installments</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <installments_options>fixed</installments_options>
+                            </depends>
+                        </installments_options_fixed>
+                        <installments_options_min_total translate="label">
+                            <label>Minimum Interest-Free Installment Value</label>
+                            <comment><![CDATA[Valor inteiro sem decimais. Exemplo: 10 para R$ 10,00.<small>Neste exemplo, um pedido de R$100 poderá ser parcelado em 10x sem juros.
+                                        Taxa padrão de juros: 2,99% a.m (consulte valor atualizado).</small>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <installments_options>min_total</installments_options>
+                            </depends>
+                        </installments_options_min_total>
+                        <enable_installments_limit translate="label">
+                            <label>Limit installments</label>
+                            <comment>Recommendation: Do not prevent your customer from purchasing with a high installment plan even if they want to pay the interest. There is no greater cost to you.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </enable_installments_limit>
+                        <installments_limit translate="label">
+                            <label>Maximum Number of Installments</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>90</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_installments_limit>1</enable_installments_limit>
+                            </depends>
+                        </installments_limit>
+                    </fields>
+                </ricardomartins_pagbank_cc>
+                <ricardomartins_pagbank_billet translate="label comment" module="ricardomartins_pagbank">
+                    <label>PagBank - Boleto - Ricardo Martins</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>8</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Active</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </title>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <comment>Adjust this to move the payment method above or below other payment methods</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </sort_order>
+                        <expiration_time translate="label">
+                            <label>Boleto expires in (days)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </expiration_time>
+                        <instruction_line_one translate="label">
+                            <label>Instructions (line one)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </instruction_line_one>
+                        <instruction_line_two translate="label">
+                            <label>Instructions (line two)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </instruction_line_two>
+                    </fields>
+                </ricardomartins_pagbank_billet>
+                <ricardomartins_pagbank_pix translate="label comment" module="ricardomartins_pagbank">
+                    <label>PagBank - Pix - Ricardo Martins</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>9</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Active</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </title>
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <comment>Adjust this to move the payment method above or below other payment methods</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </sort_order>
+                        <expiration_time translate="label">
+                            <label>PIX Expiration Time (minutes)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <active>1</active>
+                            </depends>
+                        </expiration_time>
+                    </fields>
+                </ricardomartins_pagbank_pix>
+            </groups>
+        </payment>
+    </sections>
+</config>

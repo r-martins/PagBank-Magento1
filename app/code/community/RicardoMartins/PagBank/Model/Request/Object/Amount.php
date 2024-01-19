@@ -1,0 +1,47 @@
+<?php
+
+class RicardoMartins_PagBank_Model_Request_Object_Amount extends Varien_Object implements RicardoMartins_PagBank_Api_Connect_AmountInterface
+{
+    /**
+     * @return int
+     */
+    public function getValue()
+    {
+        return $this->getData(RicardoMartins_PagBank_Api_Connect_AmountInterface::VALUE);
+    }
+
+    /**
+     * @param int|float $value
+     * @return RicardoMartins_PagBank_Api_Connect_AmountInterface
+     */
+    public function setValue($value)
+    {
+        return $this->setData(RicardoMartins_PagBank_Api_Connect_AmountInterface::VALUE, $this->convertAmountToCents($value));
+    }
+
+    /**
+     * @return ?string
+     */
+    public function getCurrency()
+    {
+        return $this->getData(RicardoMartins_PagBank_Api_Connect_AmountInterface::CURRENCY);
+    }
+
+    /**
+     * @param string|null $currency
+     * @return RicardoMartins_PagBank_Api_Connect_AmountInterface
+     */
+    public function setCurrency($currency)
+    {
+        return $this->setData(RicardoMartins_PagBank_Api_Connect_AmountInterface::CURRENCY, $currency);
+    }
+
+    /**
+     * @param $amount
+     * @return int
+     */
+    private function convertAmountToCents($amount)
+    {
+        return (int) round($amount * 100);
+    }
+}

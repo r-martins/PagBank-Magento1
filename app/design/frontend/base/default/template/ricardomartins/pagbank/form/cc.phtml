@@ -1,0 +1,20 @@
+<?php
+/** @var RicardoMartins_PagBank_Block_Form_Cc $this */
+$_code = $this->getMethodCode();
+?>
+<ul class="form-list stripe-new" id="payment_form_<?php echo $_code ?>" style="display:none;">
+    <strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (Cc PagBank)</strong>
+<!--
+Exibir form do cartão de crédito
+nome do titular
+numero do cartão
+validade
+cvc
+parcelas
+
+lembrar de encrptar os dados do cartão
+   -->
+<!--
+Inserir campo condicional para pedir o documento CPF/CNPJ do cliente
+-->
+</ul>

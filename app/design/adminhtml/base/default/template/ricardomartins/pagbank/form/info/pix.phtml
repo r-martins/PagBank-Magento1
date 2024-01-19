@@ -1,0 +1,17 @@
+<?php
+/**
+ * @var $this RicardoMartins_PagBank_Block_Form_Info_Pix
+ */
+?>
+<p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (PagBank - Ricardo Martins)</strong></p>
+<?php if($info = $this->getPixAdditionalData()): ?>
+    <div class="pix-qr-container">
+        <img src="<?= $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?= $this->__('Scan the code below with your bank\'s app.') ?>" width="200px" />
+    </div>
+    <p class="qrcode">
+        <?= $this->__('Pix Code:') ?>
+        <br>
+        <?= $this->escapeHtml($info['qrcode_text']) ?>
+    </p>
+    <p><b><?= $this->__('Pix code expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
+<?php endif; ?>

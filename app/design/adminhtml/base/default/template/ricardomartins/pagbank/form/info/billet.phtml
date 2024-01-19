@@ -1,0 +1,24 @@
+<?php
+/**
+ * @var $this RicardoMartins_PagBank_Block_Form_Info_Billet
+ */
+?>
+<p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (PagBank - Ricardo Martins)</strong></p>
+<?php if($info = $this->getBilletAdditionalData()): ?>
+    <p class="barcode">
+        <?= $this->__('Barcode:') ?>
+        <br>
+        <?= $this->escapeHtml($info['formatted_barcode']) ?>
+    </p>
+    <p><b><?= $this->__('Billet expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
+    <p>
+        <a href="<?= $this->escapeUrl($info['payment_link_boleto_pdf']);?>" target="_blank">
+            <?= $this->__('Download billet file') ?>
+        </a>
+    </p>
+    <p>
+        <a href="<?= $this->escapeUrl($info['payment_link_boleto_image']);?>" target="_blank">
+            <?= $this->__('Print billet file') ?>
+        </a>
+    </p>
+<?php endif; ?>

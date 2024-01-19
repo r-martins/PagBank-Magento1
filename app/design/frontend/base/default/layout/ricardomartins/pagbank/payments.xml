@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+    <checkout_onepage_success>
+        <reference name="head">
+            <action method="addItem"><type>skin_js</type><name>js/ricardomartins/pagbank/copy-button.js</name></action>
+            <action method="addCss"><stylesheet>css/ricardomartins/pagbank/styles.css</stylesheet></action>
+        </reference>
+        <reference name="content">
+            <reference name="checkout.success">
+                <block type="ricardomartins_pagbank/onepage_success_billet" name="ricardomartins.pagbank.checkout.success.billet" template="ricardomartins/pagbank/checkout/info/billet.phtml" after="-"/>
+                <block type="ricardomartins_pagbank/onepage_success_pix" name="ricardomartins.pagbank.checkout.success.pix" template="ricardomartins/pagbank/checkout/info/pix.phtml" after="-"/>
+            </reference>
+        </reference>
+    </checkout_onepage_success>
+    <sales_order_view>
+        <reference name="head">
+            <action method="addItem"><type>skin_js</type><name>js/ricardomartins/pagbank/copy-button.js</name></action>
+            <action method="addCss"><stylesheet>css/ricardomartins/pagbank/styles.css</stylesheet></action>
+        </reference>
+    </sales_order_view>
+</layout>

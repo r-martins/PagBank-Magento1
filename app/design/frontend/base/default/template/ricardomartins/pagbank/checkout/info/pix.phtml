@@ -1,0 +1,42 @@
+<?php
+/**
+ * @var $this RicardoMartins_PagBank_Block_Onepage_Success_Pix
+ */
+?>
+<?php if ($this->isVisible()): ?>
+<div class="ricardomartins-pagbank-success">
+    <h2><?= $this->__('Pay your Pix') ?></h2>
+    <p><?= $this->__('Scan the code below with your bank\'s app.') ?></p>
+    <div class="pix-qr-container">
+        <img src="<?= $this->escapeUrl($this->getPaymentQrcodeImage()); ?>" class="pix-qr" alt="PIX QrCode" title="<?= $this->__('Scan the code below with your bank\'s app.') ?>"/>
+    </div>
+    <p><?= $this->escapeHtml($this->__('Or if you prefer, copy and paste the code below into your bank\'s application using PIX with Copy and Paste mode.')) ?></p>
+    <div class="code-container">
+        <label for="qrcode">
+            <?= $this->__('Pix Code:') ?>
+        </label>
+        <div class="code-content">
+            <span>
+                <input type="text" id="qrcode" class="payment-code" value="<?= $this->escapeHtml($this->getPaymentTextPix()) ?>" readonly="readonly"/>
+                <img src="<?= $this->getSkinUrl('images/ricardomartins/pagbank/copy-icon.svg'); ?>" alt="<?= $this->__('Copy') ?>" title="<?= $this->__('Copy') ?>" class="copy-btn"/>
+            </span>
+            <p class="copied" style="display: none"><?= $this->__('Copied ✔') ?></p>
+        </div>
+    </div>
+    <div class="pix-exiration-container">
+        <p>
+            <strong>
+                <?= $this->__('Your Pix code expires in %s',
+                    $this->escapeHtml(
+                            $this->formatDate(
+                                    $this->getExpirationDate(),
+                                    'short',
+                                    true
+                            )
+                    )
+                ) ?>
+            </strong>
+        </p>
+    </div>
+</div>
+<?php endif; ?>

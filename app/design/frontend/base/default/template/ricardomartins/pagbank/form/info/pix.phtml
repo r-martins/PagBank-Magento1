@@ -1,0 +1,31 @@
+<?php
+/**
+ * @var $this RicardoMartins_PagBank_Block_Form_Info_Pix
+ */
+?>
+<p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (PagBank - Ricardo Martins)</strong></p>
+<?php if($info = $this->getPixAdditionalData()): ?>
+    <div class="pix-qr-container">
+        <img src="<?= $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?= $this->__('Scan the code below with your bank\'s app.') ?>" width="200px"/>
+    </div>
+    <div class="code-container">
+        <label for="qrcode">
+            <?= $this->__('Pix Code:') ?>
+        </label>
+        <div class="code-content">
+            <span>
+                <input type="text" id="qrcode" class="payment-code" value="<?= $this->escapeHtml($info['qrcode_text']) ?>" readonly="readonly"/>
+                <img src="<?= $this->getSkinUrl('images/ricardomartins/pagbank/copy-icon.svg'); ?>" alt="<?= $this->__('Copy') ?>" title="<?= $this->__('Copy') ?>" class="copy-btn"/>
+            </span>
+            <p class="copied" style="display: none"><?= $this->__('Copied ✔') ?></p>
+        </div>
+    </div>
+    <p>
+        <b>
+            <?= $this->__(
+                    'Your Pix code expires in %s',
+                    $this->escapeHtml($this->formatDateFromString($info['due_date']))
+            ) ?>
+        </b>
+    </p>
+<?php endif; ?>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <RicardoMartins_PagBank>
+            <active>true</active>
+            <codePool>community</codePool>
+            <depends>
+                <Mage_Checkout/>
+                <Mage_Sales/>
+                <Mage_Payment/>
+            </depends>
+        </RicardoMartins_PagBank>
+    </modules>
+</config>
