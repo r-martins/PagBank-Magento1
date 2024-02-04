@@ -39,7 +39,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Installments extends Varien_Ob
     /**
      * @return int|null
      */
-    public function getMaxInstallments(): ?int
+    public function getMaxInstallments()
     {
         return $this->getData(RicardoMartins_PagBank_Api_Connect_InstallmentsInterface::MAX_INSTALLMENTS);
     }

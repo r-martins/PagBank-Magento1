@@ -26,24 +26,6 @@ class RicardoMartins_PagBank_Model_Method_Billet extends Mage_Payment_Model_Meth
     }
 
     /**
-     * @return $this|RicardoMartins_PagBank_Model_Method_Billet
-     * @throws Mage_Core_Exception
-     */
-    public function validate()
-    {
-        parent::validate();
-
-        $info = $this->getInfoInstance();
-        $errorMsg = null;
-
-        if ($errorMsg) {
-            Mage::throwException($errorMsg);
-        }
-
-        return $this;
-    }
-
-    /**
      * @param Varien_Object $payment
      * @param $amount
      * @return $this|RicardoMartins_PagBank_Model_Method_Billet

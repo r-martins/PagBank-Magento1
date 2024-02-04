@@ -95,5 +95,29 @@
                 </ricardomartins_pagbank>
             </modules>
         </translate>
+        <events>
+            <payment_info_block_prepare_specific_information>
+                <observers>
+                    <ricardomartins_pagbank>
+                        <type>model</type>
+                        <class>ricardomartins_pagbank/observer</class>
+                        <method>paymentInfoBlockPrepareSpecificInformation</method>
+                    </ricardomartins_pagbank>
+                </observers>
+            </payment_info_block_prepare_specific_information>
+        </events>
     </frontend>
+    <adminhtml>
+        <events>
+            <payment_info_block_prepare_specific_information>
+                <observers>
+                    <ricardomartins_pagbank>
+                        <type>model</type>
+                        <class>ricardomartins_pagbank/observer</class>
+                        <method>paymentInfoBlockPrepareSpecificInformation</method>
+                    </ricardomartins_pagbank>
+                </observers>
+            </payment_info_block_prepare_specific_information>
+        </events>
+    </adminhtml>
 </config>

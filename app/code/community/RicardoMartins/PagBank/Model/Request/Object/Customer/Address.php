@@ -161,6 +161,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Customer_Address extends Varie
      */
     public function setPostalCode($postalCode)
     {
+        $postalCode = preg_replace('/[^0-9]/', '', $postalCode);
         $postalCode = substr($postalCode, 0, 8);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_AddressInterface::POSTAL_CODE, $postalCode);
     }

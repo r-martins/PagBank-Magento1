@@ -38,10 +38,20 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         $paramsString = json_encode($params);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $endpoint);
+
+        if ($type == CURLOPT_HTTPGET) {
+            $paramsString = http_build_query($params);
+            $endpoint = strpos($endpoint, '?') === false ? "{$endpoint}?" : "{$endpoint}&";
+            $endpoint = $endpoint . $paramsString;
+        }
+
+        if ($type == CURLOPT_POST) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $paramsString);
+        }
+
         curl_setopt($ch, $type, count($params));
+        curl_setopt($ch, CURLOPT_URL, $endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $paramsString);
         curl_setopt($ch, CURLOPT_TIMEOUT, 45);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -61,6 +71,16 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         }
 
         $response = json_decode($response, true);
+
+        $isSandbox = false;
+        $parsedParams = parse_url($endpoint, PHP_URL_QUERY);
+        if ($parsedParams) {
+            parse_str($parsedParams, $parsedStr);
+            $isSandbox = (bool)$parsedStr['isSandbox'];
+        }
+
+        $response['is_sandbox'] = $isSandbox;
+
         $info = curl_getinfo($ch);
         $httpCode = $info['http_code'];
         if ($httpCode != 200 && $httpCode != 201) {
