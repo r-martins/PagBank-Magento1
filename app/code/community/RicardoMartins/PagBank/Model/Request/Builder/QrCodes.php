@@ -29,12 +29,14 @@ class RicardoMartins_PagBank_Model_Request_Builder_QrCodes
         $result = [];
         $storeId = $this->order->getStoreId();
 
-        $amount = new RicardoMartins_PagBank_Model_Request_Object_Amount();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
+        $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
         $amount->setValue($this->order->getGrandTotalAmount());
 
         $expirationDate = Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/expiration_time', $storeId);
 
-        $qrCodes = new RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_QrCode();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Qrcode $qrCodes */
+        $qrCodes = Mage::getModel('ricardomartins_pagbank/request_object_paymentmethod_qrcode');
         $qrCodes->setAmount($amount->getData());
         $qrCodes->setExpirationDate($expirationDate);
 

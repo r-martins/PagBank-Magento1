@@ -1,6 +1,6 @@
 <?php
 
-class RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_Card extends Varien_Object implements RicardoMartins_PagBank_Api_Connect_PaymentMethod_CardInterface
+class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card extends Varien_Object implements RicardoMartins_PagBank_Api_Connect_PaymentMethod_CardInterface
 {
     /**
      * @return string|null

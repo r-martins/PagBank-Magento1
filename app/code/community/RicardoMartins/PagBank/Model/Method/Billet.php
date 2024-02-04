@@ -71,30 +71,36 @@ class RicardoMartins_PagBank_Model_Method_Billet extends Mage_Payment_Model_Meth
      */
     private function billetPayment($order)
     {
-        $orderDataObj = new RicardoMartins_PagBank_Model_Request_Builder_Order($order);
-        $orderData = $orderDataObj->build();
+        /** @var RicardoMartins_PagBank_Model_Request_Builder_Order $orderBuilder */
+        $orderBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_order', $order);
+        $orderData = $orderBuilder->build();
 
-        $customerObj = new RicardoMartins_PagBank_Model_Request_Builder_Customer($order);
-        $customer = $customerObj->build();
+        /** @var RicardoMartins_PagBank_Model_Request_Builder_Customer $customerBuilder */
+        $customerBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_customer', $order);
+        $customerData = $customerBuilder->build();
 
-        $itemsObj = new RicardoMartins_PagBank_Model_Request_Builder_Items($order);
-        $items = $itemsObj->build();
+        /** @var RicardoMartins_PagBank_Model_Request_Builder_Items $itemsBuilder */
+        $itemsBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_items', $order);
+        $itemsData = $itemsBuilder->build();
 
-        $shippingObj = new RicardoMartins_PagBank_Model_Request_Builder_Shipping($order);
-        $shipping = $shippingObj->build();
+        /** @var RicardoMartins_PagBank_Model_Request_Builder_Shipping $shippingBuilder */
+        $shippingBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_shipping', $order);
+        $shippingData = $shippingBuilder->build();
 
-        $billetObj = new RicardoMartins_PagBank_Model_Request_Builder_Charges_Billet($order);
-        $billet = $billetObj->build();
+        /** @var RicardoMartins_PagBank_Model_Request_Builder_Charges_Billet $billetBuilder */
+        $billetBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_charges_billet', $order);
+        $billetData = $billetBuilder->build();
 
         $data = array_merge(
             $orderData,
-            $customer,
-            $items,
-            $shipping,
-            $billet
+            $customerData,
+            $itemsData,
+            $shippingData,
+            $billetData
         );
 
-        $api = new RicardoMartins_PagBank_Model_Api_Connect_Client();
+        /** @var RicardoMartins_PagBank_Model_Api_Connect_Client $api */
+        $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
 
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');

@@ -1,6 +1,6 @@
 <?php
 
-class RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_Billet extends Varien_Object implements RicardoMartins_PagBank_Api_Connect_PaymentMethod_BilletInterface
+class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Billet extends Varien_Object implements RicardoMartins_PagBank_Api_Connect_PaymentMethod_BilletInterface
 {
     /**
      * @return string

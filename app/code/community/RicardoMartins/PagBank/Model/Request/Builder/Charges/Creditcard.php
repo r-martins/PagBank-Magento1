@@ -29,15 +29,19 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         $storeId = $this->order->getStoreId();
         $payment = $this->order->getPayment();
 
-        $holder = new RicardoMartins_PagBank_Model_Request_Object_Holder();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Holder $holder */
+        $holder = Mage::getModel('ricardomartins_pagbank/request_object_holder');
         $holder->setName($payment->getAdditionalInformation('cc_owner'));
 
-        $card = new RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_Card();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_Card $card */
+        $card = Mage::getModel('ricardomartins_pagbank/request_object_paymentmethod_card');
         $card->setHolder($holder->getData());
         $card->setEncrypted($payment->getAdditionalInformation('cc_number_encrypted'));
 
         $selectedInstallments = (int) $payment->getAdditionalInformation('cc_installments');
-        $paymentMethod = new RicardoMartins_PagBank_Model_Request_Object_PaymentMethod();
+
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Paymentmethod $paymentMethod */
+        $paymentMethod = Mage::getModel('ricardomartins_pagbank/request_object_paymentmethod');
         $paymentMethod->setType(RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface::TYPE_CREDIT_CARD);
         $paymentMethod->setInstallments($selectedInstallments);
         $paymentMethod->setCapture(true);
@@ -72,11 +76,13 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
             }
         }
 
-        $amount = new RicardoMartins_PagBank_Model_Request_Object_Amount();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
+        $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
         $amount->setValue($totalAmount);
         $amount->setCurrency($this->order->getOrderCurrency()->getCode());
 
-        $charges = new RicardoMartins_PagBank_Model_Request_Object_Charge();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Charge $charges */
+        $charges = Mage::getModel('ricardomartins_pagbank/request_object_charge');
         $charges->setReferenceId($this->order->getIncrementId());
         $charges->setAmount($amount->getData());
         $charges->setPaymentMethod($paymentMethod->getData());

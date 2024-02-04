@@ -18,7 +18,8 @@ class RicardoMartins_PagBank_Model_Observer
         ];
 
         try {
-            $api = new RicardoMartins_PagBank_Model_Api_Connect_Client();
+            /** @var RicardoMartins_PagBank_Model_Api_Connect_Client $api */
+            $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
             $response = $api->placePostRequest($endpoint, $body);
             $publicKey = $response[RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY];
             Mage::getConfig()->saveConfig('payment/ricardomartins_pagbank/public_key', $publicKey);

@@ -1,6 +1,6 @@
 <?php
 
-class RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_QrCode extends Varien_Object implements RicardoMartins_PagBank_Api_Connect_PaymentMethod_QrCodeInterface
+class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Qrcode extends Varien_Object implements RicardoMartins_PagBank_Api_Connect_PaymentMethod_QrCodeInterface
 {
     /**
      * @return RicardoMartins_PagBank_Api_Connect_AmountInterface[]

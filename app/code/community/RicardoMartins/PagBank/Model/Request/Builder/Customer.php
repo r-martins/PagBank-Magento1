@@ -33,13 +33,15 @@ class RicardoMartins_PagBank_Model_Request_Builder_Customer
         $telephone = $this->order->getBillingAddress()->getTelephone();
         $telephone = preg_replace('/[^0-9]/','', $telephone);
 
-        $phones = new RicardoMartins_PagBank_Model_Request_Object_Customer_Phone();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Customer_Phone $phones */
+        $phones = Mage::getModel('ricardomartins_pagbank/request_object_customer_phone');
         $phones->setCountry(RicardoMartins_PagBank_Api_Connect_PhoneInterface::DEFAULT_COUNTRY_CODE);
         $phones->setArea((int) substr($telephone, 0, 2));
         $phones->setNumber((int) substr($telephone, 2));
         $phones->setType($this->getPhoneType($telephone, $document));
 
-        $customer = new RicardoMartins_PagBank_Model_Request_Object_Customer();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Customer $customer */
+        $customer = Mage::getModel('ricardomartins_pagbank/request_object_customer');
         $customer->setName($this->order->getCustomerFirstname() . ' ' . $this->order->getCustomerLastname());
         $customer->setTaxId($document);
         $customer->setEmail($this->order->getCustomerEmail());

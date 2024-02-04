@@ -38,7 +38,8 @@ class RicardoMartins_PagBank_Model_Request_Builder_Shipping
 
         $shippingAddress = $this->order->getShippingAddress();
 
-        $address = new RicardoMartins_PagBank_Model_Request_Object_Customer_Address();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Customer_Address $address */
+        $address = Mage::getModel('ricardomartins_pagbank/request_object_customer_address');
         $address->setStreet($shippingAddress->getStreet(1));
         $address->setNumber($shippingAddress->getStreet(2));
         $address->setLocality($shippingAddress->getStreet(4));

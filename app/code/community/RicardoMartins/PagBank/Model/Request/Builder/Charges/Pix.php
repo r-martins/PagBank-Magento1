@@ -31,10 +31,12 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Pix
         $storeId = $this->order->getStoreId();
         $expirationDate = Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/expiration_time', $storeId) ?: 60;
 
-        $amount = new RicardoMartins_PagBank_Model_Request_Object_Amount();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
+        $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
         $amount->setValue($this->order->getBaseGrandTotal());
 
-        $qrCodes = new RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_QrCode();
+        /** @var RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_QrCode $qrCodes */
+        $qrCodes = Mage::getModel('ricardomartins_pagbank/request_object_paymentmethod_qrcode');
         $qrCodes->setAmount($amount->getData());
         $qrCodes->setExpirationDate($expirationDate);
 
