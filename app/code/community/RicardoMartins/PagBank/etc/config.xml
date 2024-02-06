@@ -12,16 +12,17 @@
                 <debug>1</debug>
             </ricardomartins_pagbank>
             <ricardomartins_pagbank_cc>
-                <active>0</active>
+                <active>1</active>
                 <title>Cartão de Crédito - PagBank</title>
                 <sort_order>1</sort_order>
                 <order_status>pending</order_status>
                 <allowspecific>0</allowspecific>
                 <payment_action>order</payment_action>
                 <model>ricardomartins_pagbank/method_cc</model>
+                <soft_descriptor>Compra Via PagBank</soft_descriptor>
             </ricardomartins_pagbank_cc>
             <ricardomartins_pagbank_billet>
-                <active>0</active>
+                <active>1</active>
                 <title>Boleto - PagBank</title>
                 <sort_order>2</sort_order>
                 <order_status>pending</order_status>
@@ -31,7 +32,7 @@
                 <expiration_time>3</expiration_time>
             </ricardomartins_pagbank_billet>
             <ricardomartins_pagbank_pix>
-                <active>0</active>
+                <active>1</active>
                 <title>Pix - PagBank</title>
                 <sort_order>3</sort_order>
                 <order_status>pending</order_status>
