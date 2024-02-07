@@ -13,7 +13,7 @@
         <reference name="before_body_end">
             <block type="page/html_head" name="ricardomartins.pagbank.js.footer" after="-" template="ricardomartins/pagbank/page/html/footer.phtml">
                 <action method="addItem"><type>js</type><name>ricardomartins/pagbank/creditcard.js</name></action>
-                <action method="addItem"><type>js</type><name>ricardomartins/jquery/jquery.mask.min.js</name></action>
+                <action method="addItem"><type>js</type><name>ricardomartins/pagbank/jquery/jquery.mask.min.js</name></action>
             </block>
         </reference>
     </checkout_onepage_index>
