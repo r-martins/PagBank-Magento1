@@ -22,9 +22,16 @@ class RicardoMartins_PagBank_Model_Observer
             $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
             $response = $api->placePostRequest($endpoint, $body);
             $publicKey = $response[RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY];
+        } catch (\Exception $e) {
+            $helper->writeLog(sprintf('Error generating public key: %s', $e->getMessage()));
+            throw new \Exception(__('Error generating public key: %s', $e->getMessage()));
+        }
+
+        try {
             Mage::getConfig()->saveConfig('payment/ricardomartins_pagbank/public_key', $publicKey);
         } catch (\Exception $e) {
-            throw new \Exception(__('Public Key Error: %1', $e->getMessage()));
+            $helper->writeLog(sprintf('Error saving public key: %s', $e->getMessage()));
+            throw new \Exception(__('Error saving public key: %s', $e->getMessage()));
         }
     }
 

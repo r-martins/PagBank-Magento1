@@ -3,6 +3,9 @@
 class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
 {
     /**
+     * Get the orders endpoint
+     *
+     * @param $storeId
      * @return string
      */
     public function getOrdersEndpoint($storeId = null)
@@ -16,6 +19,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the public key endpoint
+     *
+     * @param $storeId
      * @return string
      */
     public function getPublicKeyEndpoint($storeId = null)
@@ -29,6 +35,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the interest endpoint
+     *
+     * @param $storeId
      * @return string
      */
     public function getInterestEndpoint($storeId = null)
@@ -42,6 +51,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get if the connect key is from sandbox
+     *
+     * @param $storeId
      * @return bool
      */
     public function isSandbox($storeId = null)
@@ -54,6 +66,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the connect key
+     *
+     * @param $storeId
      * @return string
      */
     public function getConnectKey($storeId = null)
@@ -62,6 +77,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the public key
+     *
+     * @param $storeId
      * @return mixed
      */
     public function getPublicKey($storeId = null)
@@ -69,32 +87,64 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         return Mage::getStoreConfig('payment/ricardomartins_pagbank/public_key', $storeId);
     }
 
+    /**
+     * Get the installments options
+     *
+     * @param $storeId
+     * @return mixed
+     */
     public function getInstallmentsOptions($storeId = null)
     {
         return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options', $storeId);
     }
 
+    /**
+     * Get the number of installments without interest
+     *
+     * @param $storeId
+     * @return mixed
+     */
     public function getInstallmentsWithoutInterestNumber($storeId = null)
     {
         return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options_fixed', $storeId);
     }
 
+    /**
+     * Get the minimum amount for installments
+     *
+     * @param $storeId
+     * @return mixed
+     */
     public function getInstallmentsMinAmount($storeId = null)
     {
         return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options_min_total', $storeId);
     }
 
+    /**
+     * Check if the installments limit is enabled
+     *
+     * @param $storeId
+     * @return mixed
+     */
     public function isEnabledInstallmentsLimit($storeId = null)
     {
         return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/enable_installments_limit', $storeId);
     }
 
+    /**
+     * Get the installments limit
+     *
+     * @param $storeId
+     * @return mixed
+     */
     public function getInstallmentsLimit($storeId = null)
     {
         return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_limit', $storeId);
     }
 
     /**
+     * Get the maximum number of installments without interest
+     *
      * @param $amount
      * @param $storeId
      * @return int|mixed|null
@@ -119,6 +169,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
 
 
     /**
+     * Get the headers for the API request
+     *
      * @return string[]
      */
     public function getHeaders()
@@ -132,6 +184,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the document value from different sources
+     *
      * @param $order
      * @return array|string|string[]|null
      */
@@ -161,7 +215,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
 
     /**
      * Serialized (json) string with module configuration
-     * return string
+     *
+     * @param $storeId
+     * @return false|string
      */
     public function getConfigJs($storeId = null)
     {
@@ -226,6 +282,32 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Write something to pagbank.log
+     *
+     * @param $obj mixed|string
+     */
+    public function writeLog($obj)
+    {
+        if ($this->isDebugActive()) {
+            if (is_string($obj)) {
+                Mage::log($obj, Zend_Log::DEBUG, 'pagbank.log', true);
+            } else {
+                Mage::log(var_export($obj, true), Zend_Log::DEBUG, 'pagbank.log', true);
+            }
+        }
+    }
+
+    /**
+     * Check if the debug mode is active
+     *
+     * @return mixed
+     */
+    public function isDebugActive()
+    {
+        return Mage::getStoreConfig('payment/ricardomartins_pagbank/debug');
+    }
+
+    /**
      * @param $minTotal
      * @param $amount
      * @return int
@@ -233,6 +315,6 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     private function calculeInstallmentsNumberWithMinTotal($minTotal, $amount)
     {
         $installments = floor($amount / $minTotal);
-        return (int) min($installments, 18);
+        return (int)min($installments, 18);
     }
 }
