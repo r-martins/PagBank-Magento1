@@ -1,6 +1,7 @@
 <?php
 
-class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_Action {
+class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_Action
+{
 
     /**
      * @return Mage_Core_Controller_Response_Http|Zend_Controller_Response_Abstract

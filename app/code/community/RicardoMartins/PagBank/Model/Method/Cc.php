@@ -1,6 +1,6 @@
 <?php
 
-class RicardoMartins_PagBank_Model_Method_Cc extends Mage_Payment_Model_Method_Abstract
+class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Model_Method_Abstract
 {
     const CHARGE_ID = 'charge_id';
     const CHARGE_LINK = 'charge_link';

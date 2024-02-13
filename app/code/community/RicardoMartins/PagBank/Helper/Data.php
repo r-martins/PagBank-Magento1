@@ -10,12 +10,12 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getOrdersEndpoint($storeId = null)
     {
+        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_ORDERS;
         if ($this->isSandbox($storeId)) {
-            return RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_ORDERS
-                . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
         }
 
-        return RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_ORDERS;
+        return $endpoint;
     }
 
     /**
@@ -26,12 +26,12 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getPublicKeyEndpoint($storeId = null)
     {
+        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PUBLIC_KEY;
         if ($this->isSandbox($storeId)) {
-            return RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PUBLIC_KEY
-                . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
         }
 
-        return RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PUBLIC_KEY;
+        return $endpoint;
     }
 
     /**
@@ -42,12 +42,28 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getInterestEndpoint($storeId = null)
     {
+        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_INTEREST;
         if ($this->isSandbox($storeId)) {
-            return RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_INTEREST
-                . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
         }
 
-        return RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_INTEREST;
+        return $endpoint;
+    }
+
+    /**
+     * Get the orders consult endpoint
+     *
+     * @param $storeId
+     * @return string
+     */
+    public function getPaymentInfoEndpoint($storeId = null)
+    {
+        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PAYMENT_INFO . '/{pagbankOrderId}/';
+        if ($this->isSandbox($storeId)) {
+            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        }
+
+        return $endpoint;
     }
 
     /**

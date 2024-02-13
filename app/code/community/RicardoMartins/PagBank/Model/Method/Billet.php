@@ -1,6 +1,6 @@
 <?php
 
-class RicardoMartins_PagBank_Model_Method_Billet extends Mage_Payment_Model_Method_Abstract
+class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_Model_Method_Abstract
 {
     protected $_code = 'ricardomartins_pagbank_billet';
     protected $_formBlockType = 'ricardomartins_pagbank/form_billet';

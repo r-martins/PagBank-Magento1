@@ -47,7 +47,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
      */
     private function getNotificationUrls()
     {
-        $hash = Mage::helper('core')->getHash($this->order->getIncrementId(), Mage_Admin_Model_User::HASH_SALT_LENGTH);
+        $hash = Mage::helper('core')->getHash($this->order->getIncrementId());
         $hash = substr($hash, 0, 5);
         $baseUrl = Mage::app()->getStore()->getBaseUrl();
         return [

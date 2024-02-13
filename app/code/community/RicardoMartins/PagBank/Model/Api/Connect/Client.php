@@ -7,25 +7,27 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
      *
      * @param $endpoint
      * @param $params
+     * @param bool $log
      * @return mixed
      * @throws Mage_Core_Exception
      */
-    public function placePostRequest($endpoint, $params)
+    public function placePostRequest($endpoint, $params, $log = true)
     {
-        return $this->placeRequest(CURLOPT_POST, $endpoint, $params);
+        return $this->placeRequest(CURLOPT_POST, $endpoint, $params, $log);
     }
 
     /**
      * Place a GET request to the PagBank API
      *
      * @param $endpoint
-     * @param $params
+     * @param array $params
+     * @param bool $log
      * @return mixed
      * @throws Mage_Core_Exception
      */
-    public function placeGetRequest($endpoint, $params)
+    public function placeGetRequest($endpoint, $params = [], $log = true)
     {
-        return $this->placeRequest(CURLOPT_HTTPGET, $endpoint, $params);
+        return $this->placeRequest(CURLOPT_HTTPGET, $endpoint, $params, $log);
     }
 
     /**
@@ -33,11 +35,12 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
      *
      * @param $type
      * @param $endpoint
-     * @param $params
+     * @param array $params
+     * @param bool $log
      * @return mixed
      * @throws Mage_Core_Exception
      */
-    public function placeRequest($type, $endpoint, $params = [])
+    public function placeRequest($type, $endpoint, $params = [], $log = true)
     {
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
@@ -70,9 +73,14 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
 
         try {
             $response = curl_exec($ch);
-            $helper->writeLog(
-                sprintf('Response from the request to %s: %s', $endpoint, $response)
-            );
+            if ($log) {
+                $helper->writeLog(
+                    sprintf('Request to PagBank %s: %s', $endpoint, $paramsString)
+                );
+                $helper->writeLog(
+                    sprintf('Response from the request to %s: %s', $endpoint, $response)
+                );
+            }
         } catch (Exception $e) {
             $helper->writeLog(
                 sprintf('Failure in communication with PagBank: %s', $e->getMessage())
