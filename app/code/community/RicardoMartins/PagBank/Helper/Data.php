@@ -165,7 +165,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getPlaceOrderButton($storeId = null)
     {
-        return Mage::getStoreConfig('payment/ricardomartins_pagbank/debug', $storeId);
+        return Mage::getStoreConfig('payment/ricardomartins_pagbank/placeorder_button', $storeId);
     }
 
     /**

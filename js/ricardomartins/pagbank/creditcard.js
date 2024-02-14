@@ -64,9 +64,6 @@ RMPagBank = Class.create({
                 error: function (data) {
                     console.error('Error encrypting card');
                     console.error(data);
-                },
-                complete: function (data) {
-                    this.enablePlaceOrderButton();
                 }
             });
         } catch (e) {
@@ -112,6 +109,7 @@ RMPagBank = Class.create({
         }
 
         numberEncryptedInput.val(card.encryptedCard);
+        this.enablePlaceOrderButton();
         return true;
     },
     disablePlaceOrderButton: function(){
