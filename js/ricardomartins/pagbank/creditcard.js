@@ -59,11 +59,9 @@ RMPagBank = Class.create({
                 expYear: expYear,
                 securityCode: ccCvc,
                 success: function (data) {
-                    debugger;
                     console.log('Card encrypted successfully');
                 },
                 error: function (data) {
-                    debugger;
                     console.error('Error encrypting card');
                     console.error(data);
                 },
@@ -73,6 +71,9 @@ RMPagBank = Class.create({
             });
         } catch (e) {
             alert("Erro ao criptografar o cartão.\nVerifique se os dados digitados estão corretos.");
+            if(RMPagBankObj.config.debug){
+                console.error('Erro ao criptografar o cartão.\nVerifique se os dados digitados estão corretos.', e);
+            }
             return false;
         }
 
@@ -103,6 +104,10 @@ RMPagBank = Class.create({
                 }
             }
             alert('Erro ao criptografar cartão.\n' + error);
+
+            if(RMPagBankObj.config.debug){
+                console.error('Erro ao criptografar cartão.\n' + error);
+            }
             return false;
         }
 
@@ -110,7 +115,6 @@ RMPagBank = Class.create({
         return true;
     },
     disablePlaceOrderButton: function(){
-        debugger;
         if (RMPagBankObj.config.placeorder_button) {
             if(typeof $$(RMPagBankObj.config.placeorder_button).first() != 'undefined'){
                 $$(RMPagBankObj.config.placeorder_button).first().up().insert({
@@ -164,6 +168,9 @@ RMPagBank = Class.create({
                 cc_bin: ccBin
             },
             success: (response)=>{
+                if(RMPagBankObj.config.debug){
+                    console.log('Installments response:', response);
+                }
                 response = JSON.parse(response);
                 let select = jQuery('#ricardomartins_pagbank_cc_cc_installments');
                 select.empty();
@@ -188,6 +195,9 @@ RMPagBank = Class.create({
             },
             error: (response)=>{
                 alert('Error getting installments. Please try again.');
+                if(RMPagBankObj.config.debug){
+                    console.error('Error getting installments. Please try again.', response);
+                }
             }
         });
     }
