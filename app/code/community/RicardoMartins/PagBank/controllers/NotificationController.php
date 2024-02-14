@@ -45,7 +45,7 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
             $this->getResponse()->setBody('Notificação já recebida a menos de 1 minuto.');
             return;
         }
-        Mage::app()->getCache()->save('in_progress', $orderIncrementId, array('ricardomartins_pagbank_notification'), 60);
+        Mage::app()->getCache()->save('in_progress', $orderIncrementId, ['ricardomartins_pagbank_notification'], 60);
 
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');

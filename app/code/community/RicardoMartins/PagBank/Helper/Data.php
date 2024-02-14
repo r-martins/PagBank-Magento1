@@ -254,7 +254,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         ];
 
         try {
-            $config['loader_url'] = Mage::getDesign()->getSkinUrl('images/ricardomartins/pagbank/ajax-loader.gif', array('_secure'=>true));
+            $config['loader_url'] = Mage::getDesign()->getSkinUrl('images/ricardomartins/pagbank/ajax-loader.gif', ['_secure'=>true]);
         } catch (Exception $e) {
             $config['loader_url'] = '';
         }
