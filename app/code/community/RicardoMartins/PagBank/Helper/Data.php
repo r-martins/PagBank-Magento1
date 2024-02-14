@@ -159,6 +159,16 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the place order button css selector
+     *
+     * @return mixed
+     */
+    public function getPlaceOrderButton($storeId = null)
+    {
+        return Mage::getStoreConfig('payment/ricardomartins_pagbank/debug', $storeId);
+    }
+
+    /**
      * Get the maximum number of installments without interest
      *
      * @param $amount
@@ -238,11 +248,17 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     public function getConfigJs($storeId = null)
     {
         $config = [
-            'ricardomartins_pagbank' => [
-                'publicKey' => $this->getPublicKey($storeId),
-                'installmentsEndpoint' => $this->_getUrl('pagbank/ajax/getinstallments', ['_secure' => true]),
-            ],
+            'publicKey' => $this->getPublicKey($storeId),
+            'installments_endpoint' => $this->_getUrl('pagbank/ajax/getinstallments', ['_secure' => true]),
+            'placeorder_button' => $this->getPlaceOrderButton($storeId)
         ];
+
+        try {
+            $config['loader_url'] = Mage::getDesign()->getSkinUrl('images/ricardomartins/pagbank/ajax-loader.gif', array('_secure'=>true));
+        } catch (Exception $e) {
+            $config['loader_url'] = '';
+        }
+
         return json_encode($config);
     }
 

@@ -5,7 +5,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
 
     /**
      * @return Mage_Core_Controller_Response_Http|Zend_Controller_Response_Abstract
-     * @throws Mage_Core_Model_Store_Exception
+     * @throws Mage_Core_Model_Store_Exception|Mage_Core_Exception
      */
     public function getInstallmentsAction()
     {
@@ -14,6 +14,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $creditCardBin = $params['cc_bin'];
         $storeId = Mage::app()->getStore()->getId();
 
+        /** @var RicardoMartins_PagBank_Model_Request_Builder_Installments $installmentsBuilder */
         $installmentsBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_installments', $creditCardBin);
         $installments = $installmentsBuilder->build();
 

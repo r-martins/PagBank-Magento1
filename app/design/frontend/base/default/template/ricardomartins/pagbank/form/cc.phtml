@@ -3,6 +3,9 @@
 $_code = $this->getMethodCode();
 $_grandTotal = Mage::helper('checkout/cart')->getQuote()->getGrandTotal();
 $_grandTotal = (!$_grandTotal)?'null':$_grandTotal;
+
+/** @var RicardoMartins_PagBank_Helper_Data $pagbankHelper */
+$pagbankHelper = Mage::helper('ricardomartins_pagbank');
 ?>
 <ul class="form-list ricardomartins-pagbank ricardomartins-pagbank-cc" id="payment_form_<?= $_code ?>" style="display:none;">
     <li class="ricardomartins-pagbank-cc-number-row">
@@ -82,6 +85,24 @@ $_grandTotal = (!$_grandTotal)?'null':$_grandTotal;
         </div>
     </li>
 </ul>
+<script type="text/javascript">
+    //<![CDATA[
+    const preparePagBank = function(){
+        if(typeof RMPagBankObj != "undefined"){
+            <?php if ($pagbankHelper->isDebugActive()): ?>
+            console.info('PagBank was already started.');
+            <?php endif; ?>
+            return;
+        }
+        <?php if ($pagbankHelper->isDebugActive()): ?>
+        console.info('PagBank is initiating. Wait for ready message.');
+        <?php endif; ?>
+        RMPagBankObj = new RMPagBank(<?php echo $pagbankHelper->getConfigJs()?>);
+        console.info('PagBank ready');
+    }
+    preparePagBank();
+    //]]>
+</script>
 <script type="text/javascript">
 if (jQuery != undefined) {
     jQuery(document).ready(function($) {

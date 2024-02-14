@@ -22,6 +22,8 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
 
     /**
      * @return array
+     * @throws Mage_Core_Exception
+     * @throws Mage_Core_Model_Store_Exception
      */
     public function build()
     {
@@ -53,6 +55,8 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         $totalAmount = $this->order->getBaseGrandTotal();
         if ($selectedInstallments > 1) {
             $creditCardBin = $payment->getAdditionalInformation('cc_bin');
+
+            /** @var RicardoMartins_PagBank_Model_Request_Builder_Installments $installmentsBuilder */
             $installmentsBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_installments', $creditCardBin);
             $installments = $installmentsBuilder->build();
 
