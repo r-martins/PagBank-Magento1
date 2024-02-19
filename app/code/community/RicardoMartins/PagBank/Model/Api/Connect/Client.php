@@ -11,7 +11,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
      * @return mixed
      * @throws Mage_Core_Exception
      */
-    public function placePostRequest($endpoint, $params, $log = true)
+    public function placePostRequest($endpoint, $params = [], $log = true)
     {
         return $this->placeRequest(CURLOPT_POST, $endpoint, $params, $log);
     }
@@ -59,6 +59,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         }
 
         if ($type == CURLOPT_POST) {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
             curl_setopt($ch, CURLOPT_POSTFIELDS, $paramsString);
         }
 
@@ -66,6 +67,9 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         curl_setopt($ch, CURLOPT_URL, $endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 45);
+        curl_setopt($ch, CURLOPT_ENCODING, '');
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $helper->getHeaders());
@@ -115,6 +119,16 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         if ($httpCode != 200 && $httpCode != 201) {
             if ($response['error_messages']) {
                 $errors = $this->getErrors($response['error_messages']);
+                $helper->writeLog(
+                    sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
+                );
+                Mage::throwException(
+                    sprintf('Falha ao tentar enviar parametros ao PagBank: %s', $errors)
+                );
+            }
+
+            if ($response['message']) {
+                $errors = $response['message'];
                 $helper->writeLog(
                     sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
                 );

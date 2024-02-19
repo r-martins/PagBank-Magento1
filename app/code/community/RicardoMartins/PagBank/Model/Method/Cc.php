@@ -13,6 +13,8 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
     const CC_INSTALLMENTS = 'cc_installments';
     const CC_NUMBER_ENCRYPTED = 'cc_number_encrypted';
     const CC_BIN = 'cc_bin';
+    const CC_3DS_ID = 'cc_3ds_id';
+    const CC_PAGBANK_SESSION = 'cc_has_session';
     const AUTHORIZATION_CODE = 'authorization_code';
     const NSU = 'nsu';
 
@@ -38,6 +40,11 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
         $info->setAdditionalInformation(self::CC_BIN, $data->getData('cc_bin'));
         $info->setAdditionalInformation(self::CC_INSTALLMENTS, $data->getData('cc_installments'));
         $info->setAdditionalInformation(self::DOCUMENT, $data->getData('data_tax_id'));
+        $info->setAdditionalInformation(self::CC_PAGBANK_SESSION, $data->getData('cc_has_session'));
+
+        if ($data->getData('cc_3ds_id')) {
+            $info->setAdditionalInformation(self::CC_3DS_ID, $data->getData('cc_3ds_id'));
+        }
 
         return $this;
     }

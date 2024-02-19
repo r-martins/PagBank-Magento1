@@ -67,6 +67,22 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the 3D Secure session endpoint
+     *
+     * @param $storeId
+     * @return string
+     */
+    public function get3DSecureSessionEndpoint($storeId = null)
+    {
+        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::CHECKOUT_SDK_SESSION_ENDPOINT;
+        if ($this->isSandbox($storeId)) {
+            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        }
+
+        return $endpoint;
+    }
+
+    /**
      * Get if the connect key is from sandbox
      *
      * @param $storeId
@@ -101,6 +117,28 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     public function getPublicKey($storeId = null)
     {
         return Mage::getStoreConfig('payment/ricardomartins_pagbank/public_key', $storeId);
+    }
+
+    /**
+     * Check if the 3DS is enabled
+     *
+     * @param $storeId
+     * @return mixed
+     */
+    public function isCc3dsEnabled($storeId = null)
+    {
+        return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds', $storeId);
+    }
+
+    /**
+     * Check if the 3DS is enabled
+     *
+     * @param $storeId
+     * @return mixed
+     */
+    public function allowContinueWithout3ds($storeId = null)
+    {
+        return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds_allow_continue', $storeId);
     }
 
     /**
@@ -250,7 +288,11 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         $config = [
             'publicKey' => $this->getPublicKey($storeId),
             'installments_endpoint' => $this->_getUrl('pagbank/ajax/getinstallments', ['_secure' => true]),
-            'placeorder_button' => $this->getPlaceOrderButton($storeId)
+            'quotedata_endpoint' => $this->_getUrl('pagbank/ajax/getquotedata', ['_secure' => true]),
+            'placeorder_button' => $this->getPlaceOrderButton($storeId),
+            'enabled_3ds' => $this->isCc3dsEnabled($storeId),
+            'cc_3ds_allow_continue' => $this->allowContinueWithout3ds($storeId),
+            'environment' => $this->isSandbox($storeId) ? 'SANDBOX' : 'PROD'
         ];
 
         try {

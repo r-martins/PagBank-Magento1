@@ -33,4 +33,38 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
 
         return $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($installmentsPlans));
     }
+
+    /**
+     * @return Mage_Core_Controller_Response_Http|Zend_Controller_Response_Abstract
+     */
+    public function getQuoteDataAction()
+    {
+        /** @var Mage_Core_Helper_Data $helper */
+        $helper = Mage::helper('core');
+
+        /** @var Mage_Sales_Model_Quote $quote */
+        $quote = Mage::helper('checkout/cart')->getQuote();
+        $quote->collectTotals();
+        $total = $quote->getGrandTotal();
+
+        $postcode = preg_replace('/[^0-9]/', '', $quote->getBillingAddress()->getPostcode());
+        $phone = preg_replace('/[^0-9]/', '', $quote->getBillingAddress()->getTelephone());
+
+        $result = [
+            'totalAmount' => $total,
+            'customerName' => $helper->escapeHtml($quote->getCustomer()->getName()),
+            'email' => $helper->escapeHtml($quote->getCustomer()->getEmail()),
+            'phone' => $helper->escapeHtml($phone),
+            'street'=> $helper->escapeHtml($quote->getBillingAddress()->getStreet(1)),
+            'number'=> $helper->escapeHtml($quote->getBillingAddress()->getStreet(2)),
+            'complement'=> $helper->escapeHtml($quote->getBillingAddress()->getStreet(3)),
+            'regionCode'=> $helper->escapeHtml($quote->getBillingAddress()->getRegionCode()),
+            'country'=> 'BRA',
+            'city'=> $helper->escapeHtml($quote->getBillingAddress()->getCity()),
+            'postalCode'=> $helper->escapeHtml($postcode)
+        ];
+
+        $this->getResponse()->setHeader('Content-type', 'application/json', true);
+        return $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+    }
 }

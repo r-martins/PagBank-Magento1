@@ -61,4 +61,9 @@ interface RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface
      */
     const TYPE_BILLET_OBJECT = 'boleto';
 
+    /**
+     * Authentication method. Optional. Only for credit card payments.
+     * @see RicardoMartins_PagBank_Api_Connect_PaymentMethod_CardInterface
+     */
+    const AUTHENTICATION_METHOD = 'authentication_method';
 }

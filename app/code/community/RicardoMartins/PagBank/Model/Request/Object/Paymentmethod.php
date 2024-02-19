@@ -91,7 +91,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod extends Varien_O
     /**
      * @return RicardoMartins_PagBank_Api_Connect_PaymentMethod_BilletInterface[]
      */
-    public function getBillet(): array
+    public function getBillet()
     {
         return $this->getData(RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface::TYPE_BILLET_OBJECT);
     }
@@ -100,8 +100,25 @@ class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod extends Varien_O
      * @param RicardoMartins_PagBank_Api_Connect_PaymentMethod_BilletInterface[] $billet
      * @return RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface
      */
-    public function setBillet(array $billet): RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface
+    public function setBillet(array $billet)
     {
         return $this->setData(RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface::TYPE_BILLET_OBJECT, $billet);
+    }
+
+    /**
+     * @return RicardoMartins_PagBank_Api_Connect_PaymentMethod_Card_AuthenticationMethodInterface[]
+     */
+    public function getAuthenticationMethod()
+    {
+        return $this->getData(RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface::AUTHENTICATION_METHOD);
+    }
+
+    /**
+     * @param RicardoMartins_PagBank_Api_Connect_PaymentMethod_Card_AuthenticationMethodInterface[] $authenticationMethod
+     * @return RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface
+     */
+    public function setAuthenticationMethod(array $authenticationMethod)
+    {
+        return $this->setData(RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface::AUTHENTICATION_METHOD, $authenticationMethod);
     }
 }

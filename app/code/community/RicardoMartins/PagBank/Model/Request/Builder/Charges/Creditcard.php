@@ -27,6 +27,9 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
      */
     public function build()
     {
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+
         $result = [];
         $storeId = $this->order->getStoreId();
         $payment = $this->order->getPayment();
@@ -49,6 +52,14 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         $paymentMethod->setCapture(true);
         $paymentMethod->setCard($card->getData());
 
+        if ($helper->isCc3dsEnabled()) {
+            $authenticationMethodData = $this->getAuthenticationMethodData($payment);
+
+            if ($authenticationMethodData) {
+                $paymentMethod->setAuthenticationMethod($authenticationMethodData);
+            }
+        }
+
         $softDescriptor = Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/soft_descriptor', $storeId);
         $paymentMethod->setSoftDescriptor($softDescriptor);
 
@@ -63,8 +74,6 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
             /** @var RicardoMartins_PagBank_Model_Api_Connect_Client $api */
             $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
 
-            /** @var RicardoMartins_PagBank_Helper_Data $helper */
-            $helper = Mage::helper('ricardomartins_pagbank');
             $endpoint = $helper->getInterestEndpoint($storeId);
 
             try {
@@ -94,5 +103,39 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         $result[self::CHARGES][] = $charges->getData();
 
         return $result;
+    }
+
+    /**
+     * @param $payment
+     * @return array|mixed|null
+     * @throws Mage_Core_Exception
+     */
+    private function getAuthenticationMethodData($payment)
+    {
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+
+        $has3DsSession = $payment->getAdditionalInformation('cc_has_session');
+        $allowContinue = $helper->allowContinueWithout3ds();
+        $cc3dsCardId = $payment->getAdditionalInformation('cc_3ds_id');
+
+        if (!$has3DsSession && !$allowContinue) {
+            Mage::throwException($helper->__('Erro ao obter a sessão 3D Secure PagBank. Pagamento com cartão de crédito foi desativado. Por favor recarregue a página.'));
+        }
+
+        if (!$cc3dsCardId && !$allowContinue) {
+            Mage::throwException($helper->__('Erro ao obter o 3D Secure PagBank ID. Pagamento com cartão de crédito foi desativado. Por favor recarregue a página.'));
+        }
+
+        if (!$cc3dsCardId) {
+            return null;
+        }
+
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card_Authenticationmethod $authenticationMethod */
+        $authenticationMethod = Mage::getModel('ricardomartins_pagbank/request_object_paymentmethod_card_authenticationmethod');
+        $authenticationMethod->setType(RicardoMartins_PagBank_Api_Connect_PaymentMethod_Card_AuthenticationMethodInterface::AUTHENTICATION_METHOD_TYPE_VALUE);
+        $authenticationMethod->setCardId($cc3dsCardId);
+
+        return $authenticationMethod->getData();
     }
 }
