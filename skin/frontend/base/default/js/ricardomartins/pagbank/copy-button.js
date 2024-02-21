@@ -1,7 +1,7 @@
 //adds copy text from .pix-code to clipboard function on .copy-btn click
 jQuery(document).ready(function($) {
     $('.copy-btn').click(function() {
-        var copyText = jQuery('.pix-code').val();
+        var copyText = jQuery('.payment-code').val();
         copyToClipboard(copyText, function(){
             $('.copied').fadeIn(500).delay(3000).fadeOut(500);
         });
