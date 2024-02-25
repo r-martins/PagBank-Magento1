@@ -10,6 +10,8 @@
             <ricardomartins_pagbank>
                 <document_from>taxvat</document_from>
                 <stc_mirror>1</stc_mirror>
+                <jsdelivr_enabled>0</jsdelivr_enabled>
+                <jsdelivr_minify>0</jsdelivr_minify>
                 <debug>1</debug>
             </ricardomartins_pagbank>
             <ricardomartins_pagbank_cc>

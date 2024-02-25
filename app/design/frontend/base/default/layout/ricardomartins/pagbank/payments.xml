@@ -1,44 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout version="0.1.0">
-    <checkout_onepage_index>
-        <reference name="head">
-            <action method="addItem"><type>js</type><name>ricardomartins/pagbank/jquery/jquery.mask.min.js</name></action>
-            <action method="addItem"><type>js</type><name>ricardomartins/pagbank/creditcard.js</name></action>
-            <block type="core/text" name="ricardomartins.pagbank.js">
-                <action method="setText">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></script>]]>
-                    </text>
-                </action>
-            </block>
-        </reference>
-    </checkout_onepage_index>
-    <onestepcheckout_index_index>
-        <reference name="head">
-            <action method="addItem"><type>js</type><name>ricardomartins/pagbank/jquery/jquery.mask.min.js</name></action>
-            <action method="addItem"><type>js</type><name>ricardomartins/pagbank/creditcard.js</name></action>
-            <block type="core/text" name="ricardomartins.pagbank.js">
-                <action method="setText">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></script>]]>
-                    </text>
-                </action>
-            </block>
-        </reference>
-    </onestepcheckout_index_index>
-    <firecheckout_index_index>
-        <reference name="head">
-            <action method="addItem"><type>js</type><name>ricardomartins/pagbank/jquery/jquery.mask.min.js</name></action>
-            <action method="addItem"><type>js</type><name>ricardomartins/pagbank/creditcard.js</name></action>
-            <block type="core/text" name="ricardomartins.pagbank.js">
-                <action method="setText">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></script>]]>
-                    </text>
-                </action>
-            </block>
-        </reference>
-    </firecheckout_index_index>
     <checkout_onepage_success>
         <reference name="head">
             <action method="addItem"><type>skin_js</type><name>js/ricardomartins/pagbank/copy-button.js</name></action>
