@@ -29,7 +29,19 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
             $response = $api->placeGetRequest($endpoint, $installments);
             $creditCard = reset($response['payment_methods']['credit_card']);
             $installmentsPlans = $creditCard['installment_plans'];
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+            $installmentsPlans = [
+                [
+                    'installments' => 1,
+                    'interest_free' => true,
+                    'installment_value' => $installments['value'],
+                    'amount' => [
+                        'value' => $installments['value'],
+                        'currency' => 'BRL'
+                    ]
+                ]
+            ];
+        }
 
         return $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($installmentsPlans));
     }

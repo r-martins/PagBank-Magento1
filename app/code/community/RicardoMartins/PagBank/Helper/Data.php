@@ -476,7 +476,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $errors = [];
         foreach ($responseErrors as $error) {
-            $code = $this->getFriendlyCode($error['code']);
+            $code = $this->getFriendlyCode(isset($error['code']) ? $error['code'] : '');
             $description = $this->getFriendlyDescription($error['description']);
             $parameter = $this->getFriendlyParameter($error['parameter_name']);
             $errors[] = sprintf('%s: %s - %s', $code, $parameter, $description);
@@ -537,6 +537,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
                 return 'deve ser um endereço de e-mail válido';
             case 'must be a valid CPF or CNPJ':
                 return 'deve ser um CPF ou CNPJ válido';
+            case 'credit_card_bin data not found.':
+                return 'cartão de crédito não reconhecido';
             default:
                 return $description;
         }
@@ -571,6 +573,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
                 return 'e-mail';
             case 'customer.tax_id':
                 return 'documento (CPF/CNPJ)';
+            case 'credit_card_bin':
+                return 'número bin do cartão';
             default:
                 return $parameterName;
         }

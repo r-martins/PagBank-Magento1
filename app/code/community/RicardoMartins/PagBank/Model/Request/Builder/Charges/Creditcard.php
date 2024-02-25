@@ -80,7 +80,10 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
                 $response = $api->placeGetRequest($endpoint, $installments);
                 $creditCard = reset($response['payment_methods']['credit_card']);
                 $installmentsPlans = $creditCard['installment_plans'];
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                $helper->writeLog('Erro ao obter as condições de parcelamento. Por favor, tente novamente. ' . $e->getMessage());
+                Mage::throwException($helper->__('Erro ao obter as condições de parcelamento. Por favor, tente novamente. ' . $e->getMessage()));
+            }
 
             $installment = $helper->extractInstallment($installmentsPlans, $selectedInstallments);
             if (!$installment['interest_free']) {

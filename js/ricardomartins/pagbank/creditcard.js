@@ -226,13 +226,12 @@ RMPagBank = Class.create({
                 if(RMPagBankObj.config.debug){
                     console.log('Installments response:', response);
                 }
+
                 response = JSON.parse(response);
-                if (response.length === 0) {
-                    return;
-                }
 
                 let select = jQuery('#ricardomartins_pagbank_cc_cc_installments');
                 select.empty();
+
                 for (let i = 0; i < response.length; i++) {
                     let option = jQuery('<option></option>');
                     option.attr('value', response[i].installments);
@@ -245,8 +244,9 @@ RMPagBank = Class.create({
                     totalAmount = totalAmount.toFixed(2).toString().replace('.', ',');
 
                     let additionalText = ' (sem juros)';
-                    if (response[i].interest_free === false)
+                    if (response[i].interest_free === false) {
                         additionalText = ' (Total R$ ' + totalAmount + ')';
+                    }
 
                     option.text(text + additionalText);
                     select.append(option);
