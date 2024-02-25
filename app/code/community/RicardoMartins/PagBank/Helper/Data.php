@@ -123,11 +123,11 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      * Check if the 3DS is enabled
      *
      * @param $storeId
-     * @return mixed
+     * @return bool
      */
     public function isCc3dsEnabled($storeId = null)
     {
-        return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds', $storeId);
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank_cc/cc_3ds', $storeId);
     }
 
     /**
@@ -138,7 +138,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function allowContinueWithout3ds($storeId = null)
     {
-        return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds_allow_continue', $storeId);
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank_cc/cc_3ds_allow_continue', $storeId);
     }
 
     /**
@@ -156,11 +156,11 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      * Check if the STC mirror is enabled
      *
      * @param $storeId
-     * @return mixed
+     * @return bool
      */
     public function isStcMirrorEnabled($storeId = null)
     {
-        return Mage::getStoreConfig('payment/ricardomartins_pagbank/stc_mirror', $storeId);
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/stc_mirror', $storeId);
     }
 
     /**
@@ -200,11 +200,11 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      * Check if the installments limit is enabled
      *
      * @param $storeId
-     * @return mixed
+     * @return bool
      */
     public function isEnabledInstallmentsLimit($storeId = null)
     {
-        return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/enable_installments_limit', $storeId);
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank_cc/enable_installments_limit', $storeId);
     }
 
     /**
@@ -398,11 +398,11 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Check if the debug mode is active
      *
-     * @return mixed
+     * @return bool
      */
     public function isDebugActive()
     {
-        return Mage::getStoreConfig('payment/ricardomartins_pagbank/debug');
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/debug');
     }
 
     /**
