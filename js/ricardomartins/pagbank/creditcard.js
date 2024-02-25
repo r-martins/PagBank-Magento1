@@ -22,6 +22,7 @@ RMPagBank = Class.create({
 
             Element.observe(numberElem,'change',function(e){obj.encryptCard();});
             Element.observe(numberElem,'change',function(e){obj.updateInstallments();});
+            Element.observe(numberElem,'change',function(e){obj.setBrand();});
             Element.observe(holderElem,'change',function(e){obj.encryptCard();});
             Element.observe(expElem,'change',function(e){obj.encryptCard();});
             Element.observe(cvcElem,'change',function(e){obj.encryptCard();});
@@ -29,6 +30,48 @@ RMPagBank = Class.create({
             console.error('Não foi possível adicionar observevação aos cartões. ' + e.message);
         }
 
+    },
+    setBrand: function () {
+        let brandInput = jQuery('#ricardomartins_pagbank_cc_cc_brand');
+        let brandFlag = jQuery('#card-brand');
+        let flag = this.config.flag_size;
+        let numberInput = jQuery('#ricardomartins_pagbank_cc_cc_number');
+        let urlPrefix = 'https://stc.pagseguro.uol.com.br/';
+        if(this.config.stc_mirror){
+            urlPrefix = 'https://stcpagseguro.ricardomartins.net.br/';
+        }
+        let src = urlPrefix + 'public/img/payment-methods-flags/{flag}/{brand}.png';
+        let flagImgTemplate = '<img src="{src}" alt="{brand}" title="{brand}"/>';
+
+        src = src.replace('{flag}', flag);
+        flagImgTemplate = flagImgTemplate.replace('{src}', src);
+
+        if (flag === '') {
+            flagImgTemplate = "<b>{brand}</b>";
+            brandFlag.attr('style', 'text-transform: capitalize;' +
+                'display: block;' +
+                'border: 1px solid silver;' +
+                'width: fit-content;' +
+                'padding: 1px 5px;' +
+                'margin-top: 1px;')
+        }
+
+        numberInput = numberInput.val();
+        let ccNumber = numberInput.replace(/\s/g, '');
+
+        let cardTypes = RMPagBankObj.getCardTypes(ccNumber);
+        if (cardTypes.length > 0) {
+            flagImgTemplate = flagImgTemplate.replace(/{brand}/g, cardTypes[0].type);
+            brandInput.val(cardTypes[0].type);
+            brandFlag.html(flagImgTemplate);
+            brandFlag.removeClass();
+            brandFlag.addClass(cardTypes[0].type.replace(/[^a-zA-Z]*!/g,''));
+            console.log("Bandeira armazenada com sucesso");
+        } else {
+            brandFlag.html('');
+            brandFlag.removeClass();
+            console.log("Bandeira não encontrada");
+        }
     },
     encryptCard: function () {
         //inputs
@@ -344,6 +387,113 @@ RMPagBank = Class.create({
             url: this.config.quotedata_endpoint,
             method: 'GET'
         });
+    },
+    getCardTypes: function (cardNumber) {
+        const typesPagBank = [
+            {
+                title: 'MasterCard',
+                type: 'mastercard',
+                pattern: '^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$',
+                gaps: [4, 8, 12],
+                lengths: [16],
+                code: {
+                    name: 'CVC',
+                    size: 3
+                }
+            },
+            {
+                title: 'Visa',
+                type: 'visa',
+                pattern: '^4\\d*$',
+                gaps: [4, 8, 12],
+                lengths: [16, 18, 19],
+                code: {
+                    name: 'CVV',
+                    size: 3
+                }
+            },
+            {
+                title: 'American Express',
+                type: 'amex',
+                pattern: '^3([47]\\d*)?$',
+                isAmex: true,
+                gaps: [4, 10],
+                lengths: [15],
+                code: {
+                    name: 'CID',
+                    size: 4
+                }
+            },
+            {
+                title: 'Diners',
+                type: 'dinnersclub',
+                pattern: '^(3(0[0-5]|095|6|[8-9]))\\d*$',
+                gaps: [4, 10],
+                lengths: [14, 16, 17, 18, 19],
+                code: {
+                    name: 'CVV',
+                    size: 3
+                }
+            },
+            {
+                title: 'Elo',
+                type: 'elo',
+                pattern: '^((451416)|(509091)|(636368)|(636297)|(504175)|(438935)|(40117[8-9])|(45763[1-2])|' +
+                    '(457393)|(431274)|(50990[0-2])|(5099[7-9][0-9])|(50996[4-9])|(509[1-8][0-9][0-9])|' +
+                    '(5090(0[0-2]|0[4-9]|1[2-9]|[24589][0-9]|3[1-9]|6[0-46-9]|7[0-24-9]))|' +
+                    '(5067(0[0-24-8]|1[0-24-9]|2[014-9]|3[0-379]|4[0-9]|5[0-3]|6[0-5]|7[0-8]))|' +
+                    '(6504(0[5-9]|1[0-9]|2[0-9]|3[0-9]))|' +
+                    '(6504(8[5-9]|9[0-9])|6505(0[0-9]|1[0-9]|2[0-9]|3[0-8]))|' +
+                    '(6505(4[1-9]|5[0-9]|6[0-9]|7[0-9]|8[0-9]|9[0-8]))|' +
+                    '(6507(0[0-9]|1[0-8]))|(65072[0-7])|(6509(0[1-9]|1[0-9]|20))|' +
+                    '(6516(5[2-9]|6[0-9]|7[0-9]))|(6550(0[0-9]|1[0-9]))|' +
+                    '(6550(2[1-9]|3[0-9]|4[0-9]|5[0-8])))\\d*$',
+                gaps: [4, 8, 12],
+                lengths: [16],
+                code: {
+                    name: 'CVC',
+                    size: 3
+                }
+            },
+            {
+                title: 'Hipercard',
+                type: 'hipercard',
+                pattern: '^((606282)|(637095)|(637568)|(637599)|(637609)|(637612))\\d*$',
+                gaps: [4, 8, 12],
+                lengths: [13, 16],
+                code: {
+                    name: 'CVC',
+                    size: 3
+                }
+            },
+            {
+                title: 'Aura',
+                type: 'aura',
+                pattern: '^5078\\d*$',
+                gaps: [4, 8, 12],
+                lengths: [19],
+                code: {
+                    name: 'CVC',
+                    size: 3
+                }
+            }];
+
+        //remove spaces
+        cardNumber = cardNumber.replace(/\s/g, '');
+        let result = [];
+
+        if (jQuery.isEmptyObject(cardNumber)) {
+            return result;
+        }
+
+        for (let i = 0; i < typesPagBank.length; i++) {
+            let value = typesPagBank[i];
+            if (new RegExp(value.pattern).test(cardNumber)) {
+                result.push(jQuery.extend(true, {}, value));
+            }
+        }
+
+        return result.slice(-1);
     }
 });
 

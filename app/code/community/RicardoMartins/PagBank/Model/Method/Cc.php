@@ -36,6 +36,7 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
 
         $info = $this->getInfoInstance();
         $info->setAdditionalInformation(self::CC_NUMBER_ENCRYPTED, $data->getData('cc_number_encrypted'));
+        $info->setAdditionalInformation(self::CC_BRAND, $data->getData('cc_brand'));
         $info->setAdditionalInformation(self::CC_OWNER, $data->getData('cc_owner'));
         $info->setAdditionalInformation(self::CC_BIN, $data->getData('cc_bin'));
         $info->setAdditionalInformation(self::CC_INSTALLMENTS, $data->getData('cc_installments'));

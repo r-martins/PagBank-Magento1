@@ -17,10 +17,11 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
                 <input type="text" id="<?= $_code ?>_cc_number" name="payment[cc_number]" maxlength="16"
                        placeholder="<?= $this->__('•••• •••• •••• ••••') ?>" title="<?= $this->__('Credit Card Number') ?>"
                        class="input-text validate-cc-number validate-cc-type required-entry" />
-                <span id="card-brand" style="text-transform: capitalize; display: block;"></span>
+                <span id="card-brand" style="text-transform: capitalize; display: block; margin-top: 1px"></span>
                 <span id="card-msg" style="color: red;clear:left; display: block;"></span>
             </div>
         </div>
+        <input type="hidden" id="<?= $_code ?>_cc_brand" name="payment[cc_brand]" />
         <input type="hidden" id="<?= $_code ?>_cc_number_encrypted" name="payment[cc_number_encrypted]" />
         <input type="hidden" id="<?= $_code ?>_cc_bin" name="payment[cc_bin]" />
         <input type="hidden" id="<?= $_code ?>_cc_3ds_id" name="payment[cc_3ds_id]" />
