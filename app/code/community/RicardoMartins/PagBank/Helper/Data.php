@@ -467,6 +467,116 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get response errors from the API and return a string with the friendly error messages
+     *
+     * @param $responseErrors
+     * @return string
+     */
+    public function handleErrorMessages($responseErrors)
+    {
+        $errors = [];
+        foreach ($responseErrors as $error) {
+            $code = $this->getFriendlyCode($error['code']);
+            $description = $this->getFriendlyDescription($error['description']);
+            $parameter = $this->getFriendlyParameter($error['parameter_name']);
+            $errors[] = sprintf('%s: %s - %s', $code, $parameter, $description);
+        }
+        return implode(' ', $errors);
+    }
+
+    /**
+     * @param $code
+     * @return string
+     */
+    private function getFriendlyCode($code)
+    {
+        switch ($code) {
+            case '40001':
+                return 'Parâmetro obrigatório';
+            case '40002':
+                return 'Parâmetro inválido';
+            case '40003':
+                return 'Parâmetro desconhecido ou não esperado';
+            case '40004':
+                return 'Limite de uso da API excedido';
+            case '40005':
+                return 'Método não permitido';
+            default:
+                return 'Erro desconhecido';
+        }
+    }
+
+    /**
+     * @param $description
+     * @return string
+     */
+    private function getFriendlyDescription($description)
+    {
+        switch ($description) {
+            case "must match the regex: ^\\p{L}+['.-]?(?:\\s+\\p{L}+['.-]?)+$":
+                return 'parece inválido ou fora do padrão permitido';
+            case 'cannot be blank':
+                return 'não pode estar em branco';
+            case 'size must be between 8 and 9':
+                return 'deve ter entre 8 e 9 caracteres';
+            case 'must be numeric':
+                return 'deve ser numérico';
+            case 'must be greater than or equal to 100':
+                return 'deve ser maior ou igual a 100';
+            case 'must be between 1 and 24':
+                return 'deve ser entre 1 e 24';
+            case 'only ISO 3166-1 alpha-3 values are accepted':
+                return 'deve ser um código ISO 3166-1 alpha-3';
+            case 'either paymentMethod.card.id or paymentMethod.card.encrypted should be informed':
+                return 'deve ser informado o cartão de crédito criptografado ou o id do cartão';
+            case 'must be an integer number':
+                return 'deve ser um número inteiro';
+            case 'card holder name must contain a first and last name':
+                return 'o nome do titular do cartão deve conter um primeiro e último nome';
+            case 'must be a well-formed email address':
+                return 'deve ser um endereço de e-mail válido';
+            case 'must be a valid CPF or CNPJ':
+                return 'deve ser um CPF ou CNPJ válido';
+            default:
+                return $description;
+        }
+    }
+
+    /**
+     * @param $parameterName
+     * @return string
+     */
+    private function getFriendlyParameter($parameterName)
+    {
+        switch ($parameterName) {
+            case 'amount.value':
+                return 'valor do pedido';
+            case 'customer.name':
+                return 'nome do cliente';
+            case 'customer.phones[0].number':
+                return 'número de telefone do cliente';
+            case 'customer.phones[0].area':
+                return 'DDD do telefone do cliente';
+            case 'billingAddress.complement':
+                return 'complemento/bairro do endereço de cobrança';
+            case 'paymentMethod.installments':
+                return 'parcelas';
+            case 'billingAddress.country':
+                return 'país de cobrança';
+            case 'paymentMethod.card':
+                return 'cartão de crédito';
+            case 'paymentMethod.card.encrypted':
+                return 'cartão de crédito criptografado';
+            case 'customer.email':
+                return 'e-mail';
+            case 'customer.tax_id':
+                return 'documento (CPF/CNPJ)';
+            default:
+                return $parameterName;
+        }
+    }
+
+    /**
      * @param $minTotal
      * @param $amount
      * @return int

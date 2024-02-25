@@ -118,7 +118,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         $httpCode = $info['http_code'];
         if ($httpCode != 200 && $httpCode != 201) {
             if ($response['error_messages']) {
-                $errors = $this->getErrors($response['error_messages']);
+                $errors = $helper->handleErrorMessages($response['error_messages']);
                 $helper->writeLog(
                     sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
@@ -148,17 +148,5 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         curl_close($ch);
 
         return $response;
-    }
-
-    /**
-     * @param $errors
-     * @return string
-     */
-    private function getErrors($errors)
-    {
-        $errors = array_map(function ($error) {
-            return $error['description'] . ' (' . $error['parameter_name'] . ')';
-        }, $errors);
-        return implode(', ', $errors);
     }
 }
