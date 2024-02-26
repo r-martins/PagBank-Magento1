@@ -285,6 +285,8 @@ RMPagBank = Class.create({
             return false;
         }
 
+        this.disablePlaceOrderButton();
+
         const quote = await this.getQuoteData();
 
         let holderName, ccNumber, expMonth, expYear, installments;
@@ -351,18 +353,17 @@ RMPagBank = Class.create({
                         //O cliente foi autenticado com sucesso, dessa forma o pagamento foi autorizado.
                         card3dsInput.val(result.id);
                         console.debug('PagBank: 3DS Autenticado ou Sem desafio');
-                        pagbank3dAuthorized = true;
+                        this.enablePlaceOrderButton();
                         return true;
                     }
                     alert('Autenticação 3D falhou. Tente novamente.');
-                    pagbank3dAuthorized = false;
                     return false;
                 case 'AUTH_NOT_SUPPORTED':
                     //A autenticação 3DS não ocorreu, isso pode ter ocorrido por falhas na comunicação com emissor ou bandeira, ou algum controle que não possibilitou a geração do 3DS id, essa transação não terá um retorno de status de autenticação e seguirá como uma transação sem 3DS.
                     //O cliente pode seguir adiante sem 3Ds (exceto débito)
                     if (this.config.cc_3ds_allow_continue) {
                         console.debug('PagBank: 3DS não suportado pelo cartão. Continuando sem 3DS.');
-                        pagbank3dAuthorized = true;
+                        this.enablePlaceOrderButton();
                         return true;
                     }
                     alert('Seu cartão não suporta autenticação 3D. Escolha outro método de pagamento ou cartão.');
@@ -370,6 +371,7 @@ RMPagBank = Class.create({
                 case 'REQUIRE_CHALLENGE':
                     //É um status intermediário que é retornando em casos que o banco emissor solicita desafios, é importante para identificar que o desafio deve ser exibido.
                     console.debug('PagBank: REQUIRE_CHALLENGE - O desafio está sendo exibido pelo banco.');
+                    this.enablePlaceOrderButton();
                     break;
             }
         }).catch((err) => {
