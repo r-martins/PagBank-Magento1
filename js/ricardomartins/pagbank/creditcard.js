@@ -33,7 +33,6 @@ RMPagBank = Class.create({
     },
     setBrand: function () {
         let brandInput = jQuery('#ricardomartins_pagbank_cc_cc_brand');
-        let brandFlag = jQuery('#card-brand');
         let flag = this.config.flag_size;
         let numberInput = jQuery('#ricardomartins_pagbank_cc_cc_number');
         let urlPrefix = 'https://stc.pagseguro.uol.com.br/';
@@ -41,35 +40,28 @@ RMPagBank = Class.create({
             urlPrefix = 'https://stcpagseguro.ricardomartins.net.br/';
         }
         let src = urlPrefix + 'public/img/payment-methods-flags/{flag}/{brand}.png';
-        let flagImgTemplate = '<img src="{src}" alt="{brand}" title="{brand}"/>';
+        let style = '';
 
         src = src.replace('{flag}', flag);
-        flagImgTemplate = flagImgTemplate.replace('{src}', src);
 
-        if (flag === '') {
-            flagImgTemplate = "<b>{brand}</b>";
-            brandFlag.attr('style', 'text-transform: capitalize;' +
-                'display: block;' +
-                'border: 1px solid silver;' +
-                'width: fit-content;' +
-                'padding: 1px 5px;' +
-                'margin-top: 1px;')
+        if (flag !== '') {
+            style =  'background-image: url(' + src + ');' +
+                'background-repeat: no-repeat;' +
+                'background-position: calc(100% - 5px) center;' +
+                'background-size: auto calc(100% - 6px);';
         }
 
-        numberInput = numberInput.val();
-        let ccNumber = numberInput.replace(/\s/g, '');
+        let ccNumber = numberInput.val();
+        ccNumber = ccNumber.replace(/\s/g, '');
 
         let cardTypes = RMPagBankObj.getCardTypes(ccNumber);
         if (cardTypes.length > 0) {
-            flagImgTemplate = flagImgTemplate.replace(/{brand}/g, cardTypes[0].type);
+            style = style.replace(/{brand}/g, cardTypes[0].type);
+            numberInput.attr('style', style);
             brandInput.val(cardTypes[0].type);
-            brandFlag.html(flagImgTemplate);
-            brandFlag.removeClass();
-            brandFlag.addClass(cardTypes[0].type.replace(/[^a-zA-Z]*!/g,''));
             console.log("Bandeira armazenada com sucesso");
         } else {
-            brandFlag.html('');
-            brandFlag.removeClass();
+            numberInput.attr('style', '');
             console.log("Bandeira não encontrada");
         }
     },

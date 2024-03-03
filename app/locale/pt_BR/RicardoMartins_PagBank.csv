@@ -70,5 +70,5 @@
 "Failure in communication with PagBank: %s","Falha na comunicação com o PagBank: %s"
 "Failure when trying to send parameters to PagBank: %s (%s)","Falha ao tentar enviar parâmetros para o PagBank: %s (%s)"
 "Failure when trying to send parameters to PagBank: %s","Falha ao tentar enviar parâmetros para o PagBank: %s"
-"Display only text","Exibir apenas texto"
+"Do not display the card flag","Não exibir a bandeira do cartão"
 "Card flag size","Tamanho da bandeira do cartão"
