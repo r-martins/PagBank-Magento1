@@ -36,6 +36,8 @@
                 <payment_action>order</payment_action>
                 <model>ricardomartins_pagbank/method_billet</model>
                 <expiration_time>3</expiration_time>
+                <instruction_line_one>Seu pedido só será processado após o pagamento.</instruction_line_one>
+                <instruction_line_two>Obrigado pela preferência.</instruction_line_two>
             </ricardomartins_pagbank_billet>
             <ricardomartins_pagbank_pix>
                 <active>1</active>
