@@ -127,4 +127,14 @@
             </payment_info_block_prepare_specific_information>
         </events>
     </adminhtml>
+    <crontab>
+        <jobs>
+            <ricardomartins_pagbank_pix_cancel>
+                <schedule><cron_expr>*/30 * * * *</cron_expr></schedule>
+                <run>
+                    <model>ricardomartins_pagbank/cron::cancelPixOrdersUnpaid</model>
+                </run>
+            </ricardomartins_pagbank_pix_cancel>
+        </jobs>
+    </crontab>
 </config>
