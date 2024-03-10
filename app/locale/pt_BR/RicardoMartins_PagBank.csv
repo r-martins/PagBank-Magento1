@@ -72,3 +72,4 @@
 "Failure when trying to send parameters to PagBank: %s","Falha ao tentar enviar parâmetros para o PagBank: %s"
 "Do not display the card flag","Não exibir a bandeira do cartão"
 "Card flag size","Tamanho da bandeira do cartão"
+"Pix Code:","Código Pix:"
