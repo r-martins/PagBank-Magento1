@@ -24,7 +24,16 @@ class RicardoMartins_PagBank_Block_Form_Pix extends Mage_Payment_Block_Form
         $helper = Mage::helper('ricardomartins_pagbank');
         $head = Mage::app()->getLayout()->getBlock('after_body_start');
 
-        if ($head && !$head->getChild('ricardomartins.pagbank.js')) {
+        if (!$head) {
+            return parent::_prepareLayout();
+        }
+
+        if (!$head->getChild('ricardomartins.pagbank.style')) {
+            $scriptBlock = $helper->getPagBankStyleBlock();
+            $head->append($scriptBlock);
+        }
+
+        if (!$head->getChild('ricardomartins.pagbank.js')) {
             $scriptBlock = $helper->getPagBankScriptBlock();
             $head->append($scriptBlock);
         }

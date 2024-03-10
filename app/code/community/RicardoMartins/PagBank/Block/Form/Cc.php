@@ -28,6 +28,11 @@ class RicardoMartins_PagBank_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
             return parent::_prepareLayout();
         }
 
+        if (!$head->getChild('ricardomartins.pagbank.style')) {
+            $scriptBlock = $helper->getPagBankStyleBlock();
+            $head->append($scriptBlock);
+        }
+
         if (!$head->getChild('ricardomartins.pagbank.js')) {
             $scriptBlock = $helper->getPagBankScriptBlock();
             $head->append($scriptBlock);

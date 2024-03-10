@@ -448,6 +448,25 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Load the style block
+     *
+     * @return Mage_Core_Block_Text
+     */
+    public function getPagBankStyleBlock()
+    {
+        $scriptBlock = Mage::app()->getLayout()->createBlock('core/text', "ricardomartins.pagbank.style");
+        $secure = Mage::getStoreConfigFlag('web/secure/use_in_frontend');
+
+        $styles = sprintf(
+            '<link rel="stylesheet" href="%s">',
+            Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN, $secure) . 'frontend/base/default/css/ricardomartins/pagbank/styles.css'
+        );
+
+        $scriptBlock->setText($styles);
+        return $scriptBlock;
+    }
+
+    /**
      * Gets /ricardomartins/pagbank/creditcard.js URL (from this store or from jsDelivr CDNs)
      * @param $secure bool
      *

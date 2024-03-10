@@ -1,3 +1,21 @@
+.ricardomartins-pagbank-cc .ricardomartins-pagbank-cc-exp-cvv-row {
+    display: flex;
+    column-gap: 5px;
+}
+
+.ricardomartins-pagbank-cc-exp-cvv-row .input-text {
+    width: 180px;
+}
+
+.form-list.ricardomartins-pagbank input,
+.form-list.ricardomartins-pagbank select {
+    height: 30px;
+    border-radius: 2px;
+    border: 1px solid silver;
+    background: #FFFFFF;
+    font-size: 15px;
+}
+
 .ricardomartins-pagbank-success {
     max-width: 100%;
     margin: 30px auto;
