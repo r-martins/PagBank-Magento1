@@ -128,6 +128,15 @@
                 </observers>
             </payment_info_block_prepare_specific_information>
         </events>
+        <translate>
+            <modules>
+                <ricardomartins_pagbank>
+                    <files>
+                        <default>RicardoMartins_PagBank.csv</default>
+                    </files>
+                </ricardomartins_pagbank>
+            </modules>
+        </translate>
     </adminhtml>
     <crontab>
         <jobs>
