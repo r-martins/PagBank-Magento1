@@ -60,3 +60,13 @@
 .billet-container {
     margin-bottom: 30px;
 }
+
+.checkout-onepage-success .ricardomartins-pagbank-success {
+    order: 1;
+}
+.checkout-onepage-success .buttons-set {
+    order: 2;
+}
+.checkout-onepage-success .col-main {
+    display: grid;
+}

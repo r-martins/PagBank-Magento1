@@ -123,11 +123,11 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         $cc3dsCardId = $payment->getAdditionalInformation('cc_3ds_id');
 
         if (!$has3DsSession && !$allowContinue) {
-            Mage::throwException($helper->__('Erro ao obter a sessão 3D Secure PagBank. Pagamento com cartão de crédito foi desativado. Por favor recarregue a página.'));
+            Mage::throwException($helper->__('Erro ao obter a sessão 3D Secure PagBank. Por favor, utilize outro cartão ou método de pagamento.'));
         }
 
         if (!$cc3dsCardId && !$allowContinue) {
-            Mage::throwException($helper->__('Erro ao obter o 3D Secure PagBank ID. Pagamento com cartão de crédito foi desativado. Por favor recarregue a página.'));
+            Mage::throwException($helper->__('Erro ao obter o 3D Secure PagBank ID. Por favor, utilize outro cartão ou método de pagamento.'));
         }
 
         if (!$cc3dsCardId) {

@@ -8,6 +8,7 @@ class RicardoMartins_PagBank_Model_Cron
         $helper = Mage::helper('ricardomartins_pagbank');
 
         $expirationDate = Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/expiration_time') ?: 60;
+        $expirationDate += 5;
         $toDate = date('Y-m-d H:i:s', strtotime('-' . $expirationDate . 'minutes'));
 
         $orderCollection = Mage::getResourceModel('sales/order_collection');
