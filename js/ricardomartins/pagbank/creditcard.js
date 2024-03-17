@@ -1,6 +1,9 @@
 RMPagBank = Class.create({
     initialize: function (config, pagseguro_connect_3d_session) {
+        console.log('PagBank: Inicializando módulo de cartão de crédito');
+        const self = this;
         this.config = config;
+        this.formElementAndSubmit = false;
         this.addCardFieldsObserver(this);
         this.getInstallments();
 
@@ -11,6 +14,59 @@ RMPagBank = Class.create({
         if (this.config.enabled_3ds && pagseguro_connect_3d_session !== '') {
             this.setUp3DS(pagseguro_connect_3d_session);
         }
+
+        // if (config.placeorder_button != null) {
+        //     let formSubmit = $$(config.placeorder_button).first();
+        //     let form = formSubmit.closest('form');
+            // form.addEventListener('submit', function(e){
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //
+        //         //this.disablePlaceOrderButton();
+        //
+        //         self.formElementAndSubmit = e.element();
+        //         console.log('Iniciando criptografia do cartão');
+        //         let result = self.encryptCard();
+        //         console.log('Criptografia do cartão finalizada', result);
+        //
+        //         if (self.config.enabled_3ds) {
+        //             console.log('3DS iniciando...');
+        //             // result = self.authenticate3DS();
+        //             console.log('3DS finalizado', result)
+        //         }
+        //         // this.enablePlaceOrderButton();
+        //         if(result){
+        //             e.element().submit();
+        //         }
+        // } else {
+        //     let methods = $$('#payment_form_ricardomartins_pagbank_cc');
+        //
+        //     if(!methods.length) {
+        //         console.log('PagBank: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
+        //         return;
+        //     }
+        //
+        //     let form = methods.first().closest('form');
+        //     form.observe('submit', function(e){
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //         self.formElementAndSubmit = e.element();
+        //
+        //         console.log('Iniciando criptografia do cartão');
+        //         let result = self.encryptCard();
+        //         console.log('Criptografia do cartão finalizada', result);
+        //
+        //         if (self.config.enabled_3ds) {
+        //             console.log('3DS iniciando...');
+        //             result = self.authenticate3DS();
+        //             console.log('3DS finalizado', result);
+        //         }
+        //
+        //         if(result){
+        //             form.submit();
+        //         }
+        //     });
+        // }
     },
 
     addCardFieldsObserver: function(obj){
@@ -19,17 +75,33 @@ RMPagBank = Class.create({
             let numberElem = $$('#ricardomartins_pagbank_cc_cc_number').first();
             let expElem = $$('#ricardomartins_pagbank_cc_cc_exp').first();
             let cvcElem = $$('#ricardomartins_pagbank_cc_cc_cvc').first();
+            let installmentElem = $$('#ricardomartins_pagbank_cc_cc_installments').first();
 
-            Element.observe(numberElem,'change',function(e){obj.encryptCard();});
             Element.observe(numberElem,'change',function(e){obj.updateInstallments();});
             Element.observe(numberElem,'change',function(e){obj.setBrand();});
-            Element.observe(holderElem,'change',function(e){obj.encryptCard();});
-            Element.observe(expElem,'change',function(e){obj.encryptCard();});
-            Element.observe(cvcElem,'change',function(e){obj.encryptCard();});
+
+            Element.observe(numberElem,'change',function(e){obj.cardActions(obj);});
+            Element.observe(holderElem,'change',function(e){obj.cardActions(obj);});
+            Element.observe(expElem,'change',function(e){obj.cardActions(obj);});
+            Element.observe(cvcElem,'change',function(e){obj.cardActions(obj);});
+            Element.observe(installmentElem,'change',function(e){obj.cardActions(obj);});
         } catch(e) {
             console.error('Não foi possível adicionar observevação aos cartões. ' + e.message);
         }
 
+    },
+    cardActions: function () {
+        console.log('Iniciando criptografia do cartão');
+        let result = RMPagBankObj.encryptCard();
+        console.log('Criptografia do cartão finalizada', result);
+
+        if (RMPagBankObj.config.enabled_3ds) {
+            console.log('3DS iniciando...');
+            result = RMPagBankObj.authenticate3DS();
+            console.log('3DS finalizado', result);
+        }
+
+        this.enablePlaceOrderButton();
     },
     setBrand: function () {
         let brandInput = jQuery('#ricardomartins_pagbank_cc_cc_brand');
@@ -66,6 +138,8 @@ RMPagBank = Class.create({
         }
     },
     encryptCard: function () {
+        console.log('Encrypting card');
+
         //inputs
         let holderInput = jQuery('#ricardomartins_pagbank_cc_cc_owner');
         let numberInput = jQuery('#ricardomartins_pagbank_cc_cc_number');
@@ -149,49 +223,13 @@ RMPagBank = Class.create({
             if(RMPagBankObj.config.debug){
                 console.error('Erro ao criptografar cartão.\n' + error);
             }
+
+            this.enablePlaceOrderButton();
             return false;
         }
 
         numberEncryptedInput.val(card.encryptedCard);
-
-        if (this.config.enabled_3ds) {
-            this.authenticate3DS();
-        }
-
-        this.enablePlaceOrderButton();
         return true;
-    },
-    disablePlaceOrderButton: function(){
-        if (RMPagBankObj.config.placeorder_button) {
-            if(typeof $$(RMPagBankObj.config.placeorder_button).first() != 'undefined'){
-                $$(RMPagBankObj.config.placeorder_button).first().up().insert({
-                    'after': new Element('div',{
-                        'id': 'pagbank-loader'
-                    })
-                });
-
-                $$('#pagbank-loader').first().setStyle({
-                    'background': '#000000a1 url(\'' + RMPagBankObj.config.loader_url + '\') no-repeat center',
-                    'height': $$(RMPagBankObj.config.placeorder_button).first().getStyle('height'),
-                    'width': $$(RMPagBankObj.config.placeorder_button).first().getStyle('width'),
-                    'left': document.querySelector(RMPagBankObj.config.placeorder_button).offsetLeft + 'px',
-                    'z-index': 99,
-                    'opacity': .5,
-                    'position': 'absolute',
-                    'top': document.querySelector(RMPagBankObj.config.placeorder_button).offsetTop + 'px'
-                });
-                return;
-            }
-
-            if(RMPagBankObj.config.debug){
-                console.error('PagBank: Botão configurado não encontrado (' + RMPagBankObj.config.placeorder_button + '). Verifique as configurações do módulo.');
-            }
-        }
-    },
-    enablePlaceOrderButton: function(){
-        if(RMPagBankObj.config.placeorder_button && typeof $$(RMPagBankObj.config.placeorder_button).first() != 'undefined'){
-            $$('#pagbank-loader').first().remove();
-        }
     },
     updateInstallments: function() {
         let cardNumber = jQuery('#ricardomartins_pagbank_cc_cc_number').val();
@@ -278,6 +316,7 @@ RMPagBank = Class.create({
         }
 
         this.disablePlaceOrderButton();
+        this.enablePageLoader();
 
         const quote = await this.getQuoteData();
 
@@ -338,6 +377,8 @@ RMPagBank = Class.create({
                 case 'CHANGE_PAYMENT_METHOD':
                     // The user must change the payment method used
                     alert('Pagamento negado pelo PagBank. Escolha outro método de pagamento ou cartão.');
+                    this.enablePlaceOrderButton();
+                    this.disablePageLoader();
                     return false;
                 case 'AUTH_FLOW_COMPLETED':
                     //O processo de autenticação foi realizado com sucesso, dessa forma foi gerado um id do 3DS que poderá ter o resultado igual a Autenticado ou Não Autenticado.
@@ -346,24 +387,29 @@ RMPagBank = Class.create({
                         card3dsInput.val(result.id);
                         console.debug('PagBank: 3DS Autenticado ou Sem desafio');
                         this.enablePlaceOrderButton();
+                        this.disablePageLoader();
                         return true;
                     }
                     alert('Autenticação 3D falhou. Tente novamente.');
+                    this.enablePlaceOrderButton();
+                    this.disablePageLoader();
                     return false;
                 case 'AUTH_NOT_SUPPORTED':
                     //A autenticação 3DS não ocorreu, isso pode ter ocorrido por falhas na comunicação com emissor ou bandeira, ou algum controle que não possibilitou a geração do 3DS id, essa transação não terá um retorno de status de autenticação e seguirá como uma transação sem 3DS.
                     //O cliente pode seguir adiante sem 3Ds (exceto débito)
                     if (this.config.cc_3ds_allow_continue) {
                         console.debug('PagBank: 3DS não suportado pelo cartão. Continuando sem 3DS.');
-                        this.enablePlaceOrderButton();
                         return true;
                     }
                     alert('Seu cartão não suporta autenticação 3D. Escolha outro método de pagamento ou cartão.');
+                    this.enablePlaceOrderButton();
+                    this.disablePageLoader();
                     return false;
                 case 'REQUIRE_CHALLENGE':
                     //É um status intermediário que é retornando em casos que o banco emissor solicita desafios, é importante para identificar que o desafio deve ser exibido.
                     console.debug('PagBank: REQUIRE_CHALLENGE - O desafio está sendo exibido pelo banco.');
                     this.enablePlaceOrderButton();
+                    this.disablePageLoader();
                     break;
             }
         }).catch((err) => {
@@ -372,9 +418,71 @@ RMPagBank = Class.create({
                 console.debug('PagBank: ' + err.detail);
                 let errMsgs = err.detail.errorMessages.map(error => pagBankParseErrorMessage(error)).join('\n');
                 alert('Falha na requisição de autenticação 3D.\n' + errMsgs);
+                this.enablePlaceOrderButton();
+                this.disablePageLoader();
                 return false;
             }
         });
+    },
+    disablePlaceOrderButton: function(){
+        if (RMPagBankObj.config.placeorder_button) {
+
+            let placeOrderButton = $$(RMPagBankObj.config.placeorder_button).first();
+            if(typeof placeOrderButton != 'undefined'){
+                placeOrderButton.up().insert({
+                    'after': new Element('div',{
+                        'id': 'pagbank-loader'
+                    })
+                });
+
+                $$('#pagbank-loader').first().setStyle({
+                    'background': '#000000a1 url(\'' + RMPagBankObj.config.loader_url + '\') no-repeat center',
+                    'height': $$(RMPagBankObj.config.placeorder_button).first().getStyle('height'),
+                    'width': $$(RMPagBankObj.config.placeorder_button).first().getStyle('width'),
+                    'left': document.querySelector(RMPagBankObj.config.placeorder_button).offsetLeft + 'px',
+                    'z-index': 99,
+                    'opacity': .5,
+                    'position': 'absolute',
+                    'top': document.querySelector(RMPagBankObj.config.placeorder_button).offsetTop + 'px'
+                });
+                return;
+            }
+
+            if(RMPagBankObj.config.debug){
+                console.error('PagBank: Botão configurado não encontrado (' + RMPagBankObj.config.placeorder_button + '). Verifique as configurações do módulo.');
+            }
+        }
+    },
+    enablePlaceOrderButton: function(){
+        let element = $$('#pagbank-loader').first();
+        if (typeof element == 'undefined') {
+            return;
+        }
+
+        if(RMPagBankObj.config.placeorder_button && typeof $$(RMPagBankObj.config.placeorder_button).first() != 'undefined'){
+            $$('#pagbank-loader').first().remove();
+        }
+    },
+    enablePageLoader: function(){
+        let overlay = document.createElement("div");
+        overlay.id = 'pagbank-page-loader-overlay';
+
+        let spinnerContainer = document.createElement("div");
+        spinnerContainer.id = 'pagbank-page-loader-container';
+        let spinner = document.createElement("div");
+        spinner.id = 'pagbank-page-loader';
+        let spinnerText = document.createElement("p");
+        spinnerText.innerHTML = 'Aguarde...';
+        spinnerContainer.appendChild(spinner);
+        spinnerContainer.appendChild(spinnerText);
+        overlay.appendChild(spinnerContainer);
+        document.body.appendChild(overlay);
+    },
+    disablePageLoader: function(){
+        let element = document.getElementById("pagbank-page-loader-overlay");
+        if (typeof element != 'undefined') {
+            element.remove();
+        }
     },
     getQuoteData: async function() {
         return await jQuery.ajax({
