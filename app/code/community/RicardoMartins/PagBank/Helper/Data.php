@@ -417,7 +417,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
 
         $scripts = sprintf(
             '<script type="text/javascript" src="%s"></script>',
-            Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, $secure) . 'ricardomartins/pagbank/jquery/jquery.mask.min.js'
+            Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, $secure) . 'ricardomartins/pagbank/mask.js'
         );
 
         $scriptBlock->setText($scripts);
