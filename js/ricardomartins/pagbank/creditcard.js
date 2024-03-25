@@ -2,70 +2,54 @@ RMPagBank = Class.create();
 RMPagBank.prototype = {
     initialize: function (config, pagseguro_connect_3d_session) {
         console.log('PagBank: Inicializando módulo de cartão de crédito');
-        const self = this;
         this.config = config;
         this.formElementAndSubmit = false;
         this.addCardFieldsObserver(this);
         this.getInstallments();
 
         if (pagseguro_connect_3d_session !== '' && this.config.enabled_3ds) {
-            jQuery('#ricardomartins_pagbank_cc_cc_has_session').val(1);
+            document.getElementById('ricardomartins_pagbank_cc_cc_has_session').value = 1;
         }
 
         if (this.config.enabled_3ds && pagseguro_connect_3d_session !== '') {
             this.setUp3DS(pagseguro_connect_3d_session);
         }
 
-        let originalXMLHttpRequest = window.XMLHttpRequest;
-        window.XMLHttpRequest = function() {
-            let xhr = new originalXMLHttpRequest();
+        this.placeOrderEvent();
+    },
+    placeOrderEvent: function () {
+        let methodForm = $$('#payment_form_ricardomartins_pagbank_cc');
+        if (!methodForm.length) {
+            console.log('PagSeguro: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
+            return;
+        }
+        let form = methodForm.first().closest('form');
+        let button = $$(this.config.placeorder_button).first();
 
-            xhr.open = function(method, url, async, user, password) {
-                console.log('PagBank: Interceptando requisição para ' + url);
-                if (!url.includes('placeOrder') && !url.includes('saveOrder')) {
-                    originalXMLHttpRequest.prototype.open.apply(this, arguments);
-                    return;
-                }
+        // clone the button
+        let newButton = button.cloneNode(true);
 
-                const me = this;
+        // replace old button for the new button (with no events attached)
+        button.parentNode.replaceChild(newButton, button);
 
-                self.cardActions().then(result => {
-                    console.log('PagBank: Resultado da ação do cartão: ' + result);
-                    console.log('PagBank: Resultado da ação do cartão: ' + RMPagBankObj.proceedCheckout);
-                    if (RMPagBankObj.proceedCheckout) {
-                        console.log('PagBank: Enviando requisição para ' + url);
-                        return originalXMLHttpRequest.prototype.open.apply(me, arguments);
-                    }
-                    window.location.reload();
-                }).catch(error => {
-                    console.error('Erro ao executar cardActions:', error);
-                    window.location.reload();
-                });
-            };
-            return xhr;
-        };
+        // execute cardActions and prevent default
+        let validateAndPreventDefault = function (event) {
+            event.preventDefault(); // prevent the default behavior of the form/button
 
-        let form = $$('#firecheckout-form').first();
-        form.observe('submit', function (e) {
-            e.preventDefault();
-            debugger;
-            self.formElementAndSubmit = form;
-            self.cardActions().then(result => {
-                console.log('PagBank: Resultado da ação do cartão: ' + result);
-                console.log('PagBank: Resultado da ação do cartão: ' + RMPagBankObj.proceedCheckout);
+            RMPagBankObj.cardActions().then(result => {
                 if (RMPagBankObj.proceedCheckout) {
-                    console.log('PagBank: Enviando requisição para ' + form.action);
-                    form.submit();
+                    button.click(); // trigger the click event on the old button
+                    return true;
                 }
-                window.location.reload();
             }).catch(error => {
                 console.error('Erro ao executar cardActions:', error);
-                window.location.reload();
             });
-        });
+        }
 
+        // add the event listener to the form and the button, preventing the default behavior in both cases
+        form.addEventListener('submit', validateAndPreventDefault, false);
+        newButton.addEventListener('click', validateAndPreventDefault, false);
     },
-
     addCardFieldsObserver: function (obj) {
         try {
             let numberElem = $$('#ricardomartins_pagbank_cc_cc_number').first();
@@ -77,23 +61,35 @@ RMPagBank.prototype = {
 
     },
     cardActions: async function () {
-        console.log('Iniciando criptografia do cartão');
+        if (RMPagBankObj.config.debug) {
+            console.log('Iniciando criptografia do cartão');
+        }
+
         let result = RMPagBankObj.encryptCard();
-        console.log('Criptografia do cartão finalizada', result);
+
+        if (RMPagBankObj.config.debug) {
+            console.log('Criptografia do cartão finalizada', result);
+        }
 
         if (RMPagBankObj.config.enabled_3ds) {
-            console.log('3DS iniciando...');
+            if (RMPagBankObj.config.debug) {
+                console.log('3DS iniciando...');
+            }
+
             result = await RMPagBankObj.authenticate3DS();
-            console.log('3DS finalizado', result);
+
+            if (RMPagBankObj.config.debug) {
+                console.log('3DS finalizado');
+            }
         }
 
         this.enablePlaceOrderButton();
         return result;
     },
     setBrand: function () {
-        let brandInput = jQuery('#ricardomartins_pagbank_cc_cc_brand');
+        let brandInput = document.getElementById('ricardomartins_pagbank_cc_cc_brand');
         let flag = this.config.flag_size;
-        let numberInput = jQuery('#ricardomartins_pagbank_cc_cc_number');
+        let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
         let urlPrefix = 'https://stc.pagseguro.uol.com.br/';
         if (this.config.stc_mirror) {
             urlPrefix = 'https://stcpagseguro.ricardomartins.net.br/';
@@ -110,35 +106,41 @@ RMPagBank.prototype = {
                 'background-size: auto calc(100% - 6px);';
         }
 
-        let ccNumber = numberInput.val();
+        let ccNumber = numberInput.value;
         ccNumber = ccNumber.replace(/\s/g, '');
 
-        let cardTypes = RMPagBankObj.getCardTypes(ccNumber);
+        let cardTypes = this.getCardTypes(ccNumber);
         if (cardTypes.length > 0) {
             style = style.replace(/{brand}/g, cardTypes[0].type);
-            numberInput.attr('style', style);
-            brandInput.val(cardTypes[0].type);
-            console.log("Bandeira armazenada com sucesso");
+            numberInput.style = style;
+            brandInput.value = cardTypes[0].type;
+            if (this.config.debug) {
+                console.log("Bandeira armazenada com sucesso");
+            }
         } else {
-            numberInput.attr('style', '');
-            console.log("Bandeira não encontrada");
+            numberInput.style = '';
+            if (this.config.debug) {
+                console.log("Bandeira não encontrada");
+            }
         }
     },
     encryptCard: function () {
-        console.log('Encrypting card');
+        if (RMPagBankObj.config.debug) {
+            console.log('Encrypting card');
+        }
 
         //inputs
-        let holderInput = jQuery('#ricardomartins_pagbank_cc_cc_owner');
-        let numberInput = jQuery('#ricardomartins_pagbank_cc_cc_number');
-        let expInput = jQuery('#ricardomartins_pagbank_cc_cc_exp');
-        let cvcInput = jQuery('#ricardomartins_pagbank_cc_cc_cvc');
-        let numberEncryptedInput = jQuery('#ricardomartins_pagbank_cc_cc_number_encrypted');
+        let holderInput = document.getElementById('ricardomartins_pagbank_cc_cc_owner');
+        let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
+        let expInput = document.getElementById('ricardomartins_pagbank_cc_cc_exp');
+        let cvcInput = document.getElementById('ricardomartins_pagbank_cc_cc_cvc');
+        let numberEncryptedInput = document.getElementById('ricardomartins_pagbank_cc_cc_number_encrypted');
 
         //get input values
-        holderInput = holderInput.val();
-        numberInput = numberInput.val();
-        cvcInput = cvcInput.val();
-        expInput = expInput.val();
+        holderInput = holderInput.value;
+        numberInput = numberInput.value;
+        cvcInput = cvcInput.value;
+        expInput = expInput.value;
 
         if (holderInput === '' || numberInput === '' || cvcInput === '' || expInput === '') {
             return false;
@@ -164,11 +166,12 @@ RMPagBank.prototype = {
                 expYear: expYear,
                 securityCode: ccCvc,
                 success: function (data) {
-                    console.log('Card encrypted successfully');
+                    if (RMPagBankObj.config.debug) {
+                        console.log('Card encrypted successfully');
+                    }
                 },
                 error: function (data) {
-                    console.error('Error encrypting card');
-                    console.error(data);
+                    console.error('Error encrypting card.', data);
                 }
             });
         } catch (e) {
@@ -215,44 +218,40 @@ RMPagBank.prototype = {
             return false;
         }
 
-        numberEncryptedInput.val(card.encryptedCard);
+        numberEncryptedInput.value = card.encryptedCard;
         return true;
     },
     updateInstallments: function () {
-        let cardNumber = jQuery('#ricardomartins_pagbank_cc_cc_number').val();
+        let cardNumber = document.getElementById('ricardomartins_pagbank_cc_cc_number').value;
         let ccBin = cardNumber.replace(/\s/g, '').substring(0, 6);
-        let ccBinInput = jQuery('#ricardomartins_pagbank_cc_cc_bin');
+        let ccBinInput = document.getElementById('ricardomartins_pagbank_cc_cc_bin');
         if (ccBin !== window.pb_cc_bin && ccBin.length === 6) {
             window.pb_cc_bin = ccBin;
             this.getInstallments();
-            ccBinInput.val(ccBin);
+            ccBinInput.value = ccBin;
         }
     },
     getInstallments: function () {
-        //if success, update the installments select with the response
-        //if error, show error message
         let ccBin = typeof window.pb_cc_bin === 'undefined' || window.pb_cc_bin.replace(/[^0-9]/g, '').length < 6 ? '555566' : window.pb_cc_bin;
 
-        jQuery.ajax({
-            url: this.config.installments_endpoint,
+        new Ajax.Request(this.config.installments_endpoint, {
             method: 'POST',
             data: {
                 cc_bin: ccBin
             },
-            success: (response) => {
+            onSuccess: function(transport) {
+                let response = transport.responseText || "no response text";
+
                 if (RMPagBankObj.config.debug) {
                     console.log('Installments response:', response);
                 }
 
                 response = JSON.parse(response);
 
-                let select = jQuery('#ricardomartins_pagbank_cc_cc_installments');
-                select.empty();
+                let select = document.getElementById('ricardomartins_pagbank_cc_cc_installments');
+                select.innerHTML = null;
 
                 for (let i = 0; i < response.length; i++) {
-                    let option = jQuery('<option></option>');
-                    option.attr('value', response[i].installments);
-
                     let installmentValue = parseInt(response[i].installment_value) / 100;
                     let installmentAmount = installmentValue.toFixed(2).toString().replace('.', ',');
                     let text = response[i].installments + 'x de R$ ' + installmentAmount;
@@ -265,11 +264,13 @@ RMPagBank.prototype = {
                         additionalText = ' (Total R$ ' + totalAmount + ')';
                     }
 
-                    option.text(text + additionalText);
-                    select.append(option);
+                    let option = document.createElement('option');
+                    option.value = response[i].installments;
+                    option.text = text + additionalText;
+                    select.appendChild(option);
                 }
             },
-            error: (response) => {
+            onFailure:  function() {
                 alert('Error getting installments. Please try again.');
                 if (RMPagBankObj.config.debug) {
                     console.error('Error getting installments. Please try again.', response);
@@ -286,17 +287,17 @@ RMPagBank.prototype = {
     },
     authenticate3DS: async function () {
         //inputs
-        let holderInput = jQuery('#ricardomartins_pagbank_cc_cc_owner');
-        let numberInput = jQuery('#ricardomartins_pagbank_cc_cc_number');
-        let expInput = jQuery('#ricardomartins_pagbank_cc_cc_exp');
-        let installmentsInput = jQuery('#ricardomartins_pagbank_cc_cc_installments');
-        let card3dsInput = jQuery('#ricardomartins_pagbank_cc_cc_3ds_id');
+        let holderInput = document.getElementById('ricardomartins_pagbank_cc_cc_owner');
+        let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
+        let expInput = document.getElementById('ricardomartins_pagbank_cc_cc_exp');
+        let installmentsInput = document.getElementById('ricardomartins_pagbank_cc_cc_installments');
+        let card3dsInput = document.getElementById('ricardomartins_pagbank_cc_cc_3ds_id');
 
         //get input values
-        holderInput = holderInput.val();
-        numberInput = numberInput.val();
-        expInput = expInput.val();
-        installmentsInput = installmentsInput.val();
+        holderInput = holderInput.value;
+        numberInput = numberInput.value;
+        expInput = expInput.value;
+        installmentsInput = installmentsInput.value;
 
         if (holderInput === '' || numberInput === '' || expInput === '') {
             return false;
@@ -372,7 +373,7 @@ RMPagBank.prototype = {
                     //O processo de autenticação foi realizado com sucesso, dessa forma foi gerado um id do 3DS que poderá ter o resultado igual a Autenticado ou Não Autenticado.
                     if (result.authenticationStatus === 'AUTHENTICATED') {
                         //O cliente foi autenticado com sucesso, dessa forma o pagamento foi autorizado.
-                        card3dsInput.val(result.id);
+                        card3dsInput.value = result.id;
                         console.debug('PagBank: 3DS Autenticado ou Sem desafio');
                         this.enablePlaceOrderButton();
                         this.disablePageLoader();
@@ -387,6 +388,7 @@ RMPagBank.prototype = {
                     //A autenticação 3DS não ocorreu, isso pode ter ocorrido por falhas na comunicação com emissor ou bandeira, ou algum controle que não possibilitou a geração do 3DS id, essa transação não terá um retorno de status de autenticação e seguirá como uma transação sem 3DS.
                     //O cliente pode seguir adiante sem 3Ds (exceto débito)
                     if (this.config.cc_3ds_allow_continue) {
+                        RMPagBankObj.proceedCheckout = true;
                         console.debug('PagBank: 3DS não suportado pelo cartão. Continuando sem 3DS.');
                         return true;
                     }
@@ -473,9 +475,17 @@ RMPagBank.prototype = {
         }
     },
     getQuoteData: async function () {
-        return await jQuery.ajax({
-            url: this.config.quotedata_endpoint,
-            method: 'GET'
+        let endpoint = this.config.quotedata_endpoint;
+        return new Promise((resolve, reject) => {
+            new Ajax.Request(endpoint, {
+                method: 'GET',
+                onSuccess: function(response) {
+                    resolve(response.responseJSON);
+                },
+                onFailure: function(error) {
+                    reject(error);
+                }
+            });
         });
     },
     getCardTypes: function (cardNumber) {
@@ -572,14 +582,14 @@ RMPagBank.prototype = {
         cardNumber = cardNumber.replace(/\s/g, '');
         let result = [];
 
-        if (jQuery.isEmptyObject(cardNumber)) {
+        if (!cardNumber) {
             return result;
         }
 
         for (let i = 0; i < typesPagBank.length; i++) {
             let value = typesPagBank[i];
             if (new RegExp(value.pattern).test(cardNumber)) {
-                result.push(jQuery.extend(true, {}, value));
+                result.push(JSON.parse(JSON.stringify(value)));
             }
         }
 
