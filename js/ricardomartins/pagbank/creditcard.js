@@ -1,4 +1,5 @@
-RMPagBank = Class.create({
+RMPagBank = Class.create();
+RMPagBank.prototype = {
     initialize: function (config, pagseguro_connect_3d_session) {
         console.log('PagBank: Inicializando módulo de cartão de crédito');
         const self = this;
@@ -15,100 +16,86 @@ RMPagBank = Class.create({
             this.setUp3DS(pagseguro_connect_3d_session);
         }
 
-        // if (config.placeorder_button != null) {
-        //     let formSubmit = $$(config.placeorder_button).first();
-        //     let form = formSubmit.closest('form');
-            // form.addEventListener('submit', function(e){
-        //         e.preventDefault();
-        //         e.stopPropagation();
-        //
-        //         //this.disablePlaceOrderButton();
-        //
-        //         self.formElementAndSubmit = e.element();
-        //         console.log('Iniciando criptografia do cartão');
-        //         let result = self.encryptCard();
-        //         console.log('Criptografia do cartão finalizada', result);
-        //
-        //         if (self.config.enabled_3ds) {
-        //             console.log('3DS iniciando...');
-        //             // result = self.authenticate3DS();
-        //             console.log('3DS finalizado', result)
-        //         }
-        //         // this.enablePlaceOrderButton();
-        //         if(result){
-        //             e.element().submit();
-        //         }
-        // } else {
-        //     let methods = $$('#payment_form_ricardomartins_pagbank_cc');
-        //
-        //     if(!methods.length) {
-        //         console.log('PagBank: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
-        //         return;
-        //     }
-        //
-        //     let form = methods.first().closest('form');
-        //     form.observe('submit', function(e){
-        //         e.preventDefault();
-        //         e.stopPropagation();
-        //         self.formElementAndSubmit = e.element();
-        //
-        //         console.log('Iniciando criptografia do cartão');
-        //         let result = self.encryptCard();
-        //         console.log('Criptografia do cartão finalizada', result);
-        //
-        //         if (self.config.enabled_3ds) {
-        //             console.log('3DS iniciando...');
-        //             result = self.authenticate3DS();
-        //             console.log('3DS finalizado', result);
-        //         }
-        //
-        //         if(result){
-        //             form.submit();
-        //         }
-        //     });
-        // }
+        let originalXMLHttpRequest = window.XMLHttpRequest;
+        window.XMLHttpRequest = function() {
+            let xhr = new originalXMLHttpRequest();
+
+            xhr.open = function(method, url, async, user, password) {
+                console.log('PagBank: Interceptando requisição para ' + url);
+                if (!url.includes('placeOrder') && !url.includes('saveOrder')) {
+                    originalXMLHttpRequest.prototype.open.apply(this, arguments);
+                    return;
+                }
+
+                const me = this;
+
+                self.cardActions().then(result => {
+                    console.log('PagBank: Resultado da ação do cartão: ' + result);
+                    console.log('PagBank: Resultado da ação do cartão: ' + RMPagBankObj.proceedCheckout);
+                    if (RMPagBankObj.proceedCheckout) {
+                        console.log('PagBank: Enviando requisição para ' + url);
+                        return originalXMLHttpRequest.prototype.open.apply(me, arguments);
+                    }
+                    window.location.reload();
+                }).catch(error => {
+                    console.error('Erro ao executar cardActions:', error);
+                    window.location.reload();
+                });
+            };
+            return xhr;
+        };
+
+        let form = $$('#firecheckout-form').first();
+        form.observe('submit', function (e) {
+            e.preventDefault();
+            debugger;
+            self.formElementAndSubmit = form;
+            self.cardActions().then(result => {
+                console.log('PagBank: Resultado da ação do cartão: ' + result);
+                console.log('PagBank: Resultado da ação do cartão: ' + RMPagBankObj.proceedCheckout);
+                if (RMPagBankObj.proceedCheckout) {
+                    console.log('PagBank: Enviando requisição para ' + form.action);
+                    form.submit();
+                }
+                window.location.reload();
+            }).catch(error => {
+                console.error('Erro ao executar cardActions:', error);
+                window.location.reload();
+            });
+        });
+
     },
 
-    addCardFieldsObserver: function(obj){
+    addCardFieldsObserver: function (obj) {
         try {
-            let holderElem = $$('#ricardomartins_pagbank_cc_cc_owner').first();
             let numberElem = $$('#ricardomartins_pagbank_cc_cc_number').first();
-            let expElem = $$('#ricardomartins_pagbank_cc_cc_exp').first();
-            let cvcElem = $$('#ricardomartins_pagbank_cc_cc_cvc').first();
-            let installmentElem = $$('#ricardomartins_pagbank_cc_cc_installments').first();
-
             Element.observe(numberElem,'change',function(e){obj.updateInstallments();});
             Element.observe(numberElem,'change',function(e){obj.setBrand();});
-
-            Element.observe(numberElem,'change',function(e){obj.cardActions(obj);});
-            Element.observe(holderElem,'change',function(e){obj.cardActions(obj);});
-            Element.observe(expElem,'change',function(e){obj.cardActions(obj);});
-            Element.observe(cvcElem,'change',function(e){obj.cardActions(obj);});
-            Element.observe(installmentElem,'change',function(e){obj.cardActions(obj);});
         } catch(e) {
             console.error('Não foi possível adicionar observevação aos cartões. ' + e.message);
         }
 
     },
-    cardActions: function () {
+    cardActions: async function () {
         console.log('Iniciando criptografia do cartão');
         let result = RMPagBankObj.encryptCard();
         console.log('Criptografia do cartão finalizada', result);
 
         if (RMPagBankObj.config.enabled_3ds) {
             console.log('3DS iniciando...');
-            result = RMPagBankObj.authenticate3DS();
+            result = await RMPagBankObj.authenticate3DS();
             console.log('3DS finalizado', result);
         }
 
         this.enablePlaceOrderButton();
+        return result;
     },
     setBrand: function () {
         let brandInput = jQuery('#ricardomartins_pagbank_cc_cc_brand');
         let flag = this.config.flag_size;
         let numberInput = jQuery('#ricardomartins_pagbank_cc_cc_number');
         let urlPrefix = 'https://stc.pagseguro.uol.com.br/';
-        if(this.config.stc_mirror){
+        if (this.config.stc_mirror) {
             urlPrefix = 'https://stcpagseguro.ricardomartins.net.br/';
         }
         let src = urlPrefix + 'public/img/payment-methods-flags/{flag}/{brand}.png';
@@ -117,7 +104,7 @@ RMPagBank = Class.create({
         src = src.replace('{flag}', flag);
 
         if (flag !== '') {
-            style =  'background-image: url(' + src + ');' +
+            style = 'background-image: url(' + src + ');' +
                 'background-repeat: no-repeat;' +
                 'background-position: calc(100% - 5px) center;' +
                 'background-size: auto calc(100% - 6px);';
@@ -186,7 +173,7 @@ RMPagBank = Class.create({
             });
         } catch (e) {
             alert("Erro ao criptografar o cartão.\nVerifique se os dados digitados estão corretos.");
-            if(RMPagBankObj.config.debug){
+            if (RMPagBankObj.config.debug) {
                 console.error('Erro ao criptografar o cartão.\nVerifique se os dados digitados estão corretos.', e);
             }
             return false;
@@ -220,7 +207,7 @@ RMPagBank = Class.create({
             }
             alert('Erro ao criptografar cartão.\n' + error);
 
-            if(RMPagBankObj.config.debug){
+            if (RMPagBankObj.config.debug) {
                 console.error('Erro ao criptografar cartão.\n' + error);
             }
 
@@ -231,7 +218,7 @@ RMPagBank = Class.create({
         numberEncryptedInput.val(card.encryptedCard);
         return true;
     },
-    updateInstallments: function() {
+    updateInstallments: function () {
         let cardNumber = jQuery('#ricardomartins_pagbank_cc_cc_number').val();
         let ccBin = cardNumber.replace(/\s/g, '').substring(0, 6);
         let ccBinInput = jQuery('#ricardomartins_pagbank_cc_cc_bin');
@@ -241,7 +228,7 @@ RMPagBank = Class.create({
             ccBinInput.val(ccBin);
         }
     },
-    getInstallments: function() {
+    getInstallments: function () {
         //if success, update the installments select with the response
         //if error, show error message
         let ccBin = typeof window.pb_cc_bin === 'undefined' || window.pb_cc_bin.replace(/[^0-9]/g, '').length < 6 ? '555566' : window.pb_cc_bin;
@@ -252,8 +239,8 @@ RMPagBank = Class.create({
             data: {
                 cc_bin: ccBin
             },
-            success: (response)=>{
-                if(RMPagBankObj.config.debug){
+            success: (response) => {
+                if (RMPagBankObj.config.debug) {
                     console.log('Installments response:', response);
                 }
 
@@ -282,22 +269,22 @@ RMPagBank = Class.create({
                     select.append(option);
                 }
             },
-            error: (response)=>{
+            error: (response) => {
                 alert('Error getting installments. Please try again.');
-                if(RMPagBankObj.config.debug){
+                if (RMPagBankObj.config.debug) {
                     console.error('Error getting installments. Please try again.', response);
                 }
             }
         });
     },
-    setUp3DS: function(pagseguro_connect_3d_session) {
+    setUp3DS: function (pagseguro_connect_3d_session) {
         //region 3ds authentication method
         PagSeguro.setUp({
             session: pagseguro_connect_3d_session,
             env: this.config.environment,
         });
     },
-    authenticate3DS: async function() {
+    authenticate3DS: async function () {
         //inputs
         let holderInput = jQuery('#ricardomartins_pagbank_cc_cc_owner');
         let numberInput = jQuery('#ricardomartins_pagbank_cc_cc_number');
@@ -372,7 +359,8 @@ RMPagBank = Class.create({
             }
         }
 
-        PagSeguro.authenticate3DS(request).then( result => {
+        RMPagBankObj.proceedCheckout = false;
+        await PagSeguro.authenticate3DS(request).then(result => {
             switch (result.status) {
                 case 'CHANGE_PAYMENT_METHOD':
                     // The user must change the payment method used
@@ -388,6 +376,7 @@ RMPagBank = Class.create({
                         console.debug('PagBank: 3DS Autenticado ou Sem desafio');
                         this.enablePlaceOrderButton();
                         this.disablePageLoader();
+                        RMPagBankObj.proceedCheckout = true;
                         return true;
                     }
                     alert('Autenticação 3D falhou. Tente novamente.');
@@ -413,24 +402,23 @@ RMPagBank = Class.create({
                     break;
             }
         }).catch((err) => {
-            if(err instanceof PagSeguro.PagSeguroError ) {
+            if (err instanceof PagSeguro.PagSeguroError) {
                 console.error(err);
                 console.debug('PagBank: ' + err.detail);
-                let errMsgs = err.detail.errorMessages.map(error => pagBankParseErrorMessage(error)).join('\n');
-                alert('Falha na requisição de autenticação 3D.\n' + errMsgs);
+                alert('Falha na requisição de autenticação 3D.\n');
                 this.enablePlaceOrderButton();
                 this.disablePageLoader();
                 return false;
             }
         });
     },
-    disablePlaceOrderButton: function(){
+    disablePlaceOrderButton: function () {
         if (RMPagBankObj.config.placeorder_button) {
 
             let placeOrderButton = $$(RMPagBankObj.config.placeorder_button).first();
-            if(typeof placeOrderButton != 'undefined'){
+            if (typeof placeOrderButton != 'undefined') {
                 placeOrderButton.up().insert({
-                    'after': new Element('div',{
+                    'after': new Element('div', {
                         'id': 'pagbank-loader'
                     })
                 });
@@ -448,22 +436,22 @@ RMPagBank = Class.create({
                 return;
             }
 
-            if(RMPagBankObj.config.debug){
+            if (RMPagBankObj.config.debug) {
                 console.error('PagBank: Botão configurado não encontrado (' + RMPagBankObj.config.placeorder_button + '). Verifique as configurações do módulo.');
             }
         }
     },
-    enablePlaceOrderButton: function(){
+    enablePlaceOrderButton: function () {
         let element = $$('#pagbank-loader').first();
         if (typeof element == 'undefined') {
             return;
         }
 
-        if(RMPagBankObj.config.placeorder_button && typeof $$(RMPagBankObj.config.placeorder_button).first() != 'undefined'){
+        if (RMPagBankObj.config.placeorder_button && typeof $$(RMPagBankObj.config.placeorder_button).first() != 'undefined') {
             $$('#pagbank-loader').first().remove();
         }
     },
-    enablePageLoader: function(){
+    enablePageLoader: function () {
         let overlay = document.createElement("div");
         overlay.id = 'pagbank-page-loader-overlay';
 
@@ -478,13 +466,13 @@ RMPagBank = Class.create({
         overlay.appendChild(spinnerContainer);
         document.body.appendChild(overlay);
     },
-    disablePageLoader: function(){
+    disablePageLoader: function () {
         let element = document.getElementById("pagbank-page-loader-overlay");
         if (typeof element != 'undefined') {
             element.remove();
         }
     },
-    getQuoteData: async function() {
+    getQuoteData: async function () {
         return await jQuery.ajax({
             url: this.config.quotedata_endpoint,
             method: 'GET'
@@ -597,5 +585,4 @@ RMPagBank = Class.create({
 
         return result.slice(-1);
     }
-});
-
+};
