@@ -20,11 +20,16 @@ RMPagBank.prototype = {
     placeOrderEvent: function () {
         let methodForm = $$('#payment_form_ricardomartins_pagbank_cc');
         if (!methodForm.length) {
-            console.log('PagSeguro: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
+            console.log('PagBank: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
             return;
         }
         let form = methodForm.first().closest('form');
+
+        // TODO: pegar todos os botões e adicionar a sobrescrita
         let button = $$(this.config.placeorder_button).first();
+
+        let onclickEvent = button.getAttribute('onclick');
+        button.removeAttribute('onclick');
 
         // clone the button
         let newButton = button.cloneNode(true);
@@ -35,9 +40,11 @@ RMPagBank.prototype = {
         // execute cardActions and prevent default
         let validateAndPreventDefault = function (event) {
             event.preventDefault(); // prevent the default behavior of the form/button
+            event.stopImmediatePropagation(); // stop the propagation of the event
 
             RMPagBankObj.cardActions().then(result => {
                 if (RMPagBankObj.proceedCheckout) {
+                    button.setAttribute('onclick', onclickEvent);
                     button.click(); // trigger the click event on the old button
                     return true;
                 }
@@ -317,6 +324,9 @@ RMPagBank.prototype = {
         expMonth = expInput.split('/')[0].replace(/\s/g, '');
         expYear = '20' + expInput.split('/')[1].slice(-2).replace(/\s/g, '');
 
+        let complement = quote.complement ? quote.complement : quote.neighborhood;
+        complement = complement ? complement : 'n/d';
+
         const request = {
             data: {
                 customer: {
@@ -350,7 +360,7 @@ RMPagBank.prototype = {
                 billingAddress: {
                     street: quote.street,
                     number: quote.number,
-                    complement: quote.complement,
+                    complement: complement,
                     regionCode: quote.regionCode,
                     country: 'BRA',
                     city: quote.city,

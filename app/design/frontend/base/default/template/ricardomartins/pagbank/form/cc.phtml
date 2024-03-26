@@ -108,6 +108,11 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
         RMPagBankObj = new RMPagBank(<?php echo $pagbankHelper->getConfigJs()?>, pagseguro_connect_3d_session);
         console.info('PagBank ready');
     }
+    try {
+        preparePagBank();
+    } catch (e) {
+        // shhh
+    }
     document.observe("dom:loaded", function () {
         preparePagBank();
     });
