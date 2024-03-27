@@ -97,16 +97,16 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
     const preparePagBank = function(){
         if(typeof RMPagBankObj != "undefined"){
             <?php if ($pagbankHelper->isDebugActive()): ?>
-            console.info('PagBank was already started.');
+            console.info('PagBank já inicializado.');
             <?php endif; ?>
             return;
         }
         let pagseguro_connect_3d_session = '<?= $this->getPagSeguroConnect3dSession() ?>';
         <?php if ($pagbankHelper->isDebugActive()): ?>
-        console.info('PagBank is initiating. Wait for ready message.');
+        console.info('PagBank inicializando. Aguarde a mensagem de confirmação.');
         <?php endif; ?>
         RMPagBankObj = new RMPagBank(<?php echo $pagbankHelper->getConfigJs()?>, pagseguro_connect_3d_session);
-        console.info('PagBank ready');
+        console.info('PagBank inicializado.');
     }
     try {
         preparePagBank();

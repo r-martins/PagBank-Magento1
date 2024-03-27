@@ -23,39 +23,59 @@ RMPagBank.prototype = {
             console.log('PagBank: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
             return;
         }
+
         let form = methodForm.first().closest('form');
 
-        // TODO: pegar todos os botões e adicionar a sobrescrita
-        let button = $$(this.config.placeorder_button).first();
-
-        let onclickEvent = button.getAttribute('onclick');
-        button.removeAttribute('onclick');
-
-        // clone the button
-        let newButton = button.cloneNode(true);
-
-        // replace old button for the new button (with no events attached)
-        button.parentNode.replaceChild(newButton, button);
-
-        // execute cardActions and prevent default
-        let validateAndPreventDefault = function (event) {
-            event.preventDefault(); // prevent the default behavior of the form/button
-            event.stopImmediatePropagation(); // stop the propagation of the event
-
-            RMPagBankObj.cardActions().then(result => {
-                if (RMPagBankObj.proceedCheckout) {
-                    button.setAttribute('onclick', onclickEvent);
-                    button.click(); // trigger the click event on the old button
-                    return true;
-                }
-            }).catch(error => {
-                console.error('Erro ao executar cardActions:', error);
-            });
+        let buttons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button'];
+        let configuredButton = this.config.placeorder_button;
+        if (configuredButton && !buttons.includes(configuredButton)) {
+            console.log('PagBank: botão configurado encontrado.', configuredButton);
+            buttons.push(configuredButton);
         }
 
-        // add the event listener to the form and the button, preventing the default behavior in both cases
-        form.addEventListener('submit', validateAndPreventDefault, false);
-        newButton.addEventListener('click', validateAndPreventDefault, false);
+        let eventAlreadyAttached = false;
+        buttons.forEach(function(btn) {
+            let button = $$(btn).first();
+
+            if (typeof button === 'undefined' || eventAlreadyAttached) {
+                return;
+            }
+
+            let onclickEvent = button.getAttribute('onclick');
+            button.removeAttribute('onclick');
+
+            // clone the button
+            let newButton = button.cloneNode(true);
+
+            // replace old button for the new button (with no events attached)
+            button.parentNode.replaceChild(newButton, button);
+
+            // execute cardActions and prevent default
+            let validateAndPreventDefault = function (event) {
+                event.preventDefault(); // prevent the default behavior of the form/button
+                event.stopImmediatePropagation(); // stop the propagation of the event
+
+                RMPagBankObj.cardActions().then(result => {
+                    if (RMPagBankObj.proceedCheckout) {
+                        button.setAttribute('onclick', onclickEvent);
+                        button.click(); // trigger the click event on the old button
+                        return true;
+                    }
+                }).catch(error => {
+                    console.error('Erro ao executar os eventos do cartão:', error);
+                });
+            }
+
+            // add the event listener to the form and the button, preventing the default behavior in both cases
+            newButton.addEventListener('click', validateAndPreventDefault, false);
+            form.addEventListener('submit', validateAndPreventDefault, false);
+
+            eventAlreadyAttached = true;
+        });
+
+        if (!eventAlreadyAttached) {
+            throw new Error('Não foi possível adicionar o evento de clique ao botão de finalizar compra.');
+        }
     },
     addCardFieldsObserver: function (obj) {
         try {
