@@ -44,21 +44,23 @@ RMPagBank.prototype = {
             let onclickEvent = button.getAttribute('onclick');
             button.removeAttribute('onclick');
 
-            // clone the button
             let newButton = button.cloneNode(true);
-
-            // replace old button for the new button (with no events attached)
             button.parentNode.replaceChild(newButton, button);
 
-            // execute cardActions and prevent default
             let validateAndPreventDefault = function (event) {
-                event.preventDefault(); // prevent the default behavior of the form/button
-                event.stopImmediatePropagation(); // stop the propagation of the event
+                let paymentMethod = document.querySelector('input[name="payment[method]"]:checked').value;
+                if (paymentMethod !== 'ricardomartins_pagbank_cc') {
+                    button.setAttribute('onclick', onclickEvent);
+                    button.click();
+                    return true;
+                }
+                event.preventDefault();
+                event.stopImmediatePropagation();
 
                 RMPagBankObj.cardActions().then(result => {
                     if (RMPagBankObj.proceedCheckout) {
                         button.setAttribute('onclick', onclickEvent);
-                        button.click(); // trigger the click event on the old button
+                        button.click();
                         return true;
                     }
                 }).catch(error => {
@@ -66,7 +68,6 @@ RMPagBank.prototype = {
                 });
             }
 
-            // add the event listener to the form and the button, preventing the default behavior in both cases
             newButton.addEventListener('click', validateAndPreventDefault, false);
             form.addEventListener('submit', validateAndPreventDefault, false);
 
