@@ -89,6 +89,7 @@ RMPagBank.prototype = {
 
     },
     cardActions: async function () {
+        RMPagBankObj.proceedCheckout = false;
         if (RMPagBankObj.config.debug) {
             console.log('Iniciando criptografia do cartão');
         }
@@ -109,6 +110,8 @@ RMPagBank.prototype = {
             if (RMPagBankObj.config.debug) {
                 console.log('3DS finalizado');
             }
+        } else {
+            RMPagBankObj.proceedCheckout = true;
         }
 
         this.enablePlaceOrderButton();
@@ -391,7 +394,6 @@ RMPagBank.prototype = {
             }
         }
 
-        RMPagBankObj.proceedCheckout = false;
         await PagSeguro.authenticate3DS(request).then(result => {
             switch (result.status) {
                 case 'CHANGE_PAYMENT_METHOD':
