@@ -4,7 +4,7 @@ RMPagBank.prototype = {
         console.log('PagBank: Inicializando módulo de cartão de crédito');
         this.config = config;
         this.formElementAndSubmit = false;
-        this.addCardFieldsObserver(this);
+        this.addCardFieldsObserver();
         this.getInstallments();
 
         if (pagseguro_connect_3d_session !== '' && this.config.enabled_3ds) {
@@ -78,11 +78,11 @@ RMPagBank.prototype = {
             throw new Error('Não foi possível adicionar o evento de clique ao botão de finalizar compra.');
         }
     },
-    addCardFieldsObserver: function (obj) {
+    addCardFieldsObserver: function () {
         try {
             let numberElem = $$('#ricardomartins_pagbank_cc_cc_number').first();
-            Element.observe(numberElem,'change',function(e){obj.updateInstallments();});
-            Element.observe(numberElem,'change',function(e){obj.setBrand();});
+            Element.observe(numberElem,'change',function(e){RMPagBankObj.updateInstallments();});
+            Element.observe(numberElem,'change',function(e){RMPagBankObj.setBrand();});
         } catch(e) {
             console.error('Não foi possível adicionar observevação aos cartões. ' + e.message);
         }

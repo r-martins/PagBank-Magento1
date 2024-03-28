@@ -99,6 +99,7 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
             <?php if ($pagbankHelper->isDebugActive()): ?>
             console.info('PagBank já inicializado.');
             <?php endif; ?>
+            RMPagBankObj.addCardFieldsObserver();
             return;
         }
         let pagseguro_connect_3d_session = '<?= $this->getPagSeguroConnect3dSession() ?>';

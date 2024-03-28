@@ -54,10 +54,16 @@ document.observe("dom:loaded", function () {
 });
 
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-const observer = new MutationObserver(function(mutations, observer) {
-    mask();
+const observerPage = new MutationObserver(function(mutationList, observer) {
+    mutationList.forEach((mutation) => {
+        let id = mutation.target.id;
+        if (id.includes("ricardomartins_pagbank")) {
+            mask();
+        }
+    });
 });
-observer.observe(document, {
+observerPage.observe(document, {
     subtree: true,
+    attributeFilter: ["disabled"],
     attributes: true
 });
