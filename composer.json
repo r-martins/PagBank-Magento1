@@ -1,0 +1,39 @@
+{
+  "name": "ricardomartins/pagbank-magento1",
+  "description": "Módulo PagBank/PagSeguro Nova Geração para Magento 1.x e OpenMage LTS",
+  "type": "magento-module",
+  "license": "GPL-3.0",
+  "homepage": "https://pagseguro.ricardomartins.net.br/",
+  "version": "4.0.0",
+  "support": {
+    "docs": "https://pagsegurotransparente.zendesk.com/hc/pt-br/",
+    "source": "https://github.com/r-martins/PagBank-Magento1"
+  },
+  "authors": [
+    {
+      "name": "Ricardo Martins",
+      "email": "pagseguro-transparente@ricardomartins.net.br"
+    },
+    {
+      "name": "Ligia Salzano",
+      "email": "ligiasalzano@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6"
+  },
+  "keywords": [
+    "magento",
+    "pagseguro",
+    "pagbank",
+    "payment",
+    "gateway",
+    "3ds",
+    "transparente",
+    "transparent",
+    "checkout",
+    "magento1",
+    "openmage",
+    "pix"
+  ]
+}

@@ -87,6 +87,20 @@
                     <frontName>pagbank</frontName>
                 </args>
             </ricardomartins_pagbank>
+            <ricardomartins_pagseguro>
+                <args>
+                    <modules>
+                        <RicardoMartins_PagBank before="RicardoMartins_PagSeguro">RicardoMartins_PagBank</RicardoMartins_PagBank>
+                    </modules>
+                </args>
+            </ricardomartins_pagseguro>
+            <ricardomartins_pagseguro>
+                <use>standard</use>
+                <args>
+                    <module>RicardoMartins_PagBank</module>
+                    <frontName>pseguro</frontName>
+                </args>
+            </ricardomartins_pagseguro>
         </routers>
         <layout>
             <updates>
