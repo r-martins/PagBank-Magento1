@@ -142,17 +142,6 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get the flag size
-     *
-     * @param $storeId
-     * @return mixed
-     */
-    public function getFlagSize($storeId = null)
-    {
-        return Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/flag', $storeId);
-    }
-
-    /**
      * Check if the STC mirror is enabled
      *
      * @param $storeId
@@ -315,8 +304,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             'enabled_3ds' => $this->isCc3dsEnabled($storeId),
             'cc_3ds_allow_continue' => $this->allowContinueWithout3ds($storeId),
             'environment' => $this->isSandbox($storeId) ? 'SANDBOX' : 'PROD',
-            'stc_mirror' => $this->isStcMirrorEnabled($storeId),
-            'flag_size' => $this->getFlagSize($storeId)
+            'stc_mirror' => $this->isStcMirrorEnabled($storeId)
         ];
 
         try {

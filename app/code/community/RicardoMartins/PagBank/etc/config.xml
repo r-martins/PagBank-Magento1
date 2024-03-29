@@ -25,7 +25,6 @@
                 <soft_descriptor>Compra Via PagBank</soft_descriptor>
                 <cc_3ds>1</cc_3ds>
                 <cc_3ds_allow_continue>0</cc_3ds_allow_continue>
-                <flag>42x20</flag>
             </ricardomartins_pagbank_cc>
             <ricardomartins_pagbank_billet>
                 <active>1</active>

@@ -119,23 +119,16 @@ RMPagBank.prototype = {
     },
     setBrand: function () {
         let brandInput = document.getElementById('ricardomartins_pagbank_cc_cc_brand');
-        let flag = this.config.flag_size;
         let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
         let urlPrefix = 'https://stc.pagseguro.uol.com.br/';
         if (this.config.stc_mirror) {
             urlPrefix = 'https://stcpagseguro.ricardomartins.net.br/';
         }
-        let src = urlPrefix + 'public/img/payment-methods-flags/{flag}/{brand}.png';
-        let style = '';
-
-        src = src.replace('{flag}', flag);
-
-        if (flag !== '') {
-            style = 'background-image: url(' + src + ');' +
-                'background-repeat: no-repeat;' +
-                'background-position: calc(100% - 5px) center;' +
-                'background-size: auto calc(100% - 6px);';
-        }
+        let flagSrc = urlPrefix + 'public/img/payment-methods-flags/42x20/{brand}.png';
+        let style = 'background-image: url(' + flagSrc + ');' +
+            'background-repeat: no-repeat;' +
+            'background-position: calc(100% - 5px) center;' +
+            'background-size: auto calc(100% - 6px);';
 
         let ccNumber = numberInput.value;
         ccNumber = ccNumber.replace(/\s/g, '');
