@@ -48,6 +48,8 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
             $addData['pix']['qrcode_text'] = $qrCodes['text'];
             $addData['pix']['due_date'] = $qrCodes['expiration_date'];
 
+            $addData['pix']['created_at'] = $response['created_at'];
+
             $payment->setAdditionalData(serialize($addData));
             $payment->save();
         } else {

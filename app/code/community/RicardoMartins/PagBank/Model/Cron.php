@@ -20,7 +20,6 @@ class RicardoMartins_PagBank_Model_Cron
             )
             ->addFieldToFilter('status', 'pending')
             ->addFieldToFilter('method', 'ricardomartins_pagbank_pix')
-            ->addFieldToFilter('created_at',  ['to' => $toDate, 'date' => true])
             ->getSelect()
             ->order('entity_id');
 
@@ -29,18 +28,38 @@ class RicardoMartins_PagBank_Model_Cron
         }
 
         foreach( $orderCollection as $order ) {
-            if(!$order->canCancel()) {
-                $helper->writeLog('Order cannot be canceled anymore: ' . $order->getId());
-                continue;
-            } else {
-                $order->cancel();
-            }
+            try {
+                $additionalData = unserialize($order->getPayment()->getAdditionalData());
+                $createdAt = $additionalData['pix']['created_at'];
 
-            $order->setActionFlag(Mage_Sales_Model_Order::ACTION_FLAG_CANCEL, true);
-            $history = $order->addStatusHistoryComment('Pedido cancelado depois de finalizado o prazo para pagamento com PIX.', false);
-            $history->setIsCustomerNotified(false);
-            $order->save();
-            $helper->writeLog('Order canceled after the deadline for payment with PIX: ' . $order->getId());
+                $date = new DateTime();
+                $date->setTimezone(new DateTimeZone('America/Sao_Paulo'));
+                $date->setTimestamp(strtotime($createdAt));
+                $date->add(new DateInterval('PT' . $expirationDate . 'M'));
+
+                $now = new DateTime();
+                $now->setTimezone(new DateTimeZone('America/Sao_Paulo'));
+
+                if($date > $now) {
+                    $helper->writeLog('Order cannot be canceled yet: ' . $order->getId());
+                    continue;
+                }
+
+                if(!$order->canCancel()) {
+                    $helper->writeLog('Order cannot be canceled anymore: ' . $order->getId());
+                    continue;
+                } else {
+                    $order->cancel();
+                }
+
+                $order->setActionFlag(Mage_Sales_Model_Order::ACTION_FLAG_CANCEL, true);
+                $history = $order->addStatusHistoryComment('Pedido cancelado depois de finalizado o prazo para pagamento com PIX.', false);
+                $history->setIsCustomerNotified(false);
+                $order->save();
+                $helper->writeLog('Order canceled after the deadline for payment with PIX: ' . $order->getId());
+            } catch (Exception $e) {
+                $helper->writeLog('Error canceling order: ' . $order->getId() . ' - ' . $e->getMessage());
+            }
         }
     }
 }
