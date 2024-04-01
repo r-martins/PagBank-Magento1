@@ -27,6 +27,23 @@ if (class_exists('RicardoMartins_PagSeguro_TestController')) {
 
             $info['compilation'] = $helper->getCompilerState();
 
+            foreach (Mage::app()->getWebsites() as $website) {
+                foreach ($website->getGroups() as $group) {
+                    $stores = $group->getStores();
+                    foreach ($stores as $store) {
+                        $info['RicardoMartins_PagBank']['settings']['stores'][$store->getCode()] = [
+                            'name' => $store->getName(),
+                            'id' => $store->getId(),
+                            'website' => $website->getName(),
+                            'group' => $group->getName(),
+                            'url' => $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB),
+                            'secure_url' => $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB, true),
+                            'config' => $helper->getConfig($store->getId()),
+                        ];
+                    }
+                }
+            }
+
 
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(json_encode($info, $pretty));
@@ -55,6 +72,22 @@ if (class_exists('RicardoMartins_PagSeguro_TestController')) {
 
             $info['compilation'] = $helper->getCompilerState();
 
+            foreach (Mage::app()->getWebsites() as $website) {
+                foreach ($website->getGroups() as $group) {
+                    $stores = $group->getStores();
+                    foreach ($stores as $store) {
+                        $info['RicardoMartins_PagBank']['settings']['stores'][$store->getCode()] = [
+                            'name' => $store->getName(),
+                            'id' => $store->getId(),
+                            'website' => $website->getName(),
+                            'group' => $group->getName(),
+                            'url' => $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB),
+                            'secure_url' => $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB, true),
+                            'config' => $helper->getConfig($store->getId()),
+                        ];
+                    }
+                }
+            }
 
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(json_encode($info, $pretty));

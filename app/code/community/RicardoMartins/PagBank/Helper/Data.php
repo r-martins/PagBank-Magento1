@@ -572,31 +572,31 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig($storeId = null)
     {
         return [
-            'document_from' => Mage::getStoreConfig('payment/ricardomartins_pagbank/document_from'),
-            'placeorder_button' => Mage::getStoreConfig('payment/ricardomartins_pagbank/placeorder_button'),
-            'stc_mirror' => Mage::getStoreConfig('payment/ricardomartins_pagbank/stc_mirror'),
-            'jsdelivr_enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_enabled'),
-            'jsdelivr_minify' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_minify'),
+            'document_from' => Mage::getStoreConfig('payment/ricardomartins_pagbank/document_from', $storeId),
+            'placeorder_button' => Mage::getStoreConfig('payment/ricardomartins_pagbank/placeorder_button', $storeId),
+            'stc_mirror' => Mage::getStoreConfig('payment/ricardomartins_pagbank/stc_mirror', $storeId),
+            'jsdelivr_enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_enabled', $storeId),
+            'jsdelivr_minify' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_minify', $storeId),
             'cc' => [
-                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/active'),
-                'cc_3ds' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds'),
-                'cc_3ds_allow_continue' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds_allow_continue'),
-                'installments_options' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options'),
-                'installments_options_fixed' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options_fixed'),
-                'installments_options_min_total' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options_min_total'),
-                'enable_installments_limit' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/enable_installments_limit'),
-                'installments_limit' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_limit'),
+                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/active', $storeId),
+                'cc_3ds' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds', $storeId),
+                'cc_3ds_allow_continue' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds_allow_continue', $storeId),
+                'installments_options' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options', $storeId),
+                'installments_options_fixed' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options_fixed', $storeId),
+                'installments_options_min_total' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options_min_total', $storeId),
+                'enable_installments_limit' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/enable_installments_limit', $storeId),
+                'installments_limit' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_limit', $storeId),
             ],
             'boleto' => [
-                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_billet/active'),
-                'expiration_time_days' => Mage::getStoreConfig('payment/ricardomartins_pagbank_billet/expiration_time'),
+                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_billet/active', $storeId),
+                'expiration_time_days' => Mage::getStoreConfig('payment/ricardomartins_pagbank_billet/expiration_time', $storeId),
             ],
             'pix' => [
-                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/active'),
-                'expiration_time_minutes' => Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/expiration_time'),
+                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/active', $storeId),
+                'expiration_time_minutes' => Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/expiration_time', $storeId),
             ]
         ];
     }
