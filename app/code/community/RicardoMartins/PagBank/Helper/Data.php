@@ -492,6 +492,116 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Validate public key
+     *
+     * @return string|null
+     * @throws Mage_Core_Exception
+     */
+    public function validateKey()
+    {
+        $response = null;
+        $pubKey = $this->getPublicKey();
+
+        if (empty($pubKey)) {
+            return 'Public Key is empty.';
+        }
+
+        $url = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PUBLIC_KEY_VALIDATE;
+        if ($this->isSandbox()) {
+            $url .= '?isSandbox=1';
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 45);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        libxml_use_internal_errors(true);
+
+        try {
+            $response = curl_exec($ch);
+        } catch (\Exception $e) {
+            Mage::throwException(
+                sprintf('Falha na comunicação com o PagBank: %s', $e->getMessage())
+            );
+        }
+
+        if (curl_error($ch)) {
+            return 'Error on request the public key.';
+        }
+
+        $response = json_decode($response, true);
+        if (!isset($response['public_key'])) {
+            return 'Error in the response of the public key.';
+        }
+
+        return $response['public_key'] == $pubKey ? 'Valid' : 'Invalid';
+    }
+
+    /**
+     * Get compilation config details
+     * @return array
+     */
+    public function getCompilerState()
+    {
+        $compiler = Mage::getModel('compiler/process');
+        if (!$compiler) {
+            return [
+                'status' => 'Unavailable',
+                'state' => 'Unavailable'
+            ];
+        }
+        $compilerConfig = MAGENTO_ROOT . '/includes/config.php';
+
+        if (file_exists($compilerConfig) && !(defined('COMPILER_INCLUDE_PATH') || defined('COMPILER_COLLECT_PATH'))) {
+            include $compilerConfig;
+        }
+
+        $status = defined('COMPILER_INCLUDE_PATH') ? 'Enabled' : 'Disabled';
+        $state  = $compiler->getCollectedFilesCount() > 0 ? 'Compiled' : 'Not Compiled';
+        return array(
+            'status' => $status,
+            'state'  => $state,
+            'files_count' => $compiler->getCollectedFilesCount(),
+            'scopes_count' => $compiler->getCompiledFilesCount()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return [
+            'document_from' => Mage::getStoreConfig('payment/ricardomartins_pagbank/document_from'),
+            'placeorder_button' => Mage::getStoreConfig('payment/ricardomartins_pagbank/placeorder_button'),
+            'stc_mirror' => Mage::getStoreConfig('payment/ricardomartins_pagbank/stc_mirror'),
+            'jsdelivr_enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_enabled'),
+            'jsdelivr_minify' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_minify'),
+            'cc' => [
+                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/active'),
+                'cc_3ds' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds'),
+                'cc_3ds_allow_continue' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds_allow_continue'),
+                'installments_options' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options'),
+                'installments_options_fixed' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options_fixed'),
+                'installments_options_min_total' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_options_min_total'),
+                'enable_installments_limit' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/enable_installments_limit'),
+                'installments_limit' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/installments_limit'),
+            ],
+            'boleto' => [
+                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_billet/active'),
+                'expiration_time_days' => Mage::getStoreConfig('payment/ricardomartins_pagbank_billet/expiration_time'),
+            ],
+            'pix' => [
+                'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/active'),
+                'expiration_time_minutes' => Mage::getStoreConfig('payment/ricardomartins_pagbank_pix/expiration_time'),
+            ]
+        ];
+    }
+
+    /**
      * @param $code
      * @return string
      */
