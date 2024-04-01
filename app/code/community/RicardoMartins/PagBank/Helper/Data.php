@@ -494,18 +494,11 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Validate public key
      *
-     * @return string|null
-     * @throws Mage_Core_Exception
+     * @return array|null
      */
     public function validateKey()
     {
         $response = null;
-        $pubKey = $this->getPublicKey();
-
-        if (empty($pubKey)) {
-            return 'Public Key is empty.';
-        }
-
         $url = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PUBLIC_KEY_VALIDATE;
         if ($this->isSandbox()) {
             $url .= '?isSandbox=1';
@@ -523,21 +516,28 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         try {
             $response = curl_exec($ch);
         } catch (\Exception $e) {
-            Mage::throwException(
-                sprintf('Falha na comunicação com o PagBank: %s', $e->getMessage())
-            );
+            return [
+                'error' => 'Error on request the public key. ' . $e->getMessage()
+            ];
         }
 
         if (curl_error($ch)) {
-            return 'Error on request the public key.';
+            return [
+                'error' => 'Error on request the public key.'
+            ];
         }
 
         $response = json_decode($response, true);
         if (!isset($response['public_key'])) {
-            return 'Error in the response of the public key.';
+            return [
+                'error' => 'Error in the response of the public key.'
+            ];
         }
 
-        return $response['public_key'] == $pubKey ? 'Valid' : 'Invalid';
+        return [
+            'public_key' => substr($response['public_key'], 0, 50) . '...',
+            'created_at' => $response['created_at']
+        ];
     }
 
     /**
