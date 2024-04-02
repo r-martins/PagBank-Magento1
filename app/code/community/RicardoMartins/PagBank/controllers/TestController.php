@@ -11,26 +11,19 @@ if (class_exists('RicardoMartins_PagSeguro_TestController')) {
         public function getConfigAction()
         {
             $info = [];
-            /** @var RicardoMartins_PagBank_Helper_Data $helper */
-            $helper = Mage::helper('ricardomartins_pagbank');
             $pretty = ($this->getRequest()->getParam('pretty', true) && version_compare(PHP_VERSION, '5.4', '>='))?128:0;
-            $liveAuth = $helper->validateKey();
-            if (isset($liveAuth['error'])) {
-                $info['RicardoMartins_PagBank']['live_auth']['error'] = $liveAuth['error'];
+
+            /** @var RicardoMartins_PagBank_Helper_Data $helperPagbank */
+            $helperPagbank = Mage::helper('ricardomartins_pagbank');
+
+            try {
+                parent::getConfigAction();
+                $info = $helperPagbank->getModuleConfigInfo();
+                $getConfigPagseguro = json_decode($this->getResponse()->getBody(), true);
+                $info['legacy_module'] = $getConfigPagseguro;
+            } catch (Exception $e) {
+                $info['error'] = $e->getMessage();
             }
-
-            $info['RicardoMartins_PagBank']['both_modules'] = true;
-            $info['RicardoMartins_PagBank']['version'] = (string)Mage::getConfig()
-                ->getModuleConfig('RicardoMartins_PagBank')->version;
-            $info['RicardoMartins_PagBank']['connect_key'] = strlen($helper->getConnectKey()) == 40 ? 'Good' : 'Wrong size';
-            $info['RicardoMartins_PagBank']['public_key'] = substr($helper->getPublicKey(), 0, 50) . '...';
-            $info['RicardoMartins_PagBank']['live_auth']['public_key'] = isset($liveAuth['public_key']) ? $liveAuth['public_key'] : 'Not available';
-            $info['RicardoMartins_PagBank']['live_auth']['created_at'] = isset($liveAuth['created_at']) ? $liveAuth['created_at'] : 'Not available';
-            $info['RicardoMartins_PagBank']['debug'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/debug');
-            $info['RicardoMartins_PagBank']['sandbox'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/sandbox');
-            $info['RicardoMartins_PagBank']['settings'] = $helper->getConfig();
-
-            $info['compilation'] = $helper->getCompilerState();
 
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(json_encode($info, $pretty));
@@ -46,23 +39,12 @@ if (class_exists('RicardoMartins_PagSeguro_TestController')) {
             /** @var RicardoMartins_PagBank_Helper_Data $helper */
             $helper = Mage::helper('ricardomartins_pagbank');
             $pretty = ($this->getRequest()->getParam('pretty', true) && version_compare(PHP_VERSION, '5.4', '>='))?128:0;
-            $liveAuth = $helper->validateKey();
-            if (isset($liveAuth['error'])) {
-                $info['RicardoMartins_PagBank']['live_auth']['error'] = $liveAuth['error'];
+
+            try {
+                $info = $helper->getModuleConfigInfo();
+            } catch (Exception $e) {
+                $info['error'] = $e->getMessage();
             }
-
-            $info['RicardoMartins_PagBank']['both_modules'] = false;
-            $info['RicardoMartins_PagBank']['version'] = (string)Mage::getConfig()
-                ->getModuleConfig('RicardoMartins_PagBank')->version;
-            $info['RicardoMartins_PagBank']['connect_key'] = strlen($helper->getConnectKey()) == 40 ? 'Good' : 'Wrong size';
-            $info['RicardoMartins_PagBank']['public_key'] = substr($helper->getPublicKey(), 0, 50) . '...';
-            $info['RicardoMartins_PagBank']['live_auth']['public_key'] = isset($liveAuth['public_key']) ? $liveAuth['public_key'] : 'Not available';
-            $info['RicardoMartins_PagBank']['live_auth']['created_at'] = isset($liveAuth['created_at']) ? $liveAuth['created_at'] : 'Not available';
-            $info['RicardoMartins_PagBank']['debug'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/debug');
-            $info['RicardoMartins_PagBank']['sandbox'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/sandbox');
-            $info['RicardoMartins_PagBank']['settings'] = $helper->getConfig();
-
-            $info['compilation'] = $helper->getCompilerState();
 
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(json_encode($info, $pretty));

@@ -492,11 +492,38 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get module config for the test controller
+     *
+     * @return array
+     */
+    public function getModuleConfigInfo()
+    {
+        $liveAuth = $this->validateKey();
+        if (isset($liveAuth['error'])) {
+            $info['RicardoMartins_PagBank']['live_auth']['error'] = $liveAuth['error'];
+        }
+
+        $info['RicardoMartins_PagBank']['version'] = (string)Mage::getConfig()
+            ->getModuleConfig('RicardoMartins_PagBank')->version;
+        $info['RicardoMartins_PagBank']['connect_key'] = strlen($this->getConnectKey()) == 40 ? 'Good' : 'Wrong size';
+        $info['RicardoMartins_PagBank']['public_key'] = substr($this->getPublicKey(), 0, 50) . '...';
+        $info['RicardoMartins_PagBank']['live_auth']['public_key'] = isset($liveAuth['public_key']) ? $liveAuth['public_key'] : 'Not available';
+        $info['RicardoMartins_PagBank']['live_auth']['created_at'] = isset($liveAuth['created_at']) ? $liveAuth['created_at'] : 'Not available';
+        $info['RicardoMartins_PagBank']['debug'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/debug');
+        $info['RicardoMartins_PagBank']['sandbox'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/sandbox');
+        $info['RicardoMartins_PagBank']['settings'] = $this->getConfig();
+
+        $info['RicardoMartins_PagBank']['compilation'] = $this->getCompilerState();
+
+        return $info;
+    }
+
+    /**
      * Validate public key
      *
      * @return array|null
      */
-    public function validateKey()
+    private function validateKey()
     {
         $response = null;
         $url = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PUBLIC_KEY_VALIDATE;
@@ -544,7 +571,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      * Get compilation config details
      * @return array
      */
-    public function getCompilerState()
+    private function getCompilerState()
     {
         $compiler = Mage::getModel('compiler/process');
         if (!$compiler) {
@@ -572,7 +599,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * @return array
      */
-    public function getConfig($storeId = null)
+    private function getConfig($storeId = null)
     {
         return [
             'document_from' => Mage::getStoreConfig('payment/ricardomartins_pagbank/document_from', $storeId),
