@@ -9,6 +9,7 @@
         <payment>
             <ricardomartins_pagbank>
                 <document_from>taxvat</document_from>
+                <placeorder_button>#onestepcheckout-place-order-button,.btn-checkout,#payment-buttons-container .button</placeorder_button>
                 <stc_mirror>1</stc_mirror>
                 <jsdelivr_enabled>0</jsdelivr_enabled>
                 <jsdelivr_minify>0</jsdelivr_minify>

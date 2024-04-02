@@ -41,7 +41,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                             <comment><![CDATA[Alguns eventos precisam ser disparados no momento da finalização da compra. Se você usa um checkout customizado, considere adicionar o identificador do seu botão de checkout. Deixe em branco se não souber. <a href="//pagsegurotransparente.zendesk.com/hc/pt-br/articles/360039820711" target="_blank">Saiba mais.</a>]]></comment>
-                            <tooltip><![CDATA[Exemplos: <br/>por classe css: .btn-checkout <br/>por id: #btn-checkout]]></tooltip>
+                            <tooltip><![CDATA[Exemplos: <br/>por classe css: .btn-checkout <br/>por id: #btn-checkout. Você pode informar mais de um, separados por vírgula.]]></tooltip>
                         </placeorder_button>
                         <stc_mirror>
                             <label>Use secondary CDN for static files?</label>
