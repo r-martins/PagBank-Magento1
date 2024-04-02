@@ -14,36 +14,23 @@ if (class_exists('RicardoMartins_PagSeguro_TestController')) {
             /** @var RicardoMartins_PagBank_Helper_Data $helper */
             $helper = Mage::helper('ricardomartins_pagbank');
             $pretty = ($this->getRequest()->getParam('pretty', true) && version_compare(PHP_VERSION, '5.4', '>='))?128:0;
-
-            $info['RicardoMartins_PagBank']['version'] = (string)Mage::getConfig()
-                ->getModuleConfig('RicardoMartins_PagBank')->version;
+            $liveAuth = $helper->validateKey();
+            if (isset($liveAuth['error'])) {
+                $info['RicardoMartins_PagBank']['live_auth']['error'] = $liveAuth['error'];
+            }
 
             $info['RicardoMartins_PagBank']['both_modules'] = true;
+            $info['RicardoMartins_PagBank']['version'] = (string)Mage::getConfig()
+                ->getModuleConfig('RicardoMartins_PagBank')->version;
             $info['RicardoMartins_PagBank']['connect_key'] = strlen($helper->getConnectKey()) == 40 ? 'Good' : 'Wrong size';
-            $info['RicardoMartins_PagBank']['key_validate'] = $helper->validateKey();
+            $info['RicardoMartins_PagBank']['public_key'] = substr($helper->getPublicKey(), 0, 50) . '...';
+            $info['RicardoMartins_PagBank']['live_auth']['public_key'] = isset($liveAuth['public_key']) ? $liveAuth['public_key'] : 'Not available';
+            $info['RicardoMartins_PagBank']['live_auth']['created_at'] = isset($liveAuth['created_at']) ? $liveAuth['created_at'] : 'Not available';
             $info['RicardoMartins_PagBank']['debug'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/debug');
             $info['RicardoMartins_PagBank']['sandbox'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/sandbox');
             $info['RicardoMartins_PagBank']['settings'] = $helper->getConfig();
 
             $info['compilation'] = $helper->getCompilerState();
-
-            foreach (Mage::app()->getWebsites() as $website) {
-                foreach ($website->getGroups() as $group) {
-                    $stores = $group->getStores();
-                    foreach ($stores as $store) {
-                        $info['RicardoMartins_PagBank']['settings']['stores'][$store->getCode()] = [
-                            'name' => $store->getName(),
-                            'id' => $store->getId(),
-                            'website' => $website->getName(),
-                            'group' => $group->getName(),
-                            'url' => $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB),
-                            'secure_url' => $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB, true),
-                            'config' => $helper->getConfig($store->getId()),
-                        ];
-                    }
-                }
-            }
-
 
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(json_encode($info, $pretty));
@@ -59,35 +46,23 @@ if (class_exists('RicardoMartins_PagSeguro_TestController')) {
             /** @var RicardoMartins_PagBank_Helper_Data $helper */
             $helper = Mage::helper('ricardomartins_pagbank');
             $pretty = ($this->getRequest()->getParam('pretty', true) && version_compare(PHP_VERSION, '5.4', '>='))?128:0;
-
-            $info['RicardoMartins_PagBank']['version'] = (string)Mage::getConfig()
-                ->getModuleConfig('RicardoMartins_PagBank')->version;
+            $liveAuth = $helper->validateKey();
+            if (isset($liveAuth['error'])) {
+                $info['RicardoMartins_PagBank']['live_auth']['error'] = $liveAuth['error'];
+            }
 
             $info['RicardoMartins_PagBank']['both_modules'] = false;
+            $info['RicardoMartins_PagBank']['version'] = (string)Mage::getConfig()
+                ->getModuleConfig('RicardoMartins_PagBank')->version;
             $info['RicardoMartins_PagBank']['connect_key'] = strlen($helper->getConnectKey()) == 40 ? 'Good' : 'Wrong size';
-            $info['RicardoMartins_PagBank']['key_validate'] = $helper->validateKey();
+            $info['RicardoMartins_PagBank']['public_key'] = substr($helper->getPublicKey(), 0, 50) . '...';
+            $info['RicardoMartins_PagBank']['live_auth']['public_key'] = isset($liveAuth['public_key']) ? $liveAuth['public_key'] : 'Not available';
+            $info['RicardoMartins_PagBank']['live_auth']['created_at'] = isset($liveAuth['created_at']) ? $liveAuth['created_at'] : 'Not available';
             $info['RicardoMartins_PagBank']['debug'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/debug');
             $info['RicardoMartins_PagBank']['sandbox'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/sandbox');
             $info['RicardoMartins_PagBank']['settings'] = $helper->getConfig();
 
             $info['compilation'] = $helper->getCompilerState();
-
-            foreach (Mage::app()->getWebsites() as $website) {
-                foreach ($website->getGroups() as $group) {
-                    $stores = $group->getStores();
-                    foreach ($stores as $store) {
-                        $info['RicardoMartins_PagBank']['settings']['stores'][$store->getCode()] = [
-                            'name' => $store->getName(),
-                            'id' => $store->getId(),
-                            'website' => $website->getName(),
-                            'group' => $group->getName(),
-                            'url' => $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB),
-                            'secure_url' => $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB, true),
-                            'config' => $helper->getConfig($store->getId()),
-                        ];
-                    }
-                }
-            }
 
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(json_encode($info, $pretty));
