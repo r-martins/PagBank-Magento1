@@ -130,7 +130,7 @@ RMPagBank.prototype = {
         if (this.config.stc_mirror) {
             urlPrefix = 'https://stcpagseguro.ricardomartins.net.br/';
         }
-        let flagSrc = urlPrefix + 'public/img/payment-methods-flags/42x20/{brand}.png';
+        let flagSrc = urlPrefix + 'public/img/payment-methods-flags/68x30/{brand}.png';
         let style = 'background-image: url(' + flagSrc + ');' +
             'background-repeat: no-repeat;' +
             'background-position: calc(100% - 5px) center;' +

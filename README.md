@@ -2,13 +2,15 @@
 [![GitHub release](https://img.shields.io/github/v/release/r-martins/PagBank-Magento1)](https://github.com/r-martins/PagBank-Magento1)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r-martins/PagBank-Magento1/master)
 # Módulo PagBank(PagSeguro) Connect para Magento1
-![Módulo PagBank para Magento 2](https://imgur.com/LqdBGik.jpg)
+![Módulo PagBank para Magento 2](https://i.ibb.co/Z2Bbnz6/Banner-Magento1-Pag-Bank.jpg)
 ## Nova Geração - Novas APIs, Novos Recursos, Mais Estabilidade
-Aceite mais de 30 cartões de crédito, PIX e boleto em sua loja Magento 1.x ou OpenMage, usando o meio de pagamento mais aceito pelos brasileiros.
+Aceite mais de 30 cartões de crédito, PIX e boleto em sua loja [Magento 1.x](http://bit.ly/m1download) ou [OpenMage LTS](https://www.openmage.org/), usando o meio de pagamento mais aceito pelos brasileiros.
 
 Chega de reprovações e chargebacks! Nosso novo módulo tem suporte a PIX transparente e 3D Secure, alcançando até 99% de aprovação no cartão de crédito sem necessidade de antifraude.
 
 Agora usando as Novas APIs do PagBank.
+
+A integração mais usada do Brasil, agora com mais recursos, mais estabilidade e ainda mais segurança.
 
 # Recursos
 
@@ -16,9 +18,9 @@ Agora usando as Novas APIs do PagBank.
 - Autenticação 3D Secure para evitar chargebacks e aumentar aprovação
 - PIX e Boleto com validades configuráveis
 - Atualização automática do status do pedido
-- Pagamento em 1x ou parcelado
+- Pagamento em 1x ou parcelado, com várias configurações de parcelamento
 - Identificador do nome da loja na fatura
-- Descontos nas taxa oficiais do PagBank (ou suas taxas)
+- Descontos nas taxa oficiais do PagBank (ou use suas taxas)
 - Suporte a Sandbox
 - Link direto para a transação disponível no admin
 - Suporte a todos os tipos de produtos
@@ -28,17 +30,17 @@ Agora usando as Novas APIs do PagBank.
 
 <details>
   <summary>Veja alguns Screenshots (clique aqui para expandir)</summary>
-  <img src="https://imgur.com/pSd0OZr.jpg" alt="Configurações gerais do módulo" title="Configurações gerais do módulo"/>
-  <img src="https://imgur.com/Pifbsag.jpg" alt="PIX - Tela de Sucesso" title="PIX - Tela de Sucesso"/>
-  <img src="https://i.imgur.com/0tJYbxG.png" alt="Salvar Cartão ou usar um anterior" title="Salvar Cartão ou usar um anterior"/>
-  <img src="https://imgur.com/u6GgNms.jpg" alt="Configurações de cartão de crédito" title="Configurações de cartão de crédito"/>
-  <img alt="PIX - Configurações" src="https://imgur.com/afVmRTj.jpg" title="PIX - Configurações"/>
-  <img alt="Boleto - Configurações" src="https://imgur.com/Hn8TgMd.jpg" title="Boleto - Configurações"/>
+  <img src="https://i.imgur.com/TNU3sgW.png" alt="Cartão de crédito PagBank(PagSeguro) no front end" title="Cartão de crédito PagBank(PagSeguro) no front end"/>
+  <img src="https://i.imgur.com/qpIkGT8.png" alt="PIX - Tela de Sucesso" title="PIX - Tela de Sucesso"/>
+  <img src="https://i.imgur.com/fjirExl.png" alt="Configurações de cartão de crédito" title="Configurações de cartão de crédito"/>
+  <img alt="Admin - Tela do pedido" src="https://i.imgur.com/rfx75Rt.png" title="Admin - Tela do pedido"/>
+  <img alt="Autenticação 3D Secure" src="https://i.imgur.com/IrhEgMN.png" title="Autenticação 3D Secure"/>
+  <img alt="Compatibilidade com OpenMage e os principais checkouts do mercado" src="https://i.imgur.com/gdUCw42.png" title="Compatibilidade com OpenMage e os principais checkouts do mercado"/>
 </details>
 
 # Pré-requisitos
-- Magento 1.9.x ou OpenMage LTS
-- PHP 5.6 ou superior (preferncialmente 7.4 ou superior)
+- OpenMage LTS (recomendado) ou Magento 1.7.x a 1.9.x
+- PHP 5.6 ou superior (recomendado 7.4 ou superior)
 
 # Instalação
 
