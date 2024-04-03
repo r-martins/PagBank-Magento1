@@ -2,6 +2,8 @@
 
 class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Method_Abstract
 {
+    const IS_SANDBOX = 'is_sandbox';
+
     /**
      * Process the notification from the gateway
      *

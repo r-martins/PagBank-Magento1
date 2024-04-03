@@ -1,0 +1,17 @@
+<?php
+/**
+ * @see RicardoMartins_PagBank_Block_Form_Info_Cc
+ */
+?>
+<p class="subtitle"><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></strong></p>
+
+<?php if ($_specificInfo = $this->getSpecificInformation()):?>
+<dl class="payment-info">
+    <?php foreach ($_specificInfo as $_label => $_value):?>
+        <dt><?php echo $this->escapeHtml($_label)?></dt>
+        <dd><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></dd>
+    <?php endforeach ?>
+</dl>
+<?php endif ?>
+
+<?php echo $this->getChildHtml()?>

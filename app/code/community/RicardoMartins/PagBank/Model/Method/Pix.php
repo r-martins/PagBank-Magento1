@@ -39,6 +39,8 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
         if (isset($response['qr_codes'])) {
             $qrCodes = $response['qr_codes'][0];
             $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
+            $addData['pix'][self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
+
             foreach ($qrCodes['links'] as $link) {
                 if ($link['media'] == 'image/png') {
                     $addData['pix']['qrcode_image'] = $link['href'];
