@@ -90,6 +90,9 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
 
             $payment->setAdditionalData(serialize($addData));
             $payment->save();
+
+            $status = $charges[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] ?: '';
+            $this->handleNotification($this->getOrder(), $status);
         } else {
             Mage::throwException($this->_getHelper()->__("Erro no pagamento!\nMotivo: " . $paymetMethod->error_description . ".\nPor favor tente novamente mais tarde!"));
         }
