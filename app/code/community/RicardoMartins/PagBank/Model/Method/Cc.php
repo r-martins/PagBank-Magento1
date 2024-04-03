@@ -20,6 +20,7 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
 
     protected $_code = 'ricardomartins_pagbank_cc';
     protected $_formBlockType = 'ricardomartins_pagbank/form_cc';
+    protected $_infoBlockType = 'ricardomartins_pagbank/form_info_cc';
     protected $_order = null;
     protected $_canUseForMultishipping  = false;
 
@@ -66,6 +67,7 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
 
         if ($charges['payment_response']['code'] == 20000) {
             $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
+            $addData[self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
 
             $card = $paymetMethod['card'];
             $addData[self::CC_BRAND] = $card['brand'];

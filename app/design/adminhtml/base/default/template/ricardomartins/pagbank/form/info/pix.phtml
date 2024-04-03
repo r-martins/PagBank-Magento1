@@ -5,6 +5,12 @@
 ?>
 <p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (PagBank - Ricardo Martins)</strong></p>
 <?php if($info = $this->getPixAdditionalData()): ?>
+    <p>
+        <strong>
+            <?= $this->__('Is Sandbox') ?>:
+            <?= $this->__($this->escapeHtml($info['is_sandbox'])) ?>
+        </strong>
+    </p>
     <div class="pix-qr-container">
         <img src="<?= $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?= $this->__('Scan the code below with your bank\'s app.') ?>" width="200px" />
     </div>

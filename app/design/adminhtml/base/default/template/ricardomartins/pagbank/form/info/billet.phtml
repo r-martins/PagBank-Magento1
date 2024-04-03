@@ -5,6 +5,12 @@
 ?>
 <p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (PagBank - Ricardo Martins)</strong></p>
 <?php if($info = $this->getBilletAdditionalData()): ?>
+    <p>
+        <strong>
+            <?= $this->__('Is Sandbox') ?>:
+            <?= $this->__($this->escapeHtml($info['is_sandbox'])) ?>
+        </strong>
+    </p>
     <p class="barcode">
         <?= $this->__('Barcode:') ?>
         <br>

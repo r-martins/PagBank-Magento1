@@ -41,6 +41,8 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
 
         if ($charges['payment_response']['code'] == 20000) {
             $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
+            $addData['billet'][self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
+
             foreach ($links as $link) {
                 if ($link['media'] == 'application/pdf') {
                     $addData['billet']['payment_link_boleto_pdf'] = $link['href'];
