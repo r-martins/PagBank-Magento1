@@ -81,3 +81,7 @@
 "Interest paid by the buyer","Juros por conta do comprador"
 "Up to X interest-free installments", "Até X Parcelas sem juros",
 "Up to X interest-free installments depending on the amount of the installment","Até X parcelas sem juros dependendo do valor da parcela"
+"Could not confirm payment of the order #%s. The order status is not allowed.","Não foi possível confirmar o pagamento do pedido #%s. O status do pedido não é permitido."
+"Order #%s already has an invoice.","O pedido #%s já possui uma fatura."
+"The order #%s cannot be invoiced.","O pedido #%s não pode ser faturado."
+"The order #%s cannot be canceled.","O pedido #%s não pode ser cancelado."

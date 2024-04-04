@@ -49,6 +49,10 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
     {
         $order = $payment->getOrder();
 
+        if (!$order->canCancel()) {
+            Mage::throwException(sprintf("The order #%s cannot be canceled.", $order->getIncrementId()));
+        }
+
         // checks if the order state is 'Pending Payment' and changes it
         // so that the order can be cancelled. Orders with STATE_PAYMENT_REVIEW cannot be cancelled by default in
         // Magento. See #181550828 for details
@@ -79,11 +83,15 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
         );
 
         if(in_array($order->getState(), $notAllowedStates)) {
-            Mage::throwException(sprintf("Could not confirm payment of the order #%s.", $order->getIncrementId()));
+            Mage::throwException(sprintf("Could not confirm payment of the order #%s. The order status is not allowed.", $order->getIncrementId()));
         }
 
         if($order->hasInvoices()) {
-            Mage::throwException(sprintf("Could not confirm payment of the order #%s. Order already has an invoice.", $order->getIncrementId()));
+            Mage::throwException(sprintf("Order #%s already has an invoice.", $order->getIncrementId()));
+        }
+
+        if (!$order->canInvoice()) {
+            Mage::throwException(sprintf("The order #%s cannot be invoiced.", $order->getIncrementId()));
         }
 
         /** @var Mage_Sales_Model_Order_Payment $invoice */
