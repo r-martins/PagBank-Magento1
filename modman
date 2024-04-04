@@ -71,7 +71,6 @@ app/code/community/RicardoMartins/PagBank/controllers/NotificationController.php
 app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php
 app/code/community/RicardoMartins/PagBank/controllers/TestController.php app/code/community/RicardoMartins/PagBank/controllers/TestController.php
 app/code/community/RicardoMartins/PagBank/Helper/Data.php app/code/community/RicardoMartins/PagBank/Helper/Data.php
-app/code/community/RicardoMartins/PagBank/composer.json app/code/community/RicardoMartins/PagBank/composer.json
 app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php
 app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php
 app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
@@ -82,3 +81,4 @@ app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php app/code
 js/ricardomartins/pagbank/mask.js js/ricardomartins/pagbank/mask.js
 js/ricardomartins/pagbank/creditcard.js js/ricardomartins/pagbank/creditcard.js
 README.md README.md
+composer.json composer.json
