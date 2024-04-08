@@ -74,4 +74,30 @@ class RicardoMartins_PagBank_Model_Observer
         }
         return $this;
     }
+
+    /**
+     * @param $observer
+     * @return $this
+     * @throws Throwable
+     */
+    public function salesOrderPaymentPlaceEnd($observer)
+    {
+        $payment = $observer->getEvent()->getPayment();
+        $order = $payment->getOrder();
+        $method = $payment->getMethodInstance();
+
+        if ($method instanceof RicardoMartins_PagBank_Model_Method_Cc) {
+            try {
+                $additionalData = unserialize($payment->getAdditionalData());
+                $statusPagbank = $additionalData['status_pagbank'];
+                if ($statusPagbank) {
+                    $method->handleNotification($order, $statusPagbank);
+                }
+            } catch (\Exception $e) {
+                $helper = Mage::helper('ricardomartins_pagbank');
+                $helper->writeLog(sprintf('Error handling PagBank return: %s', $e->getMessage()));
+            }
+        }
+        return $this;
+    }
 }

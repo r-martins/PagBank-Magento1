@@ -128,6 +128,15 @@
                     </ricardomartins_pagbank>
                 </observers>
             </payment_info_block_prepare_specific_information>
+            <sales_order_payment_place_end>
+                <observers>
+                    <ricardomartins_pagbank>
+                        <type>model</type>
+                        <class>ricardomartins_pagbank/observer</class>
+                        <method>salesOrderPaymentPlaceEnd</method>
+                    </ricardomartins_pagbank>
+                </observers>
+            </sales_order_payment_place_end>
         </events>
     </frontend>
     <adminhtml>

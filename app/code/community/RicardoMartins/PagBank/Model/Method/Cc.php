@@ -17,6 +17,7 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
     const CC_PAGBANK_SESSION = 'cc_has_session';
     const AUTHORIZATION_CODE = 'authorization_code';
     const NSU = 'nsu';
+    const STATUS_PAGBANK = 'status_pagbank';
 
     protected $_code = 'ricardomartins_pagbank_cc';
     protected $_formBlockType = 'ricardomartins_pagbank/form_cc';
@@ -77,6 +78,7 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
             $addData[self::CC_OWNER] = $card['holder']['name'];
             $addData[self::CC_INSTALLMENTS] = $paymetMethod['installments'];
             $addData[self::CHARGE_ID] = $charges['id'];
+            $addData[self::STATUS_PAGBANK] = $charges[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] ?: '';
 
             $paymentRawData = $paymetResponse['raw_data'];
             $addData[self::AUTHORIZATION_CODE] = $paymentRawData['authorization_code'];
@@ -90,11 +92,6 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
 
             $payment->setAdditionalData(serialize($addData));
             $payment->save();
-
-            try {
-                $status = $charges[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] ?: '';
-                $this->handleNotification($this->getOrder(), $status);
-            } catch (Exception $e) {}
         } else {
             Mage::throwException($this->_getHelper()->__("Erro no pagamento!\nMotivo: " . $paymetMethod->error_description . ".\nPor favor tente novamente mais tarde!"));
         }
