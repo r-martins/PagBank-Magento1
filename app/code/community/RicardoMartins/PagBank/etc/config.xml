@@ -31,7 +31,7 @@
                 <active>1</active>
                 <title>Boleto - PagBank</title>
                 <sort_order>2</sort_order>
-                <order_status>pending</order_status>
+                <order_status>pending_payment</order_status>
                 <allowspecific>0</allowspecific>
                 <payment_action>order</payment_action>
                 <model>ricardomartins_pagbank/method_billet</model>
@@ -43,7 +43,7 @@
                 <active>1</active>
                 <title>Pix - PagBank</title>
                 <sort_order>3</sort_order>
-                <order_status>pending</order_status>
+                <order_status>pending_payment</order_status>
                 <allowspecific>0</allowspecific>
                 <payment_action>order</payment_action>
                 <model>ricardomartins_pagbank/method_pix</model>
