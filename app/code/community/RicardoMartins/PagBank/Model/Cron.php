@@ -18,7 +18,7 @@ class RicardoMartins_PagBank_Model_Cron
                 'main_table.entity_id = payment.parent_id',
                 ['payment_method' => 'payment.method']
             )
-            ->addFieldToFilter('status', 'pending')
+            ->addFieldToFilter('status', 'pending_payment')
             ->addFieldToFilter('method', 'ricardomartins_pagbank_pix')
             ->getSelect()
             ->order('entity_id');
