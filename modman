@@ -6,11 +6,13 @@ app/design/frontend/base/default/layout/ricardomartins/pagbank/payments.xml app/
 app/design/frontend/base/default/template/ricardomartins/pagbank/form/pix.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/form/pix.phtml
 app/design/frontend/base/default/template/ricardomartins/pagbank/form/cc.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/form/cc.phtml
 app/design/frontend/base/default/template/ricardomartins/pagbank/form/info/pix.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/form/info/pix.phtml
+app/design/frontend/base/default/template/ricardomartins/pagbank/form/info/cc.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/form/info/cc.phtml
 app/design/frontend/base/default/template/ricardomartins/pagbank/form/info/billet.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/form/info/billet.phtml
 app/design/frontend/base/default/template/ricardomartins/pagbank/form/billet.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/form/billet.phtml
 app/design/frontend/base/default/template/ricardomartins/pagbank/checkout/info/pix.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/checkout/info/pix.phtml
 app/design/frontend/base/default/template/ricardomartins/pagbank/checkout/info/billet.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/checkout/info/billet.phtml
 app/design/adminhtml/base/default/template/ricardomartins/pagbank/form/info/pix.phtml app/design/adminhtml/base/default/template/ricardomartins/pagbank/form/info/pix.phtml
+app/design/adminhtml/base/default/template/ricardomartins/pagbank/form/info/cc.phtml app/design/adminhtml/base/default/template/ricardomartins/pagbank/form/info/cc.phtml
 app/design/adminhtml/base/default/template/ricardomartins/pagbank/form/info/billet.phtml app/design/adminhtml/base/default/template/ricardomartins/pagbank/form/info/billet.phtml
 app/locale/pt_BR/RicardoMartins_PagBank.csv app/locale/pt_BR/RicardoMartins_PagBank.csv
 app/etc/modules/RicardoMartins_PagBank.xml app/etc/modules/RicardoMartins_PagBank.xml
@@ -75,6 +77,7 @@ app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php app/code/communi
 app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php
 app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
 app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php
+app/code/community/RicardoMartins/PagBank/Block/Form/Info/Cc.php app/code/community/RicardoMartins/PagBank/Block/Form/Info/Cc.php
 app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
 app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Billet.php app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Billet.php
 app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php

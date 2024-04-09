@@ -1,8 +1,8 @@
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/r-martins/PagBank-Magento1)](https://github.com/r-martins/PagBank-Magento1)
-![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r-martins/PagBank-Magento1/master)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r-martins/PagBank-Magento1/develop)
 # Módulo PagBank(PagSeguro) Connect para Magento1
-![Módulo PagBank para Magento 2](https://i.ibb.co/Z2Bbnz6/Banner-Magento1-Pag-Bank.jpg)
+![Módulo PagBank para Magento 2](https://i.ibb.co/Z2Bbnz6/Banner-Magento1-Pag-Bank.jpg?1=1)
 ## Nova Geração - Novas APIs, Novos Recursos, Mais Estabilidade
 Aceite mais de 30 cartões de crédito, PIX e boleto em sua loja [Magento 1.x](http://bit.ly/m1download) ou [OpenMage LTS](https://www.openmage.org/), usando o meio de pagamento mais aceito pelos brasileiros.
 
@@ -15,7 +15,7 @@ A integração mais usada do Brasil, agora com mais recursos, mais estabilidade 
 # Recursos
 
 - Aceite pagamentos com Cartão de Crédito, PIX ou Boleto de forma transparente (sem sair da loja)
-- Autenticação 3D Secure para evitar chargebacks e aumentar aprovação
+- [Autenticação 3D Secure](https://pagsegurotransparente.zendesk.com/hc/pt-br/articles/22375922278157) para evitar chargebacks e aumentar aprovação
 - PIX e Boleto com validades configuráveis
 - Atualização automática do status do pedido
 - Pagamento em 1x ou parcelado, com várias configurações de parcelamento
@@ -44,7 +44,7 @@ A integração mais usada do Brasil, agora com mais recursos, mais estabilidade 
 
 # Instalação
 
-Escolha uma das formas de instalação abaixo
+Escolha uma das formas de instalação abaixo:
 
 ## Instale com Composer
 - Certifique-se que você [configurou seu Magento para ter suporte a composer](https://www.magenteiro.com/blog/magento-1/magento-e-composer-como-gerenciar-melhor-seus-modulos-e-pacotes/).
@@ -63,7 +63,7 @@ Você pode usar [modman](https://github.com/colinmollenhour/modman) para instala
 - Digite o comando `modman clone https://github.com/r-martins/PagBank-Magento1.git` na raiz da sua instalação Magento.
 - Limpe o cache do Magento
 
-## Configuração do Módulo PagBank(PagSeguro) Connect
+# Configuração do Módulo PagBank(PagSeguro) Connect
 - Navegue até Lojas &gt; Configurações &gt; Vendas &gt; Formas de Pagamento &gt; **PagBank - Ricardo Martins**.
   - Clique em "Obter Connect Key" ou "Obter Connect Key para Testes" e siga as instruções para obter sua Connect Key e preenche-la no campo indicado logo abaixo.
   - Salve as configurações e você está pronto para vender.
@@ -71,23 +71,23 @@ Você pode usar [modman](https://github.com/colinmollenhour/modman) para instala
 - Em Clientes &gt; Configurações &gt; Opções de Nome e Endereço, configure o campo "Número de Linhas p/ Endereço" para 4.
 
 
-### Criptografia do cartão no checkout ℹ️
+## Criptografia do cartão no checkout ℹ️
 Dependendo do checkout que estiver utilizando ou de customizações no tema, você também precisará [configurar o "Identificador CSS do botão de Finalizar Compra"](https://pagsegurotransparente.zendesk.com/hc/pt-br/articles/360039820711-Configurando-o-bot%C3%A3o-de-Finalizar-Compra).
 
 Isso é necessário para que o módulo possa criptografar os dados do cartão de crédito antes de enviá-los ao PagBank e também para o correto funcionamento do recurso de 3D Secure (quando ativado).
 
 
-## Site Oficial do Módulo
+# Site Oficial do Módulo
 https://pagseguro.ricardomartins.net.br/
 
 Disponível também para [Magento 2.x](https://pagseguro.ricardomartins.net.br/magento2.html) e [WooCommerce](https://pagseguro.ricardomartins.net.br/woocommerce.html).
 
-## Cursos Magento
+# Cursos Magento
 Em [Magenteiro.com/cursos](https://www.magenteiro.com/cursos?___store=default&utm_source=github-m1&utm_medium=readme&utm_campaign=readme.md) você encontra uma dezena de cursos pagos e gratuitos sobre Magento, inclusive o famoso curso gratuito [Sua loja com PagSeguro e OneStepCheckout](https://www.magenteiro.com/sua-loja-com-pagseguro-e-onestepcheckout?___store=default&utm_source=github-m1&utm_medium=readme&utm_campaign=readme.md).
 
 Veja tamém o [canal Magenteiro no YouTube](https://youtube.com/@Magenteiro).
 
-## Central de ajuda e suporte
+# Central de ajuda e suporte
 https://pagsegurotransparente.zendesk.com/hc/pt-br/
 
 
@@ -173,3 +173,5 @@ Ao usar este plugin você concorda com os [Termos de Uso e Política de Privacid
 - [Site Oficial das Integrações PagBank por Ricardo Martins](https://pagseguro.ricardomartins.net.br/)
 - [Central de Ajuda](https://pagsegurotransparente.zendesk.com/hc/pt-br/)
 - [Termos de Uso e Política de Privacidade](https://pagseguro.ricardomartins.net.br/terms.html)
+- [Vídeos no Youtube](https://www.youtube.com/@Magenteiro/search?query=pagseguro)
+- [Artigos](https://www.magenteiro.com/blog/tag/pagseguro)
