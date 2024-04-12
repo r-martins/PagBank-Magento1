@@ -5,26 +5,26 @@
 ?>
 <?php if ($this->isVisible()): ?>
 <div class="ricardomartins-pagbank-success">
-    <h2><?= $this->__('Pay your billet') ?></h2>
-    <p><?= $this->__('Copy the barcode below and pay directly to your bank.') ?></p>
+    <h2><?php echo $this->__('Pay your billet') ?></h2>
+    <p><?php echo $this->__('Copy the barcode below and pay directly to your bank.') ?></p>
     <div class="code-container">
         <label for="barcode">
-            <?= $this->__('Barcode:') ?>
+            <?php echo $this->__('Barcode:') ?>
         </label>
         <div class="code-content">
             <span>
-                <input type="text" id="barcode" class="payment-code" value="<?= $this->escapeHtml($this->getPaymentBarcode()) ?>" readonly="readonly"/>
-                <img src="<?= $this->getSkinUrl('images/ricardomartins/pagbank/copy-icon.svg'); ?>" alt="<?= $this->__('Copy') ?>" title="<?= $this->__('Copy') ?>" class="copy-btn"/>
+                <input type="text" id="barcode" class="payment-code" value="<?php echo $this->escapeHtml($this->getPaymentBarcode()) ?>" readonly="readonly"/>
+                <img src="<?php echo $this->getSkinUrl('images/ricardomartins/pagbank/copy-icon.svg'); ?>" alt="<?php echo $this->__('Copy') ?>" title="<?php echo $this->__('Copy') ?>" class="copy-btn"/>
             </span>
-            <p class="copied" style="display: none"><?= $this->__('Copied ✔') ?></p>
+            <p class="copied" style="display: none"><?php echo $this->__('Copied ✔') ?></p>
         </div>
     </div>
     <div class="boleto-exiration-container">
-        <p><strong><?= $this->__('Your billet expires in %s', $this->escapeHtml($this->formatDate($this->getExpirationDate()))) ?></strong></p>
+        <p><strong><?php echo $this->__('Your billet expires in %s', $this->escapeHtml($this->formatDate($this->getExpirationDate()))) ?></strong></p>
     </div>
     <div class="actions-toolbar">
-        <a href="<?= $this->escapeUrl($this->getPaymentLinkBilletPdf()) ?>" target="_blank" class="button action primary"><?= $this->__('Download billet file') ?></a>
-        <a href="<?= $this->escapeUrl($this->getPaymentLinkBilletImage()) ?>" target="_blank" class="button action primary"><?= $this->__('Print billet file') ?></a>
+        <a href="<?php echo $this->escapeUrl($this->getPaymentLinkBilletPdf()) ?>" target="_blank" class="button action primary"><?php echo $this->__('Download billet file') ?></a>
+        <a href="<?php echo $this->escapeUrl($this->getPaymentLinkBilletImage()) ?>" target="_blank" class="button action primary"><?php echo $this->__('Print billet file') ?></a>
     </div>
 </div>
 <?php endif; ?>
