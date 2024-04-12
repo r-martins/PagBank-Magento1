@@ -66,6 +66,10 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         $totalAmount = $this->order->getBaseGrandTotal();
         if ($selectedInstallments > 1) {
             $creditCardBin = $payment->getAdditionalInformation('cc_bin');
+            $isSandbox = $helper->isSandbox($storeId);
+            if ($isSandbox) {
+                $creditCardBin = $helper->getSandboxCcBin();
+            }
 
             /** @var RicardoMartins_PagBank_Model_Request_Builder_Installments $installmentsBuilder */
             $installmentsBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_installments', $creditCardBin);

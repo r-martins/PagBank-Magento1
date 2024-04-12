@@ -98,6 +98,16 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the sandbox credit card bin
+     *
+     * @return string
+     */
+    public function getSandboxCcBin()
+    {
+        return RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_CC_BIN;
+    }
+
+    /**
      * Get the connect key
      *
      * @param $storeId
