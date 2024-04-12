@@ -96,6 +96,13 @@ interface RicardoMartins_PagBank_Api_Connect_ConnectInterface
     const SANDBOX_PREFIX = 'CONSANDBOX';
 
     /**
+     * Sandbox CC Bin.
+     * This CC Bin is used to simulate a successful transaction to get the installments in the Sandbox.
+     * @var string
+     */
+    const SANDBOX_CC_BIN = '555566';
+
+    /**
      * Transaction Details URL from PagBank Dashboard.
      * Do not use if you are using the Sandbox.
      */
