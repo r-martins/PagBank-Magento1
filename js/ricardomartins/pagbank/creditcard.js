@@ -266,7 +266,7 @@ RMPagBank.prototype = {
 
         new Ajax.Request(this.config.installments_endpoint, {
             method: 'POST',
-            data: {
+            parameters: {
                 cc_bin: ccBin
             },
             onSuccess: function(transport) {
