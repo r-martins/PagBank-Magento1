@@ -7,24 +7,24 @@
 <?php if($info = $this->getBilletAdditionalData()): ?>
     <p>
         <strong>
-            <?= $this->__('Is Sandbox') ?>:
-            <?= $this->__($this->escapeHtml($info['is_sandbox'])) ?>
+            <?php echo $this->__('Is Sandbox') ?>:
+            <?php echo $this->__($this->escapeHtml($info['is_sandbox'])) ?>
         </strong>
     </p>
     <p class="barcode">
-        <?= $this->__('Barcode:') ?>
+        <?php echo $this->__('Barcode:') ?>
         <br>
-        <?= $this->escapeHtml($info['formatted_barcode']) ?>
+        <?php echo $this->escapeHtml($info['formatted_barcode']) ?>
     </p>
-    <p><b><?= $this->__('Billet expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
+    <p><b><?php echo $this->__('Billet expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
     <p>
-        <a href="<?= $this->escapeUrl($info['payment_link_boleto_pdf']);?>" target="_blank">
-            <?= $this->__('Download billet file') ?>
+        <a href="<?php echo $this->escapeUrl($info['payment_link_boleto_pdf']);?>" target="_blank">
+            <?php echo $this->__('Download billet file') ?>
         </a>
     </p>
     <p>
-        <a href="<?= $this->escapeUrl($info['payment_link_boleto_image']);?>" target="_blank">
-            <?= $this->__('Print billet file') ?>
+        <a href="<?php echo $this->escapeUrl($info['payment_link_boleto_image']);?>" target="_blank">
+            <?php echo $this->__('Print billet file') ?>
         </a>
     </p>
 <?php endif; ?>
