@@ -7,14 +7,14 @@
 
 <table>
     <tr>
-        <td><b><?= $this->__('Is Sandbox') ?>:</b></td>
-        <td><b><?= $this->__($this->escapeHtml($this->isSandBox())) ?></b></td>
+        <td><b><?php echo $this->__('Is Sandbox') ?>:</b></td>
+        <td><b><?php echo $this->__($this->escapeHtml($this->isSandBox())) ?></b></td>
     </tr>
 <?php if ($_specificInfo = $this->getSpecificInformation()):?>
     <?php foreach ($_specificInfo as $_label => $_value):?>
         <tr>
-            <td><?= $this->escapeHtml($_label)?>:</td>
-            <td><?= nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></td>
+            <td><?php echo $this->escapeHtml($_label)?>:</td>
+            <td><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></td>
         </tr>
     <?php endforeach ?>
 <?php endif ?>

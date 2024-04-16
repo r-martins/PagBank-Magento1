@@ -7,17 +7,17 @@
 <?php if($info = $this->getPixAdditionalData()): ?>
     <p>
         <strong>
-            <?= $this->__('Is Sandbox') ?>:
-            <?= $this->__($this->escapeHtml($info['is_sandbox'])) ?>
+            <?php echo $this->__('Is Sandbox') ?>:
+            <?php echo $this->__($this->escapeHtml($info['is_sandbox'])) ?>
         </strong>
     </p>
     <div class="pix-qr-container">
-        <img src="<?= $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?= $this->__('Scan the code below with your bank\'s app.') ?>" width="200px" />
+        <img src="<?php echo $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?php echo $this->__('Scan the code below with your bank\'s app.') ?>" width="200px" />
     </div>
     <p class="qrcode">
-        <?= $this->__('Pix Code:') ?>
+        <?php echo $this->__('Pix Code:') ?>
         <br>
-        <?= $this->escapeHtml($info['qrcode_text']) ?>
+        <?php echo $this->escapeHtml($info['qrcode_text']) ?>
     </p>
-    <p><b><?= $this->__('Pix code expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
+    <p><b><?php echo $this->__('Pix code expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
 <?php endif; ?>

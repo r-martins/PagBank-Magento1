@@ -7,60 +7,60 @@ $_grandTotal = (!$_grandTotal)?'null':$_grandTotal;
 /** @var RicardoMartins_PagBank_Helper_Data $pagbankHelper */
 $pagbankHelper = Mage::helper('ricardomartins_pagbank');
 ?>
-<ul class="form-list ricardomartins-pagbank ricardomartins-pagbank-cc" id="payment_form_<?= $_code ?>" style="display:none;">
+<ul class="form-list ricardomartins-pagbank ricardomartins-pagbank-cc" id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li class="ricardomartins-pagbank-cc-number-row">
         <div>
-            <label for="<?= $_code ?>_cc_number" class="required">
-                <?= $this->__('Credit Card Number') ?>
+            <label for="<?php echo $_code ?>_cc_number" class="required">
+                <?php echo $this->__('Credit Card Number') ?>
             </label>
             <div class="input-box">
-                <input type="text" id="<?= $_code ?>_cc_number" name="payment[cc_number]"
-                       placeholder="<?= $this->__('•••• •••• •••• ••••') ?>" title="<?= $this->__('Credit Card Number') ?>"
+                <input type="text" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]"
+                       placeholder="<?php echo $this->__('•••• •••• •••• ••••') ?>" title="<?php echo $this->__('Credit Card Number') ?>"
                        data-js="creditCard"
                        class="input-text validate-cc-number validate-cc-type required-entry" />
                 <span id="card-brand" style="text-transform: capitalize; display: block; margin-top: 1px"></span>
                 <span id="card-msg" style="color: red;clear:left; display: block;"></span>
             </div>
         </div>
-        <input type="hidden" id="<?= $_code ?>_cc_brand" name="payment[cc_brand]" />
-        <input type="hidden" id="<?= $_code ?>_cc_number_encrypted" name="payment[cc_number_encrypted]" />
-        <input type="hidden" id="<?= $_code ?>_cc_bin" name="payment[cc_bin]" />
-        <input type="hidden" id="<?= $_code ?>_cc_3ds_id" name="payment[cc_3ds_id]" />
-        <input type="hidden" id="<?= $_code ?>_cc_has_session" name="payment[cc_has_session]" />
+        <input type="hidden" id="<?php echo $_code ?>_cc_brand" name="payment[cc_brand]" />
+        <input type="hidden" id="<?php echo $_code ?>_cc_number_encrypted" name="payment[cc_number_encrypted]" />
+        <input type="hidden" id="<?php echo $_code ?>_cc_bin" name="payment[cc_bin]" />
+        <input type="hidden" id="<?php echo $_code ?>_cc_3ds_id" name="payment[cc_3ds_id]" />
+        <input type="hidden" id="<?php echo $_code ?>_cc_has_session" name="payment[cc_has_session]" />
     </li>
     <li class="ricardomartins-pagbank-cc-exp-cvv-row">
         <div>
-            <label for="<?= $_code ?>_cc_exp" class="required">
-                <?= $this->__('Expiry Date') ?>
+            <label for="<?php echo $_code ?>_cc_exp" class="required">
+                <?php echo $this->__('Expiry Date') ?>
             </label>
             <div class="input-box">
-                <input type="text" id="<?= $_code ?>_cc_exp" name="payment[cc_expiration]"
-                       placeholder="<?= $this->__('MM/AA') ?>" title="<?= $this->__('Expiry Date') ?>"
+                <input type="text" id="<?php echo $_code ?>_cc_exp" name="payment[cc_expiration]"
+                       placeholder="<?php echo $this->__('MM/AA') ?>" title="<?php echo $this->__('Expiry Date') ?>"
                        data-js="date"
                        class="input-text required-entry" />
             </div>
         </div>
         <div>
-            <label for="<?= $_code ?>_cc_cvv" class="required">
-                <?= $this->__('Card Verification Number') ?>
+            <label for="<?php echo $_code ?>_cc_cvv" class="required">
+                <?php echo $this->__('Card Verification Number') ?>
             </label>
             <div class="input-box">
-                <input type="text" id="<?= $_code ?>_cc_cvc" name="payment[cc_cvc]" maxlength="4"
-                       placeholder="<?= $this->__('CVC') ?>" title="<?= $this->__('Card Verification Number') ?>"
+                <input type="text" id="<?php echo $_code ?>_cc_cvc" name="payment[cc_cvc]" maxlength="4"
+                       placeholder="<?php echo $this->__('CVC') ?>" title="<?php echo $this->__('Card Verification Number') ?>"
                        data-js="cvv"
                        class="input-text required-entry" />
-                <a href="#" class="cvv-what-is-this"><?= $this->__('What is this?') ?></a>
+                <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
             </div>
         </div>
     </li>
     <li class="ricardomartins-pagbank-cc-owner-row">
         <div>
-            <label for="<?= $_code ?>_cc_owner" class="required">
-                <?= $this->__('Credit Card Owner') ?>
+            <label for="<?php echo $_code ?>_cc_owner" class="required">
+                <?php echo $this->__('Credit Card Owner') ?>
             </label>
             <div class="input-box">
-                <input type="text" id="<?= $_code ?>_cc_owner" name="payment[cc_owner]"
-                       placeholder="<?= $this->__('As printed on the card') ?>" title="<?= $this->__('Credit Card Owner') ?>"
+                <input type="text" id="<?php echo $_code ?>_cc_owner" name="payment[cc_owner]"
+                       placeholder="<?php echo $this->__('As printed on the card') ?>" title="<?php echo $this->__('Credit Card Owner') ?>"
                        class="input-text required-entry" />
             </div>
         </div>
@@ -68,10 +68,10 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
     <?php if ($this->isDocumentFieldVisible()): ?>
         <li class="ricardomartins-pagbank-cc-document-row">
             <div>
-                <label for="<?= $_code ?>_document" class="required"><?= $this->__('CPF/CNPJ') ?></label>
+                <label for="<?php echo $_code ?>_document" class="required"><?php echo $this->__('CPF/CNPJ') ?></label>
                 <div class="input-box">
-                    <input type="text" id="<?= $_code ?>_document" name="payment[data_tax_id]"
-                           title="<?= $this->__('CPF/CNPJ') ?>" placeholder="<?= $this->__('CPF/CNPJ') ?>"
+                    <input type="text" id="<?php echo $_code ?>_document" name="payment[data_tax_id]"
+                           title="<?php echo $this->__('CPF/CNPJ') ?>" placeholder="<?php echo $this->__('CPF/CNPJ') ?>"
                            data-js="document"
                            class="input-text validate-length" />
                 </div>
@@ -80,13 +80,13 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
     <?php endif; ?>
     <li class="ricardomartins-pagbank-cc-installments-row">
         <div>
-            <label for="<?= $_code ?>_cc_installments" class="required">
-                <?= $this->__('Installments') ?>
+            <label for="<?php echo $_code ?>_cc_installments" class="required">
+                <?php echo $this->__('Installments') ?>
             </label>
             <div class="input-box">
-                <select name="payment[cc_installments]" id="<?= $_code ?>_cc_installments" class="required-entry">
-                    <option value="1"><?= $this->__('1x of %s (without interest)', $_grandTotal) ?></option>
-                    <option value=""><?= $this->__('Enter the credit card number...') ?></option>
+                <select name="payment[cc_installments]" id="<?php echo $_code ?>_cc_installments" class="required-entry">
+                    <option value="1"><?php echo $this->__('1x of %s (without interest)', $_grandTotal) ?></option>
+                    <option value=""><?php echo $this->__('Enter the credit card number...') ?></option>
                 </select>
             </div>
         </div>
@@ -102,7 +102,7 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
             RMPagBankObj.addCardFieldsObserver();
             return;
         }
-        let pagseguro_connect_3d_session = '<?= $this->getPagSeguroConnect3dSession() ?>';
+        let pagseguro_connect_3d_session = '<?php echo $this->getPagSeguroConnect3dSession() ?>';
         <?php if ($pagbankHelper->isDebugActive()): ?>
         console.info('PagBank inicializando. Aguarde a mensagem de confirmação.');
         <?php endif; ?>
