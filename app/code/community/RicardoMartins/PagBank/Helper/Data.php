@@ -260,12 +260,25 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getHeaders()
     {
-        return [
+        $moduleVersion = (string)Mage::getConfig()->getModuleConfig('RicardoMartins_PagBank')->version;
+        $mageVersion = Mage::getVersion();
+
+        $headers = [
             'Authorization: Bearer ' . $this->getConnectKey(),
             'Accept: application/json',
             'Content-Type: application/json',
-            'Api-Version: 4.0'
+            'Api-Version: 4.0',
+            'Platform: Magento',
+            'Platform-Version: ' . $mageVersion,
+            'Module-Version: ' . $moduleVersion
         ];
+
+        if (method_exists('Mage', 'getOpenMageVersion')) {
+            $openMageVersion = (string)Mage::getOpenMageVersion();
+            $headers[] = 'Extra-Version: ' . $openMageVersion;
+        }
+
+        return $headers;
     }
 
     /**
