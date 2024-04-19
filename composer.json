@@ -35,5 +35,8 @@
     "magento1",
     "openmage",
     "pix"
-  ]
+  ],
+  "require-dev": {
+    "phpstan/phpstan": "^1.10"
+  }
 }

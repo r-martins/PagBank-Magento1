@@ -1,0 +1,7 @@
+parameters:
+    level: 0
+    paths:
+        - .
+    phpVersion: 70100 # for PHP 7.1
+includes:
+	- phpstan-baseline.neon

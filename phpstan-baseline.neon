@@ -1,0 +1,846 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Billet\\:\\:setTemplate\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php
+
+		-
+			message: "#^Call to static method app\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Billet\\:\\:_construct\\(\\) calls parent\\:\\:_construct\\(\\) but RicardoMartins_PagBank_Block_Form_Billet does not extend any class\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Billet\\:\\:_prepareLayout\\(\\) calls parent\\:\\:_prepareLayout\\(\\) but RicardoMartins_PagBank_Block_Form_Billet does not extend any class\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Cc\\:\\:setTemplate\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
+
+		-
+			message: "#^Call to static method app\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
+
+		-
+			message: "#^Call to static method logException\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Cc\\:\\:_construct\\(\\) calls parent\\:\\:_construct\\(\\) but RicardoMartins_PagBank_Block_Form_Cc does not extend any class\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Cc\\:\\:_prepareLayout\\(\\) calls parent\\:\\:_prepareLayout\\(\\) but RicardoMartins_PagBank_Block_Form_Cc does not extend any class\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Cc.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Billet\\:\\:formatDate\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Billet\\:\\:getInfo\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Billet\\:\\:setTemplate\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
+
+		-
+			message: "#^Instantiated class Zend_Date not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Info_Billet\\:\\:_construct\\(\\) calls parent\\:\\:_construct\\(\\) but RicardoMartins_PagBank_Block_Form_Info_Billet does not extend any class\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Cc\\:\\:getInfo\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Cc.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Cc\\:\\:setTemplate\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Cc.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Info_Cc\\:\\:_construct\\(\\) calls parent\\:\\:_construct\\(\\) but RicardoMartins_PagBank_Block_Form_Info_Cc does not extend any class\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Cc.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Pix\\:\\:formatDate\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Pix\\:\\:getInfo\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Pix\\:\\:setTemplate\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php
+
+		-
+			message: "#^Instantiated class Zend_Date not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Info_Pix\\:\\:_construct\\(\\) calls parent\\:\\:_construct\\(\\) but RicardoMartins_PagBank_Block_Form_Info_Pix does not extend any class\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Pix\\:\\:setTemplate\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php
+
+		-
+			message: "#^Call to static method app\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Pix\\:\\:_construct\\(\\) calls parent\\:\\:_construct\\(\\) but RicardoMartins_PagBank_Block_Form_Pix does not extend any class\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php
+
+		-
+			message: "#^RicardoMartins_PagBank_Block_Form_Pix\\:\\:_prepareLayout\\(\\) calls parent\\:\\:_prepareLayout\\(\\) but RicardoMartins_PagBank_Block_Form_Pix does not extend any class\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Block/Form/Pix.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Onepage_Success_Billet\\:\\:getOrder\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Billet.php
+
+		-
+			message: "#^Caught class Zend_Date_Exception not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Billet.php
+
+		-
+			message: "#^Instantiated class Zend_Date not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Onepage_Success_Pix\\:\\:getOrder\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php
+
+		-
+			message: "#^Caught class Zend_Date_Exception not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php
+
+		-
+			message: "#^Instantiated class Zend_Date not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php
+
+		-
+			message: "#^Access to constant DEBUG on an unknown class Zend_Log\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Access to constant URL_TYPE_JS on an unknown class Mage_Core_Model_Store\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Access to constant URL_TYPE_SKIN on an unknown class Mage_Core_Model_Store\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Helper_Data\\:\\:__\\(\\)\\.$#"
+			count: 10
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Helper_Data\\:\\:_getUrl\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method app\\(\\) on an unknown class Mage\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method getBaseUrl\\(\\) on an unknown class Mage\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method getConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method getDesign\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method getOpenMageVersion\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 25
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method getStoreConfigFlag\\(\\) on an unknown class Mage\\.$#"
+			count: 12
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method getVersion\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method log\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Api/Connect/Client.php
+
+		-
+			message: "#^Call to static method throwException\\(\\) on an unknown class Mage\\.$#"
+			count: 5
+			path: app/code/community/RicardoMartins/PagBank/Model/Api/Connect/Client.php
+
+		-
+			message: "#^Access to constant ACTION_FLAG_CANCEL on an unknown class Mage_Sales_Model_Order\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Cron.php
+
+		-
+			message: "#^Call to static method getResourceModel\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Cron.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Cron.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Cron.php
+
+		-
+			message: "#^Access to constant STATE_CANCELED on an unknown class Mage_Sales_Model_Order\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Abstract.php
+
+		-
+			message: "#^Access to constant STATE_CLOSED on an unknown class Mage_Sales_Model_Order\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Abstract.php
+
+		-
+			message: "#^Access to constant STATE_NEW on an unknown class Mage_Sales_Model_Order\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Abstract.php
+
+		-
+			message: "#^Access to constant STATE_PAYMENT_REVIEW on an unknown class Mage_Sales_Model_Order\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Abstract.php
+
+		-
+			message: "#^Access to constant STATE_PROCESSING on an unknown class Mage_Sales_Model_Order\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Abstract.php
+
+		-
+			message: "#^Call to static method throwException\\(\\) on an unknown class Mage\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Abstract.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Method_Billet\\:\\:_getHelper\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Method_Billet\\:\\:getInfoInstance\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 8
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Call to static method registry\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Call to static method throwException\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Class Varien_Object not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Instantiated class Varien_Object not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Parameter \\$payment of method RicardoMartins_PagBank_Model_Method_Billet\\:\\:order\\(\\) has invalid type Varien_Object\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Method_Cc\\:\\:_getHelper\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Method_Cc\\:\\:getInfoInstance\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 8
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Call to static method registry\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Call to static method throwException\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Class Varien_Object not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Instantiated class Varien_Object not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Parameter \\$payment of method RicardoMartins_PagBank_Model_Method_Cc\\:\\:order\\(\\) has invalid type Varien_Object\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Cc.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Method_Pix\\:\\:_getHelper\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Method_Pix\\:\\:getInfoInstance\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 8
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Call to static method registry\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Call to static method throwException\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Class Varien_Object not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Instantiated class Varien_Object not found\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Parameter \\$payment of method RicardoMartins_PagBank_Model_Method_Pix\\:\\:order\\(\\) has invalid type Varien_Object\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Undefined variable\\: \\$pay$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Method/Pix.php
+
+		-
+			message: "#^Call to static method getConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Observer.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Observer.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Model/Observer.php
+
+		-
+			message: "#^Function __ not found\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Observer.php
+
+		-
+			message: "#^Parameter \\$observer of method RicardoMartins_PagBank_Model_Observer\\:\\:generatePublicKey\\(\\) has invalid type Varien_Event_Observer\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Observer.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Payment/Notification.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Payment/Notification.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 7
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Billet.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Billet.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Billet.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 8
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Creditcard.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Creditcard.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Creditcard.php
+
+		-
+			message: "#^Call to static method throwException\\(\\) on an unknown class Mage\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Creditcard.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Pix.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Pix.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Customer.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Customer.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Installments.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Installments.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Items.php
+
+		-
+			message: "#^Call to static method app\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Order.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Order.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/QrCodes.php
+
+		-
+			message: "#^Call to static method getStoreConfig\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/QrCodes.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Shipping.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Amount\\:\\:getData\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Amount.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Amount\\:\\:setData\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Amount.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Charge\\:\\:getData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Charge.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Charge\\:\\:setData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Charge.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Customer\\:\\:getData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Customer.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Customer\\:\\:setData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Customer.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Customer_Address\\:\\:getData\\(\\)\\.$#"
+			count: 9
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Customer/Address.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Customer_Address\\:\\:setData\\(\\)\\.$#"
+			count: 9
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Customer/Address.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Customer_Phone\\:\\:getData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Customer/Phone.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Customer_Phone\\:\\:setData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Customer/Phone.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Holder\\:\\:getData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Holder.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Holder\\:\\:setData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Holder.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Installments\\:\\:getData\\(\\)\\.$#"
+			count: 5
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Installments.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Installments\\:\\:setData\\(\\)\\.$#"
+			count: 5
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Installments.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Item\\:\\:getData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Item.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Item\\:\\:setData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Item.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod\\:\\:getData\\(\\)\\.$#"
+			count: 7
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod\\:\\:setData\\(\\)\\.$#"
+			count: 7
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Billet\\:\\:getData\\(\\)\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Billet\\:\\:setData\\(\\)\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Billet.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Billet_Instructionlines\\:\\:getData\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Billet/Instructionlines.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Billet_Instructionlines\\:\\:setData\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Billet/Instructionlines.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card\\:\\:getData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Card.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card\\:\\:setData\\(\\)\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Card.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card_Authenticationmethod\\:\\:getData\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Card/Authenticationmethod.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card_Authenticationmethod\\:\\:setData\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Card/Authenticationmethod.php
+
+		-
+			message: "#^Access to constant XML_PATH_DEFAULT_TIMEZONE on an unknown class Mage_Core_Model_Locale\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Qrcode.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Qrcode\\:\\:getData\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Qrcode.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Qrcode\\:\\:setData\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Qrcode.php
+
+		-
+			message: "#^Call to static method app\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Qrcode.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Connect/Ccbrand.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Customer/Document.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 4
+			path: app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Order/Installments.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_AjaxController\\:\\:getRequest\\(\\)\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_AjaxController\\:\\:getResponse\\(\\)\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php
+
+		-
+			message: "#^Call to static method app\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 5
+			path: app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_NotificationController\\:\\:getRequest\\(\\)\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/controllers/NotificationController.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_NotificationController\\:\\:getResponse\\(\\)\\.$#"
+			count: 11
+			path: app/code/community/RicardoMartins/PagBank/controllers/NotificationController.php
+
+		-
+			message: "#^Call to static method app\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/controllers/NotificationController.php
+
+		-
+			message: "#^Call to static method getModel\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/controllers/NotificationController.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/controllers/NotificationController.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_TestController\\:\\:getRequest\\(\\)\\.$#"
+			count: 2
+			path: app/code/community/RicardoMartins/PagBank/controllers/TestController.php
+
+		-
+			message: "#^Call to an undefined method RicardoMartins_PagBank_TestController\\:\\:getResponse\\(\\)\\.$#"
+			count: 5
+			path: app/code/community/RicardoMartins/PagBank/controllers/TestController.php
+
+		-
+			message: "#^Call to static method getModuleDir\\(\\) on an unknown class Mage\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/controllers/TestController.php
+
+		-
+			message: "#^Call to static method helper\\(\\) on an unknown class Mage\\.$#"
+			count: 3
+			path: app/code/community/RicardoMartins/PagBank/controllers/TestController.php
+
+		-
+			message: "#^RicardoMartins_PagBank_TestController\\:\\:getConfigAction\\(\\) calls parent\\:\\:getConfigAction\\(\\) but RicardoMartins_PagBank_TestController does not extend any class\\.$#"
+			count: 1
+			path: app/code/community/RicardoMartins/PagBank/controllers/TestController.php
+
+		-
+			message: "#^Parameter \\$parser of method Composer\\\\InstalledVersions\\:\\:satisfies\\(\\) has invalid type Composer\\\\Semver\\\\VersionParser\\.$#"
+			count: 1
+			path: vendor/composer/InstalledVersions.php

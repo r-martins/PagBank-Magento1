@@ -1,4 +1,4 @@
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/r-martins/PagBank-Magento1)](https://github.com/r-martins/PagBank-Magento1)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r-martins/PagBank-Magento1/develop)
 # Módulo PagBank(PagSeguro) Connect para Magento1
