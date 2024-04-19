@@ -40,7 +40,7 @@ A integração mais usada do Brasil, agora com mais recursos, mais estabilidade 
 
 # Pré-requisitos
 - OpenMage LTS (recomendado) ou Magento 1.7.x a 1.9.x
-- PHP 5.6 ou superior (recomendado 7.4 ou superior)
+- PHP 7.1 ou superior (recomendado 7.4 ou superior) / PHP 5.6 é suportado, mas não recomendado
 
 # Instalação
 
