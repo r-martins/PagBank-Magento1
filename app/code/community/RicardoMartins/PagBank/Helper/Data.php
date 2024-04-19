@@ -91,7 +91,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     public function isSandbox($storeId = null)
     {
         $connectKey = $this->getConnectKey($storeId);
-        if (str_contains($connectKey, RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PREFIX)) {
+        if (strpos($connectKey, RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PREFIX) !== false) {
             return true;
         }
         return false;
