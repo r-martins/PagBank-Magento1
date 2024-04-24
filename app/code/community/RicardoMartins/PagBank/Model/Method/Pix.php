@@ -5,7 +5,6 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
     protected $_code = 'ricardomartins_pagbank_pix';
     protected $_formBlockType = 'ricardomartins_pagbank/form_pix';
     protected $_infoBlockType = 'ricardomartins_pagbank/form_info_pix';
-    protected $_order = null;
     protected $_canUseForMultishipping  = false;
 
     /**
@@ -106,24 +105,4 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
 
         return $api->placePostRequest($endpoint, $data);
     }
-
-    /**
-     * Get current order object
-     * @return false|mixed|null
-     */
-    public function getOrder()
-    {
-        if (!$this->_order) {
-            $this->_order = Mage::registry('current_order');
-            if (!$this->_order) {
-                $sessionInstance = Mage::getModel("core/session")->getSessionQuote();
-                $this->_order = Mage::getModel($sessionInstance)->getQuote();
-                if (!$this->_order) {
-                    return false;
-                }
-            }
-        }
-        return $this->_order;
-    }
-
 }

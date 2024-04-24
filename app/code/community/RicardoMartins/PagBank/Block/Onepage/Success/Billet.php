@@ -2,12 +2,20 @@
 
 class RicardoMartins_PagBank_Block_Onepage_Success_Billet extends Mage_Checkout_Block_Onepage_Success
 {
+    /** @var mixed */
+    private $_order;
+
     /**
      * @return bool
      */
     public function isVisible()
     {
-        return $this->getOrder()->getPayment()->getMethod() === 'ricardomartins_pagbank_billet';
+        $order = $this->getCurrentOrder();
+        if (!$order) {
+            return false;
+        }
+
+        return $order->getPayment()->getMethod() === 'ricardomartins_pagbank_billet';
     }
 
     /**
@@ -52,6 +60,28 @@ class RicardoMartins_PagBank_Block_Onepage_Success_Billet extends Mage_Checkout_
      */
     private function getAdditionalData()
     {
-        return unserialize($this->getOrder()->getPayment()->getAdditionalData() ?: '');
+        return unserialize($this->getCurrentOrder()->getPayment()->getAdditionalData() ?: '');
+    }
+
+    /**
+     * Get current order
+     *
+     * @return mixed
+     */
+    private function getCurrentOrder()
+    {
+        if ($this->_order) {
+            return $this->_order;
+        }
+
+        if ($this->getOrder()) {
+            $this->_order = $this->getOrder();
+        } else {
+            $this->_order = Mage::getModel('sales/order')->loadByIncrementId(
+                Mage::getSingleton('checkout/session')->getLastRealOrderId()
+            );
+        }
+
+        return $this->_order;
     }
 }

@@ -22,7 +22,6 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
     protected $_code = 'ricardomartins_pagbank_cc';
     protected $_formBlockType = 'ricardomartins_pagbank/form_cc';
     protected $_infoBlockType = 'ricardomartins_pagbank/form_info_cc';
-    protected $_order = null;
     protected $_canUseForMultishipping  = false;
 
     /**
@@ -93,7 +92,9 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
             $payment->setAdditionalData(serialize($addData));
             $payment->save();
         } else {
-            Mage::throwException($this->_getHelper()->__("Erro no pagamento!\nMotivo: " . $paymetMethod->error_description . ".\nPor favor tente novamente mais tarde!"));
+            Mage::throwException($this->_getHelper()->__(
+                "Erro no pagamento!\nMotivo: " . $paymetResponse['message'] . ".\nPor favor tente novamente mais tarde!"
+            ));
         }
 
         return $this;
@@ -143,24 +144,5 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
         $endpoint = $helper->getOrdersEndpoint();
 
         return $api->placePostRequest($endpoint, $data);
-    }
-
-    /**
-     * Get current order object
-     * @return false|mixed|null
-     */
-    public function getOrder()
-    {
-        if (!$this->_order) {
-            $this->_order = Mage::registry('current_order');
-            if (!$this->_order) {
-                $sessionInstance = Mage::getModel("core/session")->getSessionQuote();
-                $this->_order = Mage::getModel($sessionInstance)->getQuote();
-                if (!$this->_order) {
-                    return false;
-                }
-            }
-        }
-        return $this->_order;
     }
 }

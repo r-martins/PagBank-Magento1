@@ -312,6 +312,71 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get the order by the current context.
+     * If the order is not found, try to get the quote.
+     * If the quote is not found, try to get by the session.
+     *
+     * @return mixed|null
+     */
+    public function getCurrentOrder()
+    {
+        $order = Mage::registry('current_order');
+        if (!$order) {
+            $order = Mage::getModel('checkout/cart')->getQuote();
+            if (!$order) {
+                $sessionInstance = Mage::getModel('checkout/session');
+                $order = $sessionInstance->getQuote();
+            }
+        }
+        return $order;
+    }
+
+    /**
+     * Get the region code
+     *
+     * @param $region
+     * @return false|int|string
+     */
+    public function getRegionCode($region)
+    {
+        $regions = [
+            "AC"=>"ACRE",
+            "AL"=>"ALAGOAS",
+            "AP"=>"AMAPA",
+            "AM"=>"AMAZONAS",
+            "BA"=>"BAHIA",
+            "CE"=>"CEARA",
+            "DF"=>"DISTRITOFEDERAL",
+            "ES"=>"ESPIRITOSANTO",
+            "GO"=>"GOIAS",
+            "MA"=>"MARANHAO",
+            "MT"=>"MATOGROSSO",
+            "MS"=>"MATOGROSSODOSUL",
+            "MG"=>"MINASGERAIS",
+            "PA"=>"PARA",
+            "PB"=>"PARAIBA",
+            "PR"=>"PARANA",
+            "PE"=>"PERNAMBUCO",
+            "PI"=>"PIAUI",
+            "RJ"=>"RIODEJANEIRO",
+            "RN"=>"RIOGRANDEDONORTE",
+            "RS"=>"RIOGRANDEDOSUL",
+            "RO"=>"RONDONIA",
+            "RR"=>"RORAIMA",
+            "SC"=>"SANTACATARINA",
+            "SP"=>"SAOPAULO",
+            "SE"=>"SERGIPE",
+            "TO"=>"TOCANTINS"
+        ];
+
+        $region = $this->removeAccents($region);
+        $region = str_replace(' ', '', $region);
+        $region = strtoupper($region);
+
+        return array_search($region, $regions);
+    }
+
+    /**
      * Serialized (json) string with module configuration
      *
      * @param $storeId
@@ -756,5 +821,19 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $installments = floor($amount / $minTotal);
         return (int)min($installments, 18);
+    }
+
+    /**
+     * Remove accents from a string
+     *
+     * @param $string
+     * @return string
+     */
+    private function removeAccents($string)
+    {
+        $string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+        $formats = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜüÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿRr';
+        $replace = 'aaaaaaaceeeeiiiidnoooooouuuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
+        return trim(strtr(utf8_decode($string), utf8_decode($formats), $replace));
     }
 }

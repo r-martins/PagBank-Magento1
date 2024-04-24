@@ -34,8 +34,9 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
      */
     public function build()
     {
+        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getReservedOrderId();
         return [
-            self::REFERENCE_ID => $this->order->getIncrementId(),
+            self::REFERENCE_ID => $orderIncrementId,
             self::NOTIFICATION_URLS => $this->getNotificationUrls()
         ];
     }

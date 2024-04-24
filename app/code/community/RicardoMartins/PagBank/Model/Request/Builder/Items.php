@@ -47,7 +47,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Items
             $item = Mage::getModel('ricardomartins_pagbank/request_object_item');
             $item->setReferenceId($orderItem->getSku());
             $item->setName($orderItem->getName());
-            $item->setQuantity((int) $orderItem->getQtyOrdered());
+            $item->setQuantity((int) ($orderItem->getQtyOrdered() ?  $orderItem->getQtyOrdered() : $orderItem->getQty()));
             $item->setUnitAmount($orderItem->getPrice());
             $items[] = $item->getData();
         }

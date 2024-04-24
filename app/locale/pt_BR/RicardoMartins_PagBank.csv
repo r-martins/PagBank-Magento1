@@ -85,3 +85,4 @@
 "Order #%s already has an invoice.","O pedido #%s já possui uma fatura."
 "The order #%s cannot be invoiced.","O pedido #%s não pode ser faturado."
 "The order #%s cannot be canceled.","O pedido #%s não pode ser cancelado."
+"Copied ✔","Copiado ✔"

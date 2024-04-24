@@ -38,6 +38,9 @@ class RicardoMartins_PagBank_Model_Request_Builder_Shipping
 
         $shippingAddress = $this->order->getShippingAddress();
 
+        $helper = Mage::helper('ricardomartins_pagbank');
+        $regionCode = strlen($shippingAddress->getRegionCode()) == 2 ? $shippingAddress->getRegionCode() : $helper->getRegionCode($shippingAddress->getRegionCode());
+
         /** @var RicardoMartins_PagBank_Model_Request_Object_Customer_Address $address */
         $address = Mage::getModel('ricardomartins_pagbank/request_object_customer_address');
         $address->setStreet($shippingAddress->getStreet(1));
@@ -45,7 +48,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Shipping
         $address->setLocality($shippingAddress->getStreet(4));
         $address->setCity($shippingAddress->getCity());
         $address->setRegion($shippingAddress->getRegion());
-        $address->setRegionCode($shippingAddress->getRegionCode());
+        $address->setRegionCode($regionCode);
         $address->setPostalCode($shippingAddress->getPostcode());
         $address->setCountry();
 

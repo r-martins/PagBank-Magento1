@@ -33,6 +33,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Billet
         $helper = Mage::helper('ricardomartins_pagbank');
 
         $billingAddress = $this->order->getBillingAddress();
+        $regionCode = strlen($billingAddress->getRegionCode()) == 2 ? $billingAddress->getRegionCode() : $helper->getRegionCode($billingAddress->getRegionCode());
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Customer_Address $address */
         $address = Mage::getModel('ricardomartins_pagbank/request_object_customer_address');
@@ -41,8 +42,8 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Billet
         $address->setComplement($billingAddress->getStreet(3));
         $address->setLocality($billingAddress->getStreet(4));
         $address->setCity($billingAddress->getCity());
-        $address->setRegion($billingAddress->getRegionCode());
-        $address->setRegionCode($billingAddress->getRegionCode());
+        $address->setRegion($billingAddress->getRegion());
+        $address->setRegionCode($regionCode);
         $address->setPostalCode($billingAddress->getPostcode());
         $address->setCountry();
 
@@ -75,12 +76,23 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Billet
         /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
         $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
         $amount->setValue($this->order->getBaseGrandTotal());
-        $amount->setCurrency($this->order->getOrderCurrency()->getCode());
+
+        $currencyCode = 'BRL';
+        if ($this->order->getOrderCurrency()) {
+            $currencyCode = $this->order->getOrderCurrency()->getCode();
+        }
+
+        if ($this->order->getQuoteCurrencyCode()) {
+            $currencyCode = $this->order->getQuoteCurrencyCode();
+        }
+
+        $amount->setCurrency($currencyCode);
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Charge $charges */
         $charges = Mage::getModel('ricardomartins_pagbank/request_object_charge');
         $charges->setCreatedAt();
-        $charges->setReferenceId($this->order->getIncrementId());
+        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getReservedOrderId();
+        $charges->setReferenceId($orderIncrementId);
         $charges->setAmount($amount->getData());
         $charges->setPaymentMethod($paymentMethod->getData());
 

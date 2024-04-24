@@ -5,7 +5,6 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
     protected $_code = 'ricardomartins_pagbank_billet';
     protected $_formBlockType = 'ricardomartins_pagbank/form_billet';
     protected $_infoBlockType = 'ricardomartins_pagbank/form_info_billet';
-    protected $_order = null;
     protected $_canUseForMultishipping  = false;
 
     /**
@@ -109,24 +108,5 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
         $endpoint = $helper->getOrdersEndpoint();
 
         return $api->placePostRequest($endpoint, $data);
-    }
-
-    /**
-     * Get current order object
-     * @return false|mixed|null
-     */
-    public function getOrder()
-    {
-        if (!$this->_order) {
-            $this->_order = Mage::registry('current_order');
-            if (!$this->_order) {
-                $sessionInstance = Mage::getModel("core/session")->getSessionQuote();
-                $this->_order = Mage::getModel($sessionInstance)->getQuote();
-                if (!$this->_order) {
-                    return false;
-                }
-            }
-        }
-        return $this->_order;
     }
 }

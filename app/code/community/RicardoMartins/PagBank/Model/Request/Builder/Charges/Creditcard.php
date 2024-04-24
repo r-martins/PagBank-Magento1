@@ -99,7 +99,17 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
         $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
         $amount->setValue($totalAmount);
-        $amount->setCurrency($this->order->getOrderCurrency()->getCode());
+
+        $currencyCode = 'BRL';
+        if ($this->order->getOrderCurrency()) {
+            $currencyCode = $this->order->getOrderCurrency()->getCode();
+        }
+
+        if ($this->order->getQuoteCurrencyCode()) {
+            $currencyCode = $this->order->getQuoteCurrencyCode();
+        }
+
+        $amount->setCurrency($currencyCode);
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Charge $charges */
         $charges = Mage::getModel('ricardomartins_pagbank/request_object_charge');

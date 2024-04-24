@@ -4,6 +4,8 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
 {
     const IS_SANDBOX = 'is_sandbox';
 
+    protected $_order = null;
+
     /**
      * Process the notification from the gateway
      *
@@ -106,5 +108,20 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
         $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING, true);
 
         $order->save();
+    }
+
+    /**
+     * Get current order object
+     *
+     * @return false|mixed|null
+     */
+    public function getOrder()
+    {
+        if (!$this->_order) {
+            $helper = Mage::helper('ricardomartins_pagbank');
+            $this->_order = $helper->getCurrentOrder();
+        }
+
+        return $this->_order;
     }
 }
