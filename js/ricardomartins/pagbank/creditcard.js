@@ -437,8 +437,10 @@ RMPagBank.prototype = {
                     //A autenticação 3DS não ocorreu, isso pode ter ocorrido por falhas na comunicação com emissor ou bandeira, ou algum controle que não possibilitou a geração do 3DS id, essa transação não terá um retorno de status de autenticação e seguirá como uma transação sem 3DS.
                     //O cliente pode seguir adiante sem 3Ds (exceto débito)
                     if (this.config.cc_3ds_allow_continue) {
-                        RMPagBankObj.proceedCheckout = true;
                         console.debug('PagBank: 3DS não suportado pelo cartão. Continuando sem 3DS.');
+                        RMPagBankObj.proceedCheckout = true;
+                        this.enablePlaceOrderButton();
+                        this.disablePageLoader();
                         return true;
                     }
                     alert('Seu cartão não suporta autenticação 3D. Escolha outro método de pagamento ou cartão.');
