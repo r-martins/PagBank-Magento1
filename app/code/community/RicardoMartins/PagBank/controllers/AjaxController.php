@@ -60,12 +60,17 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $total = $quote->getGrandTotal();
 
         $postcode = preg_replace('/[^0-9]/', '', $quote->getBillingAddress()->getPostcode());
+
+        $hasCustomer = (bool)$quote->getCustomer()->getId();
+
+        $name = $hasCustomer ? $quote->getCustomer()->getName() : $quote->getBillingAddress()->getFirstname() . ' ' . $quote->getBillingAddress()->getLastname();
+        $email = $hasCustomer ? $quote->getCustomer()->getEmail() : $quote->getBillingAddress()->getEmail();
         $phone = preg_replace('/[^0-9]/', '', $quote->getBillingAddress()->getTelephone());
 
         $result = [
             'totalAmount' => $total,
-            'customerName' => $helper->escapeHtml($quote->getCustomer()->getName()),
-            'email' => $helper->escapeHtml($quote->getCustomer()->getEmail()),
+            'customerName' => $helper->escapeHtml($name),
+            'email' => $helper->escapeHtml($email),
             'phone' => $helper->escapeHtml($phone),
             'street' => $helper->escapeHtml($quote->getBillingAddress()->getStreet(1)),
             'number' => $helper->escapeHtml($quote->getBillingAddress()->getStreet(2)),
