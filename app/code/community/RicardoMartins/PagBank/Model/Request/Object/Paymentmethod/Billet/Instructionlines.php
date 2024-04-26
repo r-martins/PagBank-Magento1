@@ -16,7 +16,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Billet_Instructi
      */
     public function setLineOne($lineOne)
     {
-        $lineOne = $lineOne ? substr($lineOne, 0, 75): null;
+        $lineOne = $lineOne ? mb_substr($lineOne, 0, 75, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING): null;
         return $this->setData(RicardoMartins_PagBank_Api_Connect_PaymentMethod_Billet_InstructionLinesInterface::INSTRUCTION_LINE_ONE, $lineOne);
     }
 
@@ -34,7 +34,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Billet_Instructi
      */
     public function setLineTwo($lineTwo)
     {
-        $lineTwo = $lineTwo ? substr($lineTwo, 0, 75) : null;
+        $lineTwo = $lineTwo ? mb_substr($lineTwo, 0, 75, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING) : null;
         return $this->setData(RicardoMartins_PagBank_Api_Connect_PaymentMethod_Billet_InstructionLinesInterface::INSTRUCTION_LINE_TWO, $lineTwo);
     }
 }

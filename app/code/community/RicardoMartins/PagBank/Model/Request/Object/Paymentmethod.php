@@ -50,7 +50,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod extends Varien_O
      */
     public function setSoftDescriptor($softDescriptor)
     {
-        $softDescriptor = substr($softDescriptor, 0, 17);
+        $softDescriptor = mb_substr($softDescriptor, 0, 17, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface::SOFT_DESCRIPTOR, $softDescriptor);
     }
 

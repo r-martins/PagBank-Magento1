@@ -107,4 +107,10 @@ interface RicardoMartins_PagBank_Api_Connect_ConnectInterface
      * Do not use if you are using the Sandbox.
      */
     const PAGBANK_TRANSACTION_DETAILS_URL = 'https://minhaconta.pagseguro.uol.com.br/transacao/detalhes';
+
+    /**
+     * Encoding
+     * @var string
+     */
+    const ENCODING = 'UTF-8';
 }

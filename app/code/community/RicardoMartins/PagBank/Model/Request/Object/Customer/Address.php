@@ -16,7 +16,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Customer_Address extends Varie
      */
     public function setStreet($street)
     {
-        $street = substr($street, 0, 160);
+        $street = mb_substr($street, 0, 160, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_AddressInterface::STREET, $street);
     }
 
@@ -52,7 +52,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Customer_Address extends Varie
      */
     public function setComplement($complement)
     {
-        $complement = substr($complement, 0, 40);
+        $complement = mb_substr($complement, 0, 40, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_AddressInterface::COMPLEMENT, $complement);
     }
 
@@ -70,7 +70,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Customer_Address extends Varie
      */
     public function setLocality($locality)
     {
-        $locality = substr($locality, 0, 60);
+        $locality = mb_substr($locality, 0, 60, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_AddressInterface::LOCALITY, $locality);
     }
 
@@ -89,7 +89,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Customer_Address extends Varie
      */
     public function setCity($city)
     {
-        $city = substr($city, 0, 90);
+        $city = mb_substr($city, 0, 90, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_AddressInterface::CITY, $city);
     }
 
