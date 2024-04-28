@@ -347,19 +347,36 @@ RMPagBank.prototype = {
         expMonth = expInput.split('/')[0].replace(/\s/g, '');
         expYear = '20' + expInput.split('/')[1].slice(-2).replace(/\s/g, '');
 
+        let email = quote.email ? quote.email : $$('input[name^="billing[email]').first().value;
+        let name = quote.customerName ? quote.customerName : $$('input[name^="billing[firstname]').first().value + ' ' + $$('input[name^="billing[lastname]').first().value;
+        let phone = quote.phone.replace(/\D/g, '');
+        phone = phone ? phone : $$('input[name^="billing[telephone]').first().value.replace(/\D/g, '');
+        let street = quote.street ? quote.street : $$('input[name^="billing[street]').first().value;
+        let number = quote.number ? quote.number : $$('input[name^="billing[street]')[1].value;
         let complement = quote.complement ? quote.complement : quote.neighborhood;
+        complement = complement ? complement : $$('input[name^="billing[street]')[2].value;
         complement = complement ? complement : 'n/d';
+        let city = quote.city ? quote.city : $$('input[name^="billing[city]').first().value;
+        let regionCode = quote.regionCode ? quote.regionCode : null;
+        let postalCode = quote.postalCode ? quote.postalCode : $$('input[name^="billing[postcode]').first().value.replace(/\D/g, '');
+
+        if (regionCode === null) {
+            let regionId = $$('select[name^="billing[region_id]"]').first();
+            let selectedIndex = regionId.selectedIndex;
+            let region = regionId.options[selectedIndex].text;
+            regionCode = this.getRegionCode(region);
+        }
 
         const request = {
             data: {
                 customer: {
-                    name: quote.customerName,
-                    email: quote.email,
+                    name: name,
+                    email: email,
                     phones: [
                         {
                             country: '55',
-                            area: quote.phone.substring(0, 2),
-                            number: quote.phone.substring(2),
+                            area: phone.substring(0, 2),
+                            number: phone.substring(2),
                             type: 'MOBILE'
                         }
                     ]
@@ -381,13 +398,13 @@ RMPagBank.prototype = {
                     currency: 'BRL'
                 },
                 billingAddress: {
-                    street: quote.street,
-                    number: quote.number,
+                    street: street,
+                    number: number,
                     complement: complement,
-                    regionCode: quote.regionCode,
+                    regionCode: regionCode,
                     country: 'BRA',
-                    city: quote.city,
-                    postalCode: quote.postalCode
+                    city: city,
+                    postalCode: postalCode
                 },
                 dataOnly: false
             }
@@ -626,5 +643,39 @@ RMPagBank.prototype = {
         }
 
         return result.slice(-1);
+    },
+    getRegionCode: function (region) {
+        const regionCodes = {
+            "AC": "ACRE",
+            "AL": "ALAGOAS",
+            "AP": "AMAPA",
+            "AM": "AMAZONAS",
+            "BA": "BAHIA",
+            "CE": "CEARA",
+            "DF": "DISTRITO FEDERAL",
+            "ES": "ESPIRITO SANTO",
+            "GO": "GOIAS",
+            "MA": "MARANHÃO",
+            "MT": "MATO GROSSO",
+            "MS": "MATO GROSSO DO SUL",
+            "MG": "MINAS GERAIS",
+            "PA": "PARÁ",
+            "PB": "PARAÍBA",
+            "PR": "PARANÁ",
+            "PE": "PERNAMBUCO",
+            "PI": "PIAUÍ",
+            "RJ": "RIO DE JANEIRO",
+            "RN": "RIO GRANDE DO NORTE",
+            "RS": "RIO GRANDE DO SUL",
+            "RO": "RONDÔNIA",
+            "RR": "RORAIMA",
+            "SC": "SANTA CATARINA",
+            "SP": "SÃO PAULO",
+            "SE": "SERGIPE",
+            "TO": "TOCANTINS"
+        }
+
+        region = region.toUpperCase();
+        return Object.keys(regionCodes).find(key => regionCodes[key] === region);
     }
 };
