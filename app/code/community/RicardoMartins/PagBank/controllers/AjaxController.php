@@ -14,6 +14,13 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $creditCardBin = $params['cc_bin'];
         $storeId = Mage::app()->getStore()->getId();
 
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+        $isSandbox = $helper->isSandbox($storeId);
+        if ($isSandbox) {
+            $creditCardBin = $helper->getSandboxCcBin();
+        }
+
         /** @var RicardoMartins_PagBank_Model_Request_Builder_Installments $installmentsBuilder */
         $installmentsBuilder = Mage::getModel('ricardomartins_pagbank/request_builder_installments', $creditCardBin);
         $installments = $installmentsBuilder->build();
@@ -21,8 +28,6 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         /** @var RicardoMartins_PagBank_Model_Api_Connect_Client $api */
         $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
 
-        /** @var RicardoMartins_PagBank_Helper_Data $helper */
-        $helper = Mage::helper('ricardomartins_pagbank');
         $endpoint = $helper->getInterestEndpoint($storeId);
 
         try {
