@@ -79,6 +79,7 @@ app/etc/modules/RicardoMartins_PagBank.xml app/etc/modules/RicardoMartins_PagBan
 app/locale/pt_BR/RicardoMartins_PagBank.csv app/locale/pt_BR/RicardoMartins_PagBank.csv
 js/ricardomartins/pagbank/mask.js js/ricardomartins/pagbank/mask.js
 js/ricardomartins/pagbank/creditcard.js js/ricardomartins/pagbank/creditcard.js
+skin/adminhtml/base/default/images/ricardomartins/pagbank/3d-secure.svg skin/adminhtml/base/default/images/ricardomartins/pagbank/3d-secure.svg
 skin/frontend/base/default/css/ricardomartins/pagbank/styles.css skin/frontend/base/default/css/ricardomartins/pagbank/styles.css
 skin/frontend/base/default/images/ricardomartins/pagbank/copy-icon.svg skin/frontend/base/default/images/ricardomartins/pagbank/copy-icon.svg
 skin/frontend/base/default/images/ricardomartins/pagbank/ajax-loader.gif skin/frontend/base/default/images/ricardomartins/pagbank/ajax-loader.gif
