@@ -5,6 +5,12 @@
 ?>
 <?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?>
 
+<div>
+    <?php if ($this->showSecureIcon()): ?>
+        <img src="<?php echo $this->getSkinUrl('images/ricardomartins/pagbank/3d-secure.svg') ?>" width="50px" height="61px"
+             alt="<?php echo $this->__('3D Secure') ?>" title="<?php echo $this->__('3D Secure') ?>" />
+    <?php endif ?>
+</div>
 <table>
     <tr>
         <td><b><?php echo $this->__('Is Sandbox') ?>:</b></td>
@@ -12,6 +18,7 @@
     </tr>
 <?php if ($_specificInfo = $this->getSpecificInformation()):?>
     <?php foreach ($_specificInfo as $_label => $_value):?>
+        <?php if ($_value === RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION) continue ?>
         <tr>
             <td><?php echo $this->escapeHtml($_label)?>:</td>
             <td><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></td>

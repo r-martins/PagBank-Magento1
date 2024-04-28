@@ -28,4 +28,18 @@ class RicardoMartins_PagBank_Block_Form_Info_Cc extends Mage_Payment_Block_Info
 
         return $additionalData['is_sandbox'];
     }
+
+    /**
+     * @return bool
+     */
+    public function showSecureIcon()
+    {
+        $data = parent::getSpecificInformation();
+        $key = RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION;
+        if (array_key_exists($key, $data) && $data[$key]) {
+            return true;
+        }
+
+        return false;
+    }
 }
