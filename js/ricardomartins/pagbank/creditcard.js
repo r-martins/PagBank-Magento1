@@ -351,6 +351,7 @@ RMPagBank.prototype = {
         let name = quote.customerName ? quote.customerName : $$('input[name^="billing[firstname]').first().value + ' ' + $$('input[name^="billing[lastname]').first().value;
         let phone = quote.phone.replace(/\D/g, '');
         phone = phone ? phone : $$('input[name^="billing[telephone]').first().value.replace(/\D/g, '');
+        phone = phone ? phone : $$('input[name^="billing[fax]').first().value.replace(/\D/g, '');
         let street = quote.street ? quote.street : $$('input[name^="billing[street]').first().value;
         let number = quote.number ? quote.number : $$('input[name^="billing[street]')[1].value;
         let complement = quote.complement ? quote.complement : quote.neighborhood;
