@@ -16,7 +16,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Holder extends Varien_Object i
      */
     public function setName($name)
     {
-        $name = substr($name, 0, 30);
+        $name = mb_substr($name, 0, 30, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_HolderInterface::NAME, $name);
     }
 

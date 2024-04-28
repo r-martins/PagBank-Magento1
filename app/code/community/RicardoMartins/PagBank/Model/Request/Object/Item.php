@@ -16,7 +16,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Item extends Varien_Object imp
      */
     public function setReferenceId($referenceId)
     {
-        $referenceId = substr($referenceId, 0, 255);
+        $referenceId = mb_substr($referenceId, 0, 255, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_ItemInterface::REFERENCE_ID, $referenceId);
     }
 
@@ -34,7 +34,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Item extends Varien_Object imp
      */
     public function setName($name)
     {
-        $name = substr($name, 0, 64);
+        $name = mb_substr($name, 0, 64, RicardoMartins_PagBank_Api_Connect_ConnectInterface::ENCODING);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_ItemInterface::NAME, $name);
     }
 
