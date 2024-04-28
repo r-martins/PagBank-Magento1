@@ -433,6 +433,10 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
                 return $this->__('Authorization Code:');
             case RicardoMartins_PagBank_Model_Method_Cc::NSU:
                 return $this->__('NSU:');
+            case RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION:
+                return RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION;
+            case RicardoMartins_PagBank_Model_Method_Cc::CC_3DS_ID:
+                return $this->__('3DS Code:');
         }
         return '';
     }

@@ -63,6 +63,8 @@ class RicardoMartins_PagBank_Model_Observer
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::AUTHORIZATION_CODE;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::NSU;
+            $info[] = RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION;
+            $info[] = RicardoMartins_PagBank_Model_Method_Cc::CC_3DS_ID;
         }
 
         foreach ($info as $key) {
