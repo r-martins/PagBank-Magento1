@@ -56,10 +56,9 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
             $addData['charge_id'] = $charges['id'];
 
             $payment->setAdditionalData(serialize($addData));
-            $payment->setSkipOrderProcessing(true);
             $payment->save();
         } else {
-            Mage::throwException($this->_getHelper()->__("Erro na emissão do boleto!.\nPor favor tente novamente mais tarde!"));
+            Mage::throwException($this->_getHelper()->__("Erro na emissão do boleto!\nMotivo: " . $pay->error_description . ".\nPor favor tente novamente mais tarde!"));
         }
 
         return $this;
