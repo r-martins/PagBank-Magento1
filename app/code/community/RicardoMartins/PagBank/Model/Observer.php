@@ -100,6 +100,16 @@ class RicardoMartins_PagBank_Model_Observer
                 $helper->writeLog(sprintf('Error handling PagBank return: %s', $e->getMessage()));
             }
         }
+
+        if ($method instanceof RicardoMartins_PagBank_Model_Method_Pix || $method instanceof RicardoMartins_PagBank_Model_Method_Billet) {
+            try {
+                $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
+            } catch (\Exception $e) {
+                $helper = Mage::helper('ricardomartins_pagbank');
+                $helper->writeLog(sprintf('Error handling PagBank return: %s', $e->getMessage()));
+            }
+        }
+
         return $this;
     }
 }

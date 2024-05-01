@@ -52,9 +52,10 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
             $addData['pix']['created_at'] = $response['created_at'];
 
             $payment->setAdditionalData(serialize($addData));
+            $payment->setSkipOrderProcessing(true);
             $payment->save();
         } else {
-            Mage::throwException($this->_getHelper()->__("Erro na geração do QR Code!\nMotivo: " . $pay->error_description . ".\nPor favor tente novamente mais tarde!"));
+            Mage::throwException($this->_getHelper()->__("Erro na geração do QR Code!.\nPor favor tente novamente mais tarde!"));
         }
 
         return $this;
