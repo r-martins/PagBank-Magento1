@@ -52,6 +52,15 @@
         </payment>
     </default>
     <global>
+        <sales>
+            <order>
+                <states>
+                    <pending_payment>
+                        <visible_on_front>1</visible_on_front>
+                    </pending_payment>
+                </states>
+            </order>
+        </sales>
         <models>
             <ricardomartins_pagbank>
                 <class>RicardoMartins_PagBank_Model</class>
