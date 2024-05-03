@@ -4,7 +4,7 @@
   "type": "magento-module",
   "license": "GPL-3.0",
   "homepage": "https://pagseguro.ricardomartins.net.br/",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "support": {
     "docs": "https://pagsegurotransparente.zendesk.com/hc/pt-br/",
     "source": "https://github.com/r-martins/PagBank-Magento1"
