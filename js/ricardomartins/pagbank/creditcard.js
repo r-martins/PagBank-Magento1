@@ -348,7 +348,9 @@ RMPagBank.prototype = {
         expYear = '20' + expInput.split('/')[1].slice(-2).replace(/\s/g, '');
 
         let email = quote.email ? quote.email : $$('input[name^="billing[email]').first().value;
-        let name = quote.customerName ? quote.customerName : $$('input[name^="billing[firstname]').first().value + ' ' + $$('input[name^="billing[lastname]').first().value;
+        let name = quote.customerName && quote.customerName?.trim()?.length > 0 ? quote.customerName
+            : $$('input[name^="billing[firstname]').first().value + ' '
+            + $$('input[name^="billing[lastname]').first().value;
         let phone = quote.phone.replace(/\D/g, '');
         phone = phone ? phone : $$('input[name^="billing[telephone]').first().value.replace(/\D/g, '');
         phone = phone ? phone : $$('input[name^="billing[fax]').first().value.replace(/\D/g, '');
@@ -359,7 +361,8 @@ RMPagBank.prototype = {
         complement = complement ? complement : 'n/d';
         let city = quote.city ? quote.city : $$('input[name^="billing[city]').first().value;
         let regionCode = quote.regionCode ? quote.regionCode : null;
-        let postalCode = quote.postalCode ? quote.postalCode : $$('input[name^="billing[postcode]').first().value.replace(/\D/g, '');
+        let postalCode = quote.postalCode ? quote.postalCode :
+            $$('input[name^="billing[postcode]').first().value.replace(/\D/g, '');
 
         if (regionCode === null) {
             let regionId = $$('select[name^="billing[region_id]"]').first();
