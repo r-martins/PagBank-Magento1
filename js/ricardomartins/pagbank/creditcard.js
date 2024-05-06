@@ -24,6 +24,32 @@ RMPagBank.prototype = {
             return;
         }
 
+        const mutationAttributesCallback = (mutationsList) => {
+            const observedAttributes = ['class', 'disabled'];
+            for (const mutation of mutationsList) {
+                if (
+                    mutation.type !== 'attributes' ||
+                    !observedAttributes.includes(mutation.attributeName)
+                ) {
+                    return
+                }
+
+                if (mutation.target.hasAttribute('id')) {
+                    let id = mutation.target.getAttribute('id');
+                    let button = document.getElementById(id);
+                    button.classList.value = mutation.target.classList.value;
+
+                    if (mutation.target.hasAttribute('disabled') === false) {
+                        button.removeAttribute('disabled');
+                    }
+                    if (mutation.target.hasAttribute('disabled')) {
+                        button.setAttribute('disabled', '');
+                    }
+                }
+            }
+        }
+        const observer = new MutationObserver(mutationAttributesCallback);
+
         let form = methodForm.first().closest('form');
 
         let buttons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button'];
@@ -46,6 +72,8 @@ RMPagBank.prototype = {
             if (typeof button === 'undefined' || eventAlreadyAttached) {
                 return;
             }
+
+            observer.observe(button, { attributes: true })
 
             let onclickEvent = button.getAttribute('onclick');
             button.removeAttribute('onclick');
