@@ -348,7 +348,9 @@ RMPagBank.prototype = {
         expYear = '20' + expInput.split('/')[1].slice(-2).replace(/\s/g, '');
 
         let email = quote.email ? quote.email : $$('input[name^="billing[email]').first().value;
-        let name = quote.customerName ? quote.customerName : $$('input[name^="billing[firstname]').first().value + ' ' + $$('input[name^="billing[lastname]').first().value;
+        let name = quote.customerName && quote.customerName?.trim()?.length > 0 ? quote.customerName
+            : $$('input[name^="billing[firstname]').first().value + ' '
+            + $$('input[name^="billing[lastname]').first().value;
         let phone = quote.phone.replace(/\D/g, '');
         phone = phone ? phone : $$('input[name^="billing[telephone]').first().value.replace(/\D/g, '');
         phone = phone ? phone : $$('input[name^="billing[fax]').first().value.replace(/\D/g, '');
@@ -359,7 +361,8 @@ RMPagBank.prototype = {
         complement = complement ? complement : 'n/d';
         let city = quote.city ? quote.city : $$('input[name^="billing[city]').first().value;
         let regionCode = quote.regionCode ? quote.regionCode : null;
-        let postalCode = quote.postalCode ? quote.postalCode : $$('input[name^="billing[postcode]').first().value.replace(/\D/g, '');
+        let postalCode = quote.postalCode ? quote.postalCode :
+            $$('input[name^="billing[postcode]').first().value.replace(/\D/g, '');
 
         if (regionCode === null) {
             let regionId = $$('select[name^="billing[region_id]"]').first();
@@ -459,12 +462,60 @@ RMPagBank.prototype = {
             if (err instanceof PagSeguro.PagSeguroError) {
                 console.error(err);
                 console.debug('PagBank: ' + err.detail);
-                alert('Falha na requisição de autenticação 3D.\n');
+                let errMsgs = err.detail.errorMessages.map(error => RMPagBankObj.pagBankParseErrorMessage(error)).join('\n');
+                alert('Falha na requisição de autenticação 3D.\n' + errMsgs);
                 this.enablePlaceOrderButton();
                 this.disablePageLoader();
                 return false;
             }
         });
+    },
+    pagBankParseErrorMessage: function(errorMessage) {
+        const codes = {
+            '40001': 'Parâmetro obrigatório',
+            '40002': 'Parâmetro inválido',
+            '40003': 'Parâmetro desconhecido ou não esperado',
+            '40004': 'Limite de uso da API excedido',
+            '40005': 'Método não permitido',
+        };
+
+        const descriptions = {
+            "must match the regex: ^\\p{L}+['.-]?(?:\\s+\\p{L}+['.-]?)+$": 'parece inválido ou fora do padrão permitido',
+            'cannot be blank': 'não pode estar em branco',
+            'size must be between 8 and 9': 'deve ter entre 8 e 9 caracteres',
+            'must be numeric': 'deve ser numérico',
+            'must be greater than or equal to 100': 'deve ser maior ou igual a 100',
+            'must be between 1 and 24': 'deve ser entre 1 e 24',
+            'only ISO 3166-1 alpha-3 values are accepted': 'deve ser um código ISO 3166-1 alpha-3',
+            'either paymentMethod.card.id or paymentMethod.card.encrypted should be informed': 'deve ser informado o cartão de crédito criptografado ou o id do cartão',
+            'must be an integer number': 'deve ser um número inteiro',
+            'card holder name must contain a first and last name': 'o nome do titular do cartão deve conter um primeiro e último nome',
+            'must be a well-formed email address': 'deve ser um endereço de e-mail válido',
+        };
+
+        const parameters = {
+            'amount.value': 'valor do pedido',
+            'customer.name': 'nome do cliente',
+            'customer.phones[0].number': 'número de telefone do cliente',
+            'customer.phones[0].area': 'DDD do telefone do cliente',
+            'billingAddress.complement': 'complemento/bairro do endereço de cobrança',
+            'paymentMethod.installments': 'parcelas',
+            'billingAddress.country': 'país de cobrança',
+            'paymentMethod.card': 'cartão de crédito',
+            'paymentMethod.card.encrypted': 'cartão de crédito criptografado',
+            'customer.email': 'e-mail',
+        };
+
+        // Get the code, description, and parameterName from the errorMessage object
+        const { code, description, parameterName } = errorMessage;
+
+        // Look up the translations
+        const codeTranslation = codes[code] || code;
+        const descriptionTranslation = descriptions[description] || description;
+        const parameterTranslation = parameters[parameterName] || parameterName;
+
+        // Concatenate the translations into a single string
+        return `${codeTranslation}: ${parameterTranslation} - ${descriptionTranslation}`;
     },
     disablePlaceOrderButton: function () {
         if (RMPagBankObj.config.placeorder_button) {

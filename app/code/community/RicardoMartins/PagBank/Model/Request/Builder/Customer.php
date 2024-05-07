@@ -31,6 +31,10 @@ class RicardoMartins_PagBank_Model_Request_Builder_Customer
         $document = $helper->getDocumentValue($this->order);
 
         $telephone = $this->order->getBillingAddress()->getTelephone();
+        if (!$telephone) {
+            $telephone = $this->order->getBillingAddress()->getFax();
+        }
+
         $telephone = preg_replace('/[^0-9]/','', $telephone);
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Customer_Phone $phones */
