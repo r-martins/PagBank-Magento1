@@ -7,9 +7,9 @@ function mask() {
                 .replace(/(\/\d{2})\d+?$/, '$1')
         },
         document (value) {
-            if (value.length > 14) {
+            value = value.replace(/\D+/g, '');
+            if (value.length > 11) {
                 return value
-                    .replace(/\D+/g, '')
                     .replace(/(\d{2})(\d)/, '$1.$2')
                     .replace(/(\d{3})(\d)/, '$1.$2')
                     .replace(/(\d{3})(\d)/, '$1/$2')
@@ -17,7 +17,6 @@ function mask() {
                     .replace(/(-\d{2})\d+?$/, '$1')
             }
             return value
-                .replace(/\D+/g, '')
                 .replace(/(\d{3})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d{1,2})/, '$1-$2')
