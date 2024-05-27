@@ -11,7 +11,14 @@ class RicardoMartins_PagBank_Model_Observer
      */
     public function generatePublicKey(Varien_Event_Observer $observer)
     {
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
+
+        $connectKey = $helper->getConnectKey();
+        if (!$connectKey) {
+            return;
+        }
+
         $endpoint = $helper->getPublicKeyEndpoint();
         $body = [
             RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::TYPE => RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::TYPE_CARD
