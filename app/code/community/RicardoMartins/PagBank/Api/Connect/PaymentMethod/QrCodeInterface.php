@@ -15,7 +15,7 @@ interface RicardoMartins_PagBank_Api_Connect_PaymentMethod_QrCodeInterface
     /**
      * Datetime format (YYYY-MM-DDThh:mm:ss.sTZD).
      */
-    const DATETIME_FORMAT = 'Y-m-d\TH:i:s.vP';
+    const DATETIME_FORMAT = 'Y-m-d\TH:i:sP';
 
     /**
      * Contains information on the amount to be charged.
