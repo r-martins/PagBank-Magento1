@@ -38,8 +38,10 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
         $pay = $charges['payment_method']['boleto'];
         $links = $charges['links'];
 
+        $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
+        $addData[self::ORDER_ID] = $response['id'];
+
         if ($charges['payment_response']['code'] == 20000) {
-            $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
             $addData['billet'][self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
 
             foreach ($links as $link) {

@@ -53,6 +53,7 @@
 "Enter the credit card number...","Digite o número do cartão de crédito..."
 "1x of %s (without interest)","1x de %s (sem juros)"
 "Error getting installments. Please try again.","Erro ao calcular parcelas. Verifique os dados do cartão e tente novamente."
+"PagBank Order ID:", "ID do Pedido PagBank:"
 "Is Sandbox","Sandbox"
 "Yes","Sim"
 "No","Não"

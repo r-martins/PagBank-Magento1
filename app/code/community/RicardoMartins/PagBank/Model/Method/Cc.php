@@ -65,8 +65,10 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
         $paymetResponse = $charges['payment_response'];
         $paymetMethod = $charges['payment_method'];
 
+        $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
+        $addData[self::ORDER_ID] = $response['id'];
+
         if ($charges['payment_response']['code'] == 20000) {
-            $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
             $addData[self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
 
             $card = $paymetMethod['card'];

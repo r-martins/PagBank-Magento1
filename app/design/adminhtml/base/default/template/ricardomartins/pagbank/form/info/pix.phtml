@@ -11,6 +11,15 @@
             <?php echo $this->__($this->escapeHtml($info['is_sandbox'])) ?>
         </strong>
     </p>
+    <?php if ($_specificInfo = $this->getSpecificInformation()):?>
+        <?php foreach ($_specificInfo as $_label => $_value):?>
+            <?php if ($_value === RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION) continue ?>
+            <p>
+                <strong><?php echo $this->escapeHtml($_label)?>:</strong>
+                <span><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></span>
+            </p>
+        <?php endforeach ?>
+    <?php endif ?>
     <div class="pix-qr-container">
         <img src="<?php echo $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?php echo $this->__('Scan the code below with your bank\'s app.') ?>" width="200px" />
     </div>

@@ -413,6 +413,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     public function getInfoLabels($fieldName)
     {
         switch ($fieldName) {
+            case RicardoMartins_PagBank_Model_Method_Abstract::ORDER_ID:
+                return $this->__('PagBank Order ID:');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND:
                 return $this->__('Card Brand:');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4:
