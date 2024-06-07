@@ -414,31 +414,31 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         switch ($fieldName) {
             case RicardoMartins_PagBank_Model_Method_Abstract::ORDER_ID:
-                return $this->__('PagBank Order ID:');
+                return $this->__('PagBank Order ID');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND:
-                return $this->__('Card Brand:');
+                return $this->__('Card Brand');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4:
-                return $this->__('Card Last 4 Digits:');
+                return $this->__('Card Last 4 Digits');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_MONTH:
-                return $this->__('Card Expiration Month:');
+                return $this->__('Card Expiration Month');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_YEAR:
-                return $this->__('Card Expiration Year:');
+                return $this->__('Card Expiration Year');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_OWNER:
-                return $this->__('Card Owner:');
+                return $this->__('Card Owner');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_INSTALLMENTS:
-                return $this->__('Installments:');
+                return $this->__('Installments');
             case RicardoMartins_PagBank_Model_Method_Cc::CHARGE_ID:
-                return $this->__('Charge ID:');
+                return $this->__('Charge ID');
             case RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK:
-                return $this->__('Charge Link:');
+                return $this->__('Charge Link');
             case RicardoMartins_PagBank_Model_Method_Cc::AUTHORIZATION_CODE:
-                return $this->__('Authorization Code:');
+                return $this->__('Authorization Code');
             case RicardoMartins_PagBank_Model_Method_Cc::NSU:
-                return $this->__('NSU:');
+                return $this->__('NSU');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION:
                 return RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION;
             case RicardoMartins_PagBank_Model_Method_Cc::CC_3DS_ID:
-                return $this->__('3DS Code:');
+                return $this->__('3DS Code');
         }
         return '';
     }
