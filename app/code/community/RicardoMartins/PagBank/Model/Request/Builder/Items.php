@@ -29,6 +29,14 @@ class RicardoMartins_PagBank_Model_Request_Builder_Items
      */
     public function build()
     {
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+
+        $storeId = $this->order->getStoreId();
+        if ($helper->hideOrderItems($storeId)) {
+            return [];
+        }
+
         $orderItems = $this->order->getAllItems();
 
         $result = $items = [];
