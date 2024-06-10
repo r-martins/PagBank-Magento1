@@ -22,7 +22,7 @@ class RicardoMartins_PagBank_Model_Payment_Notification
 
             $status = $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] ?: '';
             $methodInstance = $order->getPayment()->getMethodInstance();
-            $methodInstance->handleNotification($order, $status);
+            $methodInstance->handleNotification($order, $status, $charge);
             return true;
         } catch (Exception $e) {
             $helper->writeLog("Order {$incrementId} not found");
