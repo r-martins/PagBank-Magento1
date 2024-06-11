@@ -2,6 +2,10 @@
 
 class RicardoMartins_PagBank_Block_Form_Info_Cc extends Mage_Payment_Block_Info
 {
+    private $hideSpecificInfo = [
+        RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION
+    ];
+
     /**
      * Set block template
      */
@@ -41,5 +45,18 @@ class RicardoMartins_PagBank_Block_Form_Info_Cc extends Mage_Payment_Block_Info
         }
 
         return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSpecificInformation()
+    {
+        $result = parent::getSpecificInformation();
+        foreach ($this->hideSpecificInfo as $key) {
+            unset($result[$key]);
+        }
+
+        return $result;
     }
 }

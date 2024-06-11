@@ -2,6 +2,7 @@
 
 class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Method_Abstract
 {
+    const ORDER_ID = 'pagbank_order_id';
     const IS_SANDBOX = 'is_sandbox';
 
     protected $_order = null;

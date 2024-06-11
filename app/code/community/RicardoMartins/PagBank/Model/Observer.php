@@ -66,6 +66,7 @@ class RicardoMartins_PagBank_Model_Observer
         ];
 
         if (!$observer->getEvent()->getBlock()->getIsSecureMode()) {
+            $info[] = RicardoMartins_PagBank_Model_Method_Abstract::ORDER_ID;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::CHARGE_ID;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::AUTHORIZATION_CODE;

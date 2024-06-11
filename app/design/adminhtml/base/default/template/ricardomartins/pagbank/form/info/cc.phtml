@@ -18,7 +18,6 @@
     </tr>
 <?php if ($_specificInfo = $this->getSpecificInformation()):?>
     <?php foreach ($_specificInfo as $_label => $_value):?>
-        <?php if ($_value === RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION) continue ?>
         <?php if (strpos($_value, RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL) !== false): ?>
             <p>
                 <a href="<?php echo $this->escapeUrl($_value);?>" target="_blank">
