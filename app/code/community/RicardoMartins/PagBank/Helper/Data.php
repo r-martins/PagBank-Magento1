@@ -430,7 +430,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             case RicardoMartins_PagBank_Model_Method_Cc::CHARGE_ID:
                 return $this->__('Charge ID');
             case RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK:
-                return $this->__('Charge Link');
+                return $this->__('View on PagBank');
             case RicardoMartins_PagBank_Model_Method_Cc::AUTHORIZATION_CODE:
                 return $this->__('Authorization Code');
             case RicardoMartins_PagBank_Model_Method_Cc::NSU:

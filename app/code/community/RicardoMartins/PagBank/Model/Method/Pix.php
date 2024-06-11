@@ -37,6 +37,7 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
 
         $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
         $addData[self::ORDER_ID] = $response['id'];
+        $addData['pix'][self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
 
         if (isset($response['qr_codes'])) {
             $qrCodes = $response['qr_codes'][0];
@@ -61,6 +62,21 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
         }
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function handleNotification($order, $status, $charge = null)
+    {
+        parent::handleNotification($order, $status, $charge);
+
+        if (!$charge) {
+            return;
+        }
+
+        $payment = $order->getPayment();
+        $this->addChargeLinkToPaymentAdditionalData($payment, $charge);
     }
 
     /**
@@ -107,5 +123,31 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
         $endpoint = $helper->getOrdersEndpoint();
 
         return $api->placePostRequest($endpoint, $data);
+    }
+
+    /**
+     * @param $payment
+     * @param $charge
+     * @return void
+     */
+    private function addChargeLinkToPaymentAdditionalData($payment, $charge)
+    {
+        $addData = unserialize($payment->getAdditionalData());
+        $isSandbox = $addData['pix'][self::IS_SANDBOX] == 'Yes';
+        if ($isSandbox) {
+            return;
+        }
+
+        if (!isset($charge['id'])) {
+            return;
+        }
+
+        $addData['charge_id'] = $charge['id'];
+        $chargeIdWithoutPrefix = str_replace('CHAR_', '', $addData['charge_id']);
+        $transactionLink = RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL . $chargeIdWithoutPrefix;
+        $addData['charge_link'] = $transactionLink;
+
+        $payment->setAdditionalData(serialize($addData));
+        $payment->save();
     }
 }

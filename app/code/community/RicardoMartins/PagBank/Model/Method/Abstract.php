@@ -12,10 +12,12 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
      *
      * @param $order
      * @param $status
+     * @param null $charge
      * @return void
-     * @throws Mage_Core_Exception|Throwable
+     * @throws Mage_Core_Exception
+     * @throws Throwable
      */
-    public function handleNotification($order, $status)
+    public function handleNotification($order, $status, $charge = null)
     {
         $comment = '';
         $payment = $order->getPayment();

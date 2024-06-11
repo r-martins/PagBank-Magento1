@@ -30,3 +30,19 @@
     </p>
     <p><b><?php echo $this->__('Pix code expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
 <?php endif; ?>
+<?php if ($_specificInfo = $this->getSpecificInformation()):?>
+    <?php foreach ($_specificInfo as $_label => $_value):?>
+        <?php if (strpos($_value, RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL) !== false): ?>
+            <p>
+                <a href="<?php echo $this->escapeUrl($_value);?>" target="_blank">
+                    <?php echo $this->escapeHtml($_label) ?>
+                </a>
+            </p>
+            <?php continue; ?>
+        <?php endif ?>
+        <p>
+            <strong><?php echo $this->escapeHtml($_label)?>:</strong>
+            <span><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></span>
+        </p>
+    <?php endforeach ?>
+<?php endif ?>

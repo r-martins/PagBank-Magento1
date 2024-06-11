@@ -57,6 +57,12 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
             $addData['billet']['due_date'] = $pay['due_date'];
             $addData['charge_id'] = $charges['id'];
 
+            if (isset($response['is_sandbox']) && !$response['is_sandbox']) {
+                $chargeIdWithoutPrefix = str_replace('CHAR_', '', $addData['charge_id']);
+                $transactionLink = RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL . $chargeIdWithoutPrefix;
+                $addData['charge_link'] = $transactionLink;
+            }
+
             $payment->setAdditionalData(serialize($addData));
             $payment->setSkipOrderProcessing(true);
             $payment->save();
