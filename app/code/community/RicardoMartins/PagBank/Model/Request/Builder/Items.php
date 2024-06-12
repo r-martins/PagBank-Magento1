@@ -33,7 +33,9 @@ class RicardoMartins_PagBank_Model_Request_Builder_Items
         $helper = Mage::helper('ricardomartins_pagbank');
 
         $storeId = $this->order->getStoreId();
-        if ($helper->hideOrderItems($storeId)) {
+        $hideItems = $helper->hideOrderItems($storeId);
+        $method = $this->order->getPayment()->getMethod();
+        if ($hideItems && $method !== RicardoMartins_PagBank_Model_Method_Cc::METHOD_CODE) {
             return [];
         }
 
