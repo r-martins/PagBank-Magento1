@@ -33,16 +33,4 @@ interface RicardoMartins_PagBank_Api_Connect_PublicKeyInterface
      * Used to save the public key.
      */
     const PUBLIC_KEY_CONFIG_PATH = 'payment/ricardomartins_pagbank/public_key';
-
-    /**
-     * @param string $connectKey
-     * @return string
-     */
-    public function createPublicKey(string $connectKey): string;
-
-    /**
-     * @param string $publicKey
-     * @return void
-     */
-    public function savePublicKey(string $publicKey): void;
 }
