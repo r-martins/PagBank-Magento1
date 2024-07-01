@@ -35,7 +35,7 @@ class RicardoMartins_PagBank_Model_Observer
         }
 
         try {
-            Mage::getConfig()->saveConfig('payment/ricardomartins_pagbank/public_key', $publicKey);
+            Mage::getConfig()->saveConfig(RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY_CONFIG_PATH, $publicKey);
         } catch (\Exception $e) {
             $helper->writeLog(sprintf('Error saving public key: %s', $e->getMessage()));
             throw new \Exception(__('Error saving public key: %s', $e->getMessage()));
