@@ -2,7 +2,8 @@
 
 class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Model_Method_Abstract
 {
-    protected $_code = 'ricardomartins_pagbank_pix';
+    const METHOD_CODE = 'ricardomartins_pagbank_pix';
+    protected $_code = self::METHOD_CODE;
     protected $_formBlockType = 'ricardomartins_pagbank/form_pix';
     protected $_infoBlockType = 'ricardomartins_pagbank/form_info_pix';
     protected $_canUseForMultishipping  = false;

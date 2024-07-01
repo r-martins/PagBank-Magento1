@@ -2,7 +2,8 @@
 
 class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_Model_Method_Abstract
 {
-    protected $_code = 'ricardomartins_pagbank_billet';
+    const METHOD_CODE = 'ricardomartins_pagbank_billet';
+    protected $_code = self::METHOD_CODE;
     protected $_formBlockType = 'ricardomartins_pagbank/form_billet';
     protected $_infoBlockType = 'ricardomartins_pagbank/form_info_billet';
     protected $_canUseForMultishipping  = false;

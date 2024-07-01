@@ -228,6 +228,34 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param $storeId
+     * @return bool
+     */
+    public function hideOrderItems($storeId = null)
+    {
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/hide_order_items', $storeId);
+    }
+
+    /**
+     * @param $storeId
+     * @return bool
+     */
+    public function sendBuyerEmailHash($storeId = null)
+    {
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/hash_email_active', $storeId);
+    }
+
+    /**
+     * @param $email
+     * @return string
+     */
+    public function getHashEmail($email)
+    {
+        $hash = hash('md5', $email);
+        return "{$hash}@pagbankconnect.pag";
+    }
+
+    /**
      * Get the maximum number of installments without interest
      *
      * @param $amount
@@ -698,6 +726,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         return [
             'document_from' => Mage::getStoreConfig('payment/ricardomartins_pagbank/document_from', $storeId),
             'placeorder_button' => Mage::getStoreConfig('payment/ricardomartins_pagbank/placeorder_button', $storeId),
+            'hash_email_active' => Mage::getStoreConfig('payment/ricardomartins_pagbank/hash_email_active', $storeId),
+            'hide_order_items' => Mage::getStoreConfig('payment/ricardomartins_pagbank/hide_order_items', $storeId),
             'stc_mirror' => Mage::getStoreConfig('payment/ricardomartins_pagbank/stc_mirror', $storeId),
             'jsdelivr_enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_enabled', $storeId),
             'jsdelivr_minify' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_minify', $storeId),

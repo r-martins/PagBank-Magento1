@@ -48,8 +48,14 @@ class RicardoMartins_PagBank_Model_Request_Builder_Customer
         $customer = Mage::getModel('ricardomartins_pagbank/request_object_customer');
         $customer->setName($this->order->getCustomerFirstname() . ' ' . $this->order->getCustomerLastname());
         $customer->setTaxId($document);
-        $customer->setEmail($this->order->getCustomerEmail());
         $customer->setPhones([$phones->getData()]);
+
+        $email = $this->order->getCustomerEmail();
+        $storeId = $this->order->getStoreId();
+        if ($helper->sendBuyerEmailHash($storeId)) {
+            $email = $helper->getHashEmail($email);
+        }
+        $customer->setEmail($email);
 
         return [
             self::CUSTOMER => $customer->getData()

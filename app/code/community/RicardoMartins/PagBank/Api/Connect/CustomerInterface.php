@@ -23,7 +23,7 @@ interface RicardoMartins_PagBank_Api_Connect_CustomerInterface
     /**
      * Customer email
      * Receive a string.
-     * Character limit: 10 to 255 characters.
+     * Character limit: 5 to 60 characters.
      */
     const EMAIL = 'email';
 

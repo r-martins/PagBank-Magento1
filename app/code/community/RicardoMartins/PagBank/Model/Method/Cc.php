@@ -2,6 +2,7 @@
 
 class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Model_Method_Abstract
 {
+    const METHOD_CODE = 'ricardomartins_pagbank_cc';
     const CHARGE_ID = 'charge_id';
     const CHARGE_LINK = 'charge_link';
     const DOCUMENT = 'tax_id';
@@ -19,7 +20,7 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
     const NSU = 'nsu';
     const STATUS_PAGBANK = 'status_pagbank';
 
-    protected $_code = 'ricardomartins_pagbank_cc';
+    protected $_code = self::METHOD_CODE;
     protected $_formBlockType = 'ricardomartins_pagbank/form_cc';
     protected $_infoBlockType = 'ricardomartins_pagbank/form_info_cc';
     protected $_canUseForMultishipping  = false;
