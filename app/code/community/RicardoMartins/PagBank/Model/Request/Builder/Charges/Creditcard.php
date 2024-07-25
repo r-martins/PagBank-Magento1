@@ -113,7 +113,9 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Charge $charges */
         $charges = Mage::getModel('ricardomartins_pagbank/request_object_charge');
-        $charges->setReferenceId($this->order->getIncrementId());
+
+        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getReservedOrderId();
+        $charges->setReferenceId($orderIncrementId);
         $charges->setAmount($amount->getData());
         $charges->setPaymentMethod($paymentMethod->getData());
 
