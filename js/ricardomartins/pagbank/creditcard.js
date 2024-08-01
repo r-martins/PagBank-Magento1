@@ -60,8 +60,8 @@ RMPagBank.prototype = {
             buttons.push(...configuredButton);
 
             // Remove duplicated buttons
-            buttons = buttons.filter((value, index, self) => {
-                return self.indexOf(value) === index;
+            buttons = buttons.filter((value, index) => {
+                return buttons.indexOf(value) === index;
             });
         }
 
