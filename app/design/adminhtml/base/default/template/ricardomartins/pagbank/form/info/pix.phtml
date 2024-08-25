@@ -40,9 +40,5 @@
             </p>
             <?php continue; ?>
         <?php endif ?>
-        <p>
-            <strong><?php echo $this->escapeHtml($_label)?>:</strong>
-            <span><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></span>
-        </p>
     <?php endforeach ?>
 <?php endif ?>

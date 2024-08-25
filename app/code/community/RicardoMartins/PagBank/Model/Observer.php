@@ -120,4 +120,21 @@ class RicardoMartins_PagBank_Model_Observer
 
         return $this;
     }
+
+    /**
+     * @param $observer
+     */
+    public function salesModelServiceQuoteSubmitFailure($observer)
+    {
+        $quote = $observer->getEvent()->getQuote();
+        $payment = $quote->getPayment();
+        if (!$payment) {
+            return;
+        }
+
+        $methodCode = $payment->getMethod();
+        if ($methodCode == RicardoMartins_PagBank_Model_Method_Cc::METHOD_CODE) {
+            $payment->unsAdditionalInformation();
+        }
+    }
 }
