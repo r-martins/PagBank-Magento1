@@ -19,6 +19,7 @@
                         <connect_key translate="label">
                             <label>Connect Key</label>
                             <frontend_type>text</frontend_type>
+                            <comment><model>ricardomartins_pagbank/system_config_comment</model></comment>
                             <sort_order>10</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>0</show_in_website>
