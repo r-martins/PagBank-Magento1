@@ -614,6 +614,22 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @param $info
+     * @param $prefix
+     * @return void
+     */
+    public function cleanAdditionalInformation($info, $prefix)
+    {
+        $addInfo = $info->getAdditionalInformation();
+        $addInfo = array_filter($addInfo, function($key) use ($prefix) {
+            return strpos($key, $prefix) !== 0;
+        }, ARRAY_FILTER_USE_KEY);
+
+        $info->unsAdditionalInformation();
+        $info->setAdditionalInformation($addInfo);
+    }
+
+    /**
      * Get module config for the test controller
      *
      * @return array
