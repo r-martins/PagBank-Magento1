@@ -5,6 +5,7 @@ app/code/community/RicardoMartins/PagBank/Model/Observer.php app/code/community/
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Order/Installments.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Order/Installments.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Connect/Ccbrand.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Connect/Ccbrand.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Customer/Document.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Customer/Document.php
+app/code/community/RicardoMartins/PagBank/Model/System/Config/Comment.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Comment.php
 app/code/community/RicardoMartins/PagBank/Model/Cron.php app/code/community/RicardoMartins/PagBank/Model/Cron.php
 app/code/community/RicardoMartins/PagBank/Model/Api/Connect/Client.php app/code/community/RicardoMartins/PagBank/Model/Api/Connect/Client.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod.php
