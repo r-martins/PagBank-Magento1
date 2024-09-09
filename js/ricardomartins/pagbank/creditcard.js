@@ -399,6 +399,20 @@ RMPagBank.prototype = {
             regionCode = this.getRegionCode(region);
         }
 
+        let amount = quote.totalAmount * 100;
+        if (installments > 1) {
+            let installmentText = document.getElementById('ricardomartins_pagbank_cc_cc_installments').selectedOptions[0].text;
+            let totalValuePattern = /\(Total R\$ ([\d\.,]+)\)/;
+            let match = installmentText.match(totalValuePattern);
+
+            if (match) {
+                let totalValue = match[1];
+                totalValue = totalValue.replace(',', '.');
+                totalValue = parseInt(parseFloat(totalValue.toString()).toFixed(2) * 100);
+                amount = totalValue;
+            }
+        }
+
         const request = {
             data: {
                 customer: {
@@ -426,7 +440,7 @@ RMPagBank.prototype = {
                     }
                 },
                 amount: {
-                    value: quote.totalAmount * 100,
+                    value: amount,
                     currency: 'BRL'
                 },
                 billingAddress: {
