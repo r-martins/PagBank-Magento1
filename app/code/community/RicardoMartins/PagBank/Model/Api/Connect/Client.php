@@ -109,7 +109,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         $parsedParams = parse_url($endpoint, PHP_URL_QUERY);
         if ($parsedParams) {
             parse_str($parsedParams, $parsedStr);
-            $isSandbox = (bool)$parsedStr['isSandbox'];
+            $isSandbox = isset($parsedStr['isSandbox']) && $parsedStr['isSandbox'] == 1;
         }
 
         $response['is_sandbox'] = $isSandbox;
