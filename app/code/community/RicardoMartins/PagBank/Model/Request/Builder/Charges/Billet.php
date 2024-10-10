@@ -35,12 +35,17 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Billet
         $billingAddress = $this->order->getBillingAddress();
         $regionCode = strlen($billingAddress->getRegionCode()) == 2 ? $billingAddress->getRegionCode() : $helper->getRegionCode($billingAddress->getRegionCode());
 
+        /* Determining how many lines we have in the address */
+        $addressLinesNotEmpty = array_filter($billingAddress->getStreet());
+        
         /** @var RicardoMartins_PagBank_Model_Request_Object_Customer_Address $address */
         $address = Mage::getModel('ricardomartins_pagbank/request_object_customer_address');
         $address->setStreet($billingAddress->getStreet(1));
         $address->setNumber($billingAddress->getStreet(2));
-        $address->setComplement($billingAddress->getStreet(3));
-        $address->setLocality($billingAddress->getStreet(4));
+        if (count($addressLinesNotEmpty) > 3) {
+            $address->setComplement($billingAddress->getStreet(3));
+        }
+        $address->setLocality(end($addressLinesNotEmpty));
         $address->setCity($billingAddress->getCity());
         $address->setRegion($billingAddress->getRegion());
         $address->setRegionCode($regionCode);
