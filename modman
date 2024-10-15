@@ -9,6 +9,8 @@ app/code/community/RicardoMartins/PagBank/Model/System/Config/Comment.php app/co
 app/code/community/RicardoMartins/PagBank/Model/Cron.php app/code/community/RicardoMartins/PagBank/Model/Cron.php
 app/code/community/RicardoMartins/PagBank/Model/Api/Connect/Client.php app/code/community/RicardoMartins/PagBank/Model/Api/Connect/Client.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod.php
+app/code/community/RicardoMartins/PagBank/Model/Request/Object/Buyer.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Buyer.php
+app/code/community/RicardoMartins/PagBank/Model/Request/Object/Fees.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Fees.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Card.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Card.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Billet.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Billet.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Card/Authenticationmethod.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Card/Authenticationmethod.php
@@ -16,6 +18,7 @@ app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Qrc
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Billet/Instructionlines.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Billet/Instructionlines.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Charge.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Charge.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Holder.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Holder.php
+app/code/community/RicardoMartins/PagBank/Model/Request/Object/Interest.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Interest.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Customer.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Customer.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Amount.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Amount.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Item.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Item.php
@@ -43,10 +46,13 @@ app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethod/CardInterfac
 app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethod/QrCodeInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethod/QrCodeInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethod/Billet/InstructionLinesInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethod/Billet/InstructionLinesInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethod/BilletInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethod/BilletInterface.php
+app/code/community/RicardoMartins/PagBank/Api/Connect/InterestInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/InterestInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/PhoneInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/PhoneInterface.php
+app/code/community/RicardoMartins/PagBank/Api/Connect/BuyerInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/BuyerInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/AmountInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/AmountInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/HolderInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/HolderInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/CustomerInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/CustomerInterface.php
+app/code/community/RicardoMartins/PagBank/Api/Connect/FeesInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/FeesInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/AddressInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/AddressInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/PublicKeyInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/PublicKeyInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethodInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethodInterface.php

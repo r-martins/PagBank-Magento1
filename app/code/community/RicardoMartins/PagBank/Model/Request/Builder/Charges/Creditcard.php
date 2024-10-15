@@ -64,6 +64,10 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         $paymentMethod->setSoftDescriptor($softDescriptor);
 
         $totalAmount = $this->order->getBaseGrandTotal();
+        
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
+        $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
+        
         if ($selectedInstallments > 1) {
             $creditCardBin = $payment->getAdditionalInformation('cc_bin');
             $isSandbox = $helper->isSandbox($storeId);
@@ -94,10 +98,25 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
                 $totalAmount = (int) $installment['amount']['value'];
                 $totalAmount = $totalAmount / 100;
             }
-        }
 
-        /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
-        $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
+            if (isset($installment['amount']['fees'])) {
+                /** @var RicardoMartins_PagBank_Model_Request_Object_Interest $interest */
+                $interest = Mage::getModel('ricardomartins_pagbank/request_object_interest');
+                $interest->setInstallments($installment['amount']['fees']['buyer']['interest']['installments']);
+                $interest->setTotal($installment['amount']['fees']['buyer']['interest']['total']);
+                
+                /** @var RicardoMartins_PagBank_Model_Request_Object_Buyer $buyer */
+                $buyer = Mage::getModel('ricardomartins_pagbank/request_object_buyer');
+                $buyer->setInterest($interest->getData());
+                
+                /** @var RicardoMartins_PagBank_Model_Request_Object_Fees $fees */
+                $fees = Mage::getModel('ricardomartins_pagbank/request_object_fees');
+                $fees->setBuyer($buyer->getData());
+                
+                $amount->setFees($fees->getData());
+            }
+        }
+        
         $amount->setValue($totalAmount);
 
         $currencyCode = 'BRL';

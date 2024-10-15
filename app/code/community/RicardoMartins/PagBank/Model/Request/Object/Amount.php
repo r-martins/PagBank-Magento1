@@ -44,4 +44,18 @@ class RicardoMartins_PagBank_Model_Request_Object_Amount extends Varien_Object i
     {
         return (int) round($amount * 100);
     }
+
+    public function getFees()
+    {
+        return $this->getData(RicardoMartins_PagBank_Api_Connect_AmountInterface::FEES);
+    }
+
+    /**
+     * @param $fees RicardoMartins_PagBank_Api_Connect_FeesInterface
+     * @return RicardoMartins_PagBank_Model_Request_Object_Amount
+     */
+    public function setFees($fees)
+    {
+        return $this->setData(RicardoMartins_PagBank_Api_Connect_AmountInterface::FEES, $fees);
+    }
 }

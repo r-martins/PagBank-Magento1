@@ -24,4 +24,9 @@ interface RicardoMartins_PagBank_Api_Connect_AmountInterface
      * Brazilian Real currency code.
      */
     const CURRENCY_BRL = 'BRL';
+
+    /**
+     * Fees - Generally, interest fees paid by the buyer
+     */
+    const FEES = 'fees';
 }
