@@ -39,8 +39,12 @@ class RicardoMartins_PagBank_Block_Form_Info_Cc extends Mage_Payment_Block_Info
     public function showSecureIcon()
     {
         $data = parent::getSpecificInformation();
-        $key = RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION;
-        if (array_key_exists($key, $data) && $data[$key]) {
+        $prefix3DS = '3DS_';
+        $result = array_filter($data, function($valor) use ($prefix3DS) {
+            return strpos($valor, $prefix3DS) === 0;
+        });
+
+        if (count($result) > 0) {
             return true;
         }
 
