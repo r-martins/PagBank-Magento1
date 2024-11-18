@@ -392,7 +392,7 @@ RMPagBank.prototype = {
         let postalCode = quote.postalCode ? quote.postalCode :
             $$('input[name^="billing[postcode]').first().value.replace(/\D/g, '');
 
-        if (regionCode === null) {
+        if (regionCode === null || !isNaN(regionCode)) {
             let regionId = $$('select[name^="billing[region_id]"]').first();
             let selectedIndex = regionId.selectedIndex;
             let region = regionId.options[selectedIndex].text;

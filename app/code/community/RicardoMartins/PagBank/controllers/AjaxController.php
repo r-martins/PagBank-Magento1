@@ -72,18 +72,38 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $email = $hasCustomer ? $quote->getCustomer()->getEmail() : $quote->getBillingAddress()->getEmail();
         $phone = preg_replace('/[^0-9]/', '', $quote->getBillingAddress()->getTelephone());
 
+        $street = $quote->getBillingAddress()->getStreet(1);
+        $number = $quote->getBillingAddress()->getStreet(2);
+        $complement = $quote->getBillingAddress()->getStreet(3);
+        $neighborhood = $quote->getBillingAddress()->getStreet(4);
+        $regionCode = $quote->getBillingAddress()->getRegionCode();
+        $city = $quote->getBillingAddress()->getCity();
+
+        $oscData = Mage::getSingleton('checkout/session')->getData('onestepcheckout_form_values');
+        if ($oscData) {
+            $name = $oscData['billing']['firstname'] . ' ' . $oscData['billing']['lastname'];
+            $email = $oscData['billing']['email'];
+            $phone = preg_replace('/[^0-9]/', '', $oscData['billing']['telephone']);
+            $street = $oscData['billing']['street'][0];
+            $number = $oscData['billing']['street'][2];
+            $complement = $oscData['billing']['street'][3];
+            $neighborhood = $oscData['billing']['street'][4];
+            $regionCode = $oscData['billing']['region_id'];
+            $city = $oscData['billing']['city'];
+        }
+
         $result = [
             'totalAmount' => $total,
             'customerName' => $helper->escapeHtml($name),
             'email' => $helper->escapeHtml($email),
             'phone' => $helper->escapeHtml($phone),
-            'street' => $helper->escapeHtml($quote->getBillingAddress()->getStreet(1)),
-            'number' => $helper->escapeHtml($quote->getBillingAddress()->getStreet(2)),
-            'complement' => $helper->escapeHtml($quote->getBillingAddress()->getStreet(3)),
-            'neighborhood' => $helper->escapeHtml($quote->getBillingAddress()->getStreet(4)),
-            'regionCode'=> $helper->escapeHtml($quote->getBillingAddress()->getRegionCode()),
+            'street' => $helper->escapeHtml($street),
+            'number' => $helper->escapeHtml($number),
+            'complement' => $helper->escapeHtml($complement),
+            'neighborhood' => $helper->escapeHtml($neighborhood),
+            'regionCode'=> $helper->escapeHtml($regionCode),
             'country'=> 'BRA',
-            'city'=> $helper->escapeHtml($quote->getBillingAddress()->getCity()),
+            'city'=> $helper->escapeHtml($city),
             'postalCode'=> $helper->escapeHtml($postcode)
         ];
 
