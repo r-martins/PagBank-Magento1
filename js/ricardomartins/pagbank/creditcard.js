@@ -110,7 +110,7 @@ RMPagBank.prototype = {
         });
 
         if (!eventAlreadyAttached) {
-            throw new Error('Não foi possível adicionar o evento de clique ao botão de finalizar compra.');
+            throw new Error('PagBank: Não foi possível adicionar o evento de clique ao botão de finalizar compra.');
         }
     },
     addCardFieldsObserver: function () {
@@ -119,14 +119,14 @@ RMPagBank.prototype = {
             Element.observe(numberElem,'change',function(e){RMPagBankObj.updateInstallments();});
             Element.observe(numberElem,'change',function(e){RMPagBankObj.setBrand();});
         } catch(e) {
-            console.error('Não foi possível adicionar observevação aos cartões. ' + e.message);
+            console.error('PagBank: Não foi possível adicionar observevação aos cartões. ' + e.message);
         }
 
     },
     addFormFieldsEvents: function () {
         try {
             let holderElem = $$('#ricardomartins_pagbank_cc_cc_owner').first();
-            Element.observe(holderElem,'keyup',function(e){e.target.value = e.target.value.toUpperCase()});
+            Element.observe(holderElem,'input',function(e){e.target.value = e.target.value.toUpperCase()});
 
             let expElem = $$('#ricardomartins_pagbank_cc_cc_exp').first();
             Element.observe(expElem,'keydown',function(e){
@@ -136,7 +136,7 @@ RMPagBank.prototype = {
                 }
             });
         } catch(e) {
-            console.error('Não foi possível adicionar os eventos. ' + e.message);
+            console.error('PagBank: Não foi possível adicionar os eventos. ' + e.message);
         }
 
     },
