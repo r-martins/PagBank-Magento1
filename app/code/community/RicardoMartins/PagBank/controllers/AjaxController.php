@@ -82,7 +82,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $oscData = Mage::getSingleton('checkout/session')->getData('onestepcheckout_form_values');
         if ($oscData) {
             $name = $oscData['billing']['firstname'] . ' ' . $oscData['billing']['lastname'];
-            $email = $oscData['billing']['email'];
+            $email = $oscData['billing']['email'] ?? $email;
             $phone = preg_replace('/[^0-9]/', '', $oscData['billing']['telephone']);
             $street = $oscData['billing']['street'][0];
             $number = $oscData['billing']['street'][2];
