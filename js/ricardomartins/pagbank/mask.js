@@ -1,12 +1,12 @@
 function mask() {
     const masks = {
-        date (value) {
+        date(value) {
             return value
                 .replace(/\D+/g, '')
                 .replace(/(\d{2})(\d)/, '$1/$2')
-                .replace(/(\/\d{2})\d+?$/, '$1')
+                .replace(/(\/\d{2})\d+?$/, '$1');
         },
-        document (value) {
+        document(value) {
             value = value.replace(/\D+/g, '');
             if (value.length > 11) {
                 return value
@@ -14,13 +14,13 @@ function mask() {
                     .replace(/(\d{3})(\d)/, '$1.$2')
                     .replace(/(\d{3})(\d)/, '$1/$2')
                     .replace(/(\d{4})(\d)/, '$1-$2')
-                    .replace(/(-\d{2})\d+?$/, '$1')
+                    .replace(/(-\d{2})\d+?$/, '$1');
             }
             return value
                 .replace(/(\d{3})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d)/, '$1.$2')
                 .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-                .replace(/(-\d{2})\d+?$/, '$1')
+                .replace(/(-\d{2})\d+?$/, '$1');
         },
         creditCard (value) {
             return value
@@ -28,24 +28,25 @@ function mask() {
                 .replace(/(\d{4})(\d)/, '$1 $2')
                 .replace(/(\d{4})(\d)/, '$1 $2')
                 .replace(/(\d{4})(\d)/, '$1 $2')
-                .replace(/(\d{4})\d+?$/, '$1')
+                .replace(/(\d{4})\d+?$/, '$1');
         },
-        cvv (value) {
-            return value
-                .replace(/\D+/g, '')
-                .replace(/(\d{4})\d+?$/, '$1')
+        cvv(value) {
+            return value.replace(/\D+/g, '').replace(/(\d{4})\d+?$/, '$1');
         }
-    }
+    };
 
-    document.querySelectorAll('input').forEach($input => {
-        const field = $input.dataset.js
+    document.querySelectorAll('input[data-js]').forEach($input => {
+        const field = $input.dataset.js;
+        if (!field || !masks[field]) return;
 
-        if (field === undefined || masks[field] === undefined) return
+        const applyMask = (e) => {
+            e.target.value = masks[field](e.target.value);
+        };
 
-        $input.addEventListener('input', e => {
-            e.target.value = masks[field](e.target.value)
-        }, false)
-    })
+        $input.addEventListener('input', applyMask, false);
+        $input.addEventListener('focusout', applyMask, false);
+        $input.addEventListener('focusin', applyMask, false);
+    });
 }
 
 document.observe("dom:loaded", function () {
