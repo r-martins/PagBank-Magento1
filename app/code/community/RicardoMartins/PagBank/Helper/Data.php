@@ -584,6 +584,12 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getModuleJsUrl($secure)
     {
+        $moipConfig = Mage::getConfig()->getModuleConfig('MOIP_Transparente');
+        $isMoipEnabled = $moipConfig && $moipConfig->is('active', 'true');
+        if ($isMoipEnabled) {
+            return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, $secure) . 'ricardomartins/pagbank/creditcard-moip.js';
+        }
+
         if (Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/jsdelivr_enabled')) {
             $min = (Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/jsdelivr_minify')) ? '.min' : '';
             $moduleVersion = (string)Mage::getConfig()->getModuleConfig('RicardoMartins_PagBank')->version;

@@ -16,4 +16,9 @@
             <action method="addCss"><stylesheet>css/ricardomartins/pagbank/styles.css</stylesheet></action>
         </reference>
     </sales_order_view>
+    <ricardomartins_pagbank_moip>
+        <reference name="head">
+            <action method="addJs"><name>ricardomartins/pagbank/moip-place-order-compatibility.js</name></action>
+        </reference>
+    </ricardomartins_pagbank_moip>
 </layout>
