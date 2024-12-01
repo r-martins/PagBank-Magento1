@@ -53,7 +53,7 @@ RMPagBank.prototype = {
 
         let form = methodForm.first().closest('form');
 
-        let buttons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button'];
+        let buttons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button', '#checkout-onepage-buttom'];
         let configuredButton = this.config.placeorder_button;
         if (configuredButton) {
             console.log('PagBank: botão configurado encontrado.', configuredButton);
@@ -66,11 +66,13 @@ RMPagBank.prototype = {
             });
         }
 
+        var placeOrderButtonWasClicked = false;
+
         let eventAlreadyAttached = false;
         buttons.forEach(function(btn) {
-            let button = $$(btn).first();
-
-            if (typeof button === 'undefined' || eventAlreadyAttached) {
+            let buttonElements = $$(btn);
+            buttonElements.forEach(function(button) {
+                if (typeof button === 'undefined') {
                 return;
             }
 
@@ -87,8 +89,16 @@ RMPagBank.prototype = {
                 if (paymentMethod !== 'ricardomartins_pagbank_cc') {
                     button.setAttribute('onclick', onclickEvent);
                     button.click();
+                        if (button.hasClassName('moip-place-order')) {
+                            moipPlaceOrder();
+                        }
                     return true;
                 }
+
+                    if (placeOrderButtonWasClicked) {
+                        return;
+                    }
+                    placeOrderButtonWasClicked = true;
                 event.preventDefault();
                 event.stopImmediatePropagation();
 
@@ -96,6 +106,9 @@ RMPagBank.prototype = {
                     if (RMPagBankObj.proceedCheckout) {
                         button.setAttribute('onclick', onclickEvent);
                         button.click();
+                            if (button.hasClassName('moip-place-order')) {
+                                moipPlaceOrder();
+                            }
                         return true;
                     }
                 }).catch(error => {
@@ -107,6 +120,7 @@ RMPagBank.prototype = {
             form.addEventListener('submit', validateAndPreventDefault, false);
 
             eventAlreadyAttached = true;
+        });
         });
 
         if (!eventAlreadyAttached) {

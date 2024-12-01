@@ -137,4 +137,33 @@ class RicardoMartins_PagBank_Model_Observer
             $payment->unsAdditionalInformation();
         }
     }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     * @return void
+     */
+    public function addMoipCompatibility(Varien_Event_Observer $observer)
+    {
+        $layout = $observer->getEvent()->getLayout();
+
+        if (!$layout) {
+            return;
+        }
+
+        $moipConfig = Mage::getConfig()->getModuleConfig('MOIP_Transparente');
+        $isMoipEnabled = $moipConfig && $moipConfig->is('active', 'true');
+
+        if (!$isMoipEnabled) {
+            return;
+        }
+
+        $update = $layout->getUpdate();
+        $handles = $update->getHandles();
+
+        if (!in_array('checkout_onepage_index', $handles)) {
+            return;
+        }
+
+        $update->addHandle('ricardomartins_pagbank_moip');
+    }
 }

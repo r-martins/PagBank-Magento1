@@ -155,6 +155,15 @@
                     </ricardomartins_pagbank>
                 </observers>
             </payment_info_block_prepare_specific_information>
+            <controller_action_layout_load_before>
+                <observers>
+                    <ricardomartins_pagbank_moip>
+                        <type>model</type>
+                        <class>ricardomartins_pagbank/observer</class>
+                        <method>addMoipCompatibility</method>
+                    </ricardomartins_pagbank_moip>
+                </observers>
+            </controller_action_layout_load_before>
         </events>
     </frontend>
     <adminhtml>
