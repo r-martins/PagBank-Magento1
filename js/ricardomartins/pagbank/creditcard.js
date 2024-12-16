@@ -5,7 +5,6 @@ RMPagBank.prototype = {
         this.config = config;
         this.formElementAndSubmit = false;
         this.addCardFieldsObserver();
-        this.addFormFieldsEvents();
         this.getInstallments();
 
         if (pagseguro_connect_3d_session !== '' && this.config.enabled_3ds) {
@@ -120,23 +119,6 @@ RMPagBank.prototype = {
             Element.observe(numberElem,'change',function(e){RMPagBankObj.setBrand();});
         } catch(e) {
             console.error('PagBank: Não foi possível adicionar observevação aos cartões. ' + e.message);
-        }
-
-    },
-    addFormFieldsEvents: function () {
-        try {
-            let holderElem = $$('#ricardomartins_pagbank_cc_cc_owner').first();
-            Element.observe(holderElem,'input',function(e){e.target.value = e.target.value.toUpperCase()});
-
-            let expElem = $$('#ricardomartins_pagbank_cc_cc_exp').first();
-            Element.observe(expElem,'keydown',function(e){
-                if (!isNaN(e.key) && parseInt(e.key) > 1 && e.target.value.length === 0) {
-                    e.target.value = '0' + e.key;
-                    e.preventDefault();
-                }
-            });
-        } catch(e) {
-            console.error('PagBank: Não foi possível adicionar os eventos. ' + e.message);
         }
 
     },
