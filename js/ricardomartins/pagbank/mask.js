@@ -76,6 +76,7 @@ const observerPage = new MutationObserver(function(mutationList, observer) {
 });
 const observeConfig = {
     subtree: true,
+    childList: true,
     attributeFilter: ["disabled"],
     attributes: true
 }
