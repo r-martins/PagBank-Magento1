@@ -51,6 +51,7 @@ class RicardoMartins_PagBank_Model_Request_Object_Holder extends Varien_Object i
      */
     public function setEmail($email)
     {
+        $email = strtolower($email);
         $email = substr($email, 0, 255);
         return $this->setData(RicardoMartins_PagBank_Api_Connect_HolderInterface::EMAIL, $email);
     }
