@@ -251,6 +251,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getHashEmail($email)
     {
+        $email = strtolower($email);
         $hash = hash('md5', $email);
         return "{$hash}@pagbankconnect.pag";
     }
