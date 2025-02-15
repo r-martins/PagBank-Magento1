@@ -54,8 +54,19 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
     {
         $order = $payment->getOrder();
 
-        if (!$order->canCancel()) {
+        if (!$order->canCancel() && !$order->canCreditmemo()) {
             Mage::throwException(sprintf("The order #%s cannot be canceled.", $order->getIncrementId()));
+        }
+
+        if ($order->canCreditmemo() && $order->hasInvoices()) {
+            $service = Mage::getModel('sales/service_order', $order);
+            $creditmemo = $service->prepareCreditmemo();
+            $creditmemo->setRefundRequested(true);
+            $creditmemo->setOfflineRequested(true);
+            $creditmemo->register();
+            $creditmemo->save();
+            $order->save();
+            return;
         }
 
         // checks if the order state is 'Pending Payment' and changes it
