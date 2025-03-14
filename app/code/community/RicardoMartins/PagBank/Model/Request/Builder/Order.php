@@ -51,7 +51,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
         $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getReservedOrderId();
         $hash = Mage::helper('core')->getHash($orderIncrementId);
         $hash = substr($hash, 0, 5);
-        $baseUrl = Mage::app()->getStore()->getBaseUrl();
+        $baseUrl = Mage::app()->getStore()->getBaseUrl(\Mage_Core_Model_Store::URL_TYPE_LINK, true);
         return [
             $baseUrl . RicardoMartins_PagBank_Api_Connect_ConnectInterface::NOTIFICATION_ENDPOINT . '?hash=' . $hash
         ];
