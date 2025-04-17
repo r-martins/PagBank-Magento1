@@ -20,6 +20,11 @@ class RicardoMartins_PagBank_Model_Payment_Notification
                 throw new Exception("Order {$incrementId} not found");
             }
 
+            $info = unserialize($order->getPayment()->getAdditionalData());
+            if(!isset($info['charge_id']) || !isset($charge['id'])){
+                throw new Exception("charge id not found");
+            }
+            
             $status = $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] ?: '';
             $methodInstance = $order->getPayment()->getMethodInstance();
             $methodInstance->handleNotification($order, $status, $charge);
