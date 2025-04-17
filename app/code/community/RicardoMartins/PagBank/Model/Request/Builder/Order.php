@@ -34,7 +34,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
      */
     public function build()
     {
-        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getReservedOrderId();
+        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getQuote()->getReservedOrderId();
         return [
             self::REFERENCE_ID => $orderIncrementId,
             self::NOTIFICATION_URLS => $this->getNotificationUrls()
@@ -48,7 +48,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
      */
     private function getNotificationUrls()
     {
-        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getReservedOrderId();
+        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getQuote()->getReservedOrderId();
         $hash = Mage::helper('core')->getHash($orderIncrementId);
         $hash = substr($hash, 0, 5);
         $baseUrl = Mage::app()->getStore()->getBaseUrl(\Mage_Core_Model_Store::URL_TYPE_LINK, true);
