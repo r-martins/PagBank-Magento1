@@ -52,17 +52,21 @@ RMPagBank.prototype = {
 
         let form = methodForm.first().closest('form');
 
-        let buttons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button'];
+        let defaultButtons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button'];
+        let buttons = [];
         let configuredButton = this.config.placeorder_button;
         if (configuredButton) {
             console.log('PagBank: botão configurado encontrado.', configuredButton);
             configuredButton = configuredButton.split(',');
-            buttons.push(...configuredButton);
+            // priority to configure adm
+            buttons = [...configuredButton, ...defaultButtons];
 
             // Remove duplicated buttons
             buttons = buttons.filter((value, index) => {
                 return buttons.indexOf(value) === index;
             });
+        }else{
+            buttons = [...defaultButtons]
         }
 
         let eventAlreadyAttached = false;
