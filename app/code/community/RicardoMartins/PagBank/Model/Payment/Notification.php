@@ -22,17 +22,17 @@ class RicardoMartins_PagBank_Model_Payment_Notification
 
             $info = unserialize($order->getPayment()->getAdditionalData());
             if(!isset($info['charge_id']) || !isset($charge['id'])){
-                throw new Exception("charge id not found");
+                throw new Exception("Charge id not found in order or charge");
             }
             if($info['charge_id'] !== $charge['id']){
-                throw new Exception("charge different");
+                throw new Exception("Notification charge id does not match with order charge id");
             }
             $status = $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] ?: '';
             $methodInstance = $order->getPayment()->getMethodInstance();
             $methodInstance->handleNotification($order, $status, $charge);
             return true;
         } catch (Exception $e) {
-            $helper->writeLog("Order {$incrementId} not found");
+            $helper->writeLog("Failed to process notification: " . $e->getMessage());
         }
 
         return false;

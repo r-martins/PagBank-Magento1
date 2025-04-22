@@ -67,7 +67,7 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
 
         if (!$result) {
             $this->getResponse()->setHttpResponseCode(400);
-            $this->getResponse()->setBody('Falha ao processar notificação.');
+            $this->getResponse()->setBody('Falha ao processar notificação. Veja pagbank.log para mais detalhes.');
             return;
         }
 
