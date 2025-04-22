@@ -55,9 +55,9 @@ RMPagBank.prototype = {
         let buttons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button'];
         let configuredButton = this.config.placeorder_button;
         if (configuredButton) {
-            console.log('PagBank: botão configurado encontrado.', configuredButton);
+            console.log('PagBank: um botão de finalização foi configurado.', configuredButton);
             configuredButton = configuredButton.split(',');
-            buttons.push(...configuredButton);
+            buttons.unshift(...configuredButton);
 
             // Remove duplicated buttons
             buttons = buttons.filter((value, index) => {
