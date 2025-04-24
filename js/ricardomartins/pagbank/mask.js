@@ -69,7 +69,7 @@ MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 const observerPage = new MutationObserver(function(mutationList, observer) {
     mutationList.forEach((mutation) => {
         let id = mutation.target.id;
-        if (id.includes("ricardomartins_pagbank")) {
+        if (typeof id === 'string' &&  id.includes("ricardomartins_pagbank")) {
             mask();
         }
     });
