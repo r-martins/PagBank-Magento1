@@ -833,7 +833,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             case 'Parameter credit_card_bin should have 6 or 8 digits.':
                 return 'cartão com valor diferente de 6 ou 8 dígitos.';
             case 'Parameter credit_card_bin should be as disposed on the credit card, see documentation.':
-                return 'cartão com valor invalido.';
+                return 'cartão com valor inválido.';
             case 'invalid_parameter':
                 return 'não foi possível processar o pagamento devido a um parâmetro inválido. Por favor, verifique os dados informados e tente novamente.';
             default:
