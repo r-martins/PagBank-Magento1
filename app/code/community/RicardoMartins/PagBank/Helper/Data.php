@@ -830,6 +830,12 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
                 return 'deve ser um CPF ou CNPJ válido';
             case 'credit_card_bin data not found.':
                 return 'cartão de crédito não reconhecido';
+            case 'Parameter credit_card_bin should have 6 or 8 digits.':
+                return 'cartão com valor diferente de 6 ou 8 dígitos.';
+            case 'Parameter credit_card_bin should be as disposed on the credit card, see documentation.':
+                return 'cartão com valor invalido.';
+            case 'invalid_parameter':
+                return 'não foi possível processar o pagamento devido a um parâmetro inválido. Por favor, verifique os dados informados e tente novamente.';
             default:
                 return $description;
         }
@@ -866,6 +872,11 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
                 return 'documento (CPF/CNPJ)';
             case 'credit_card_bin':
                 return 'número bin do cartão';
+            case 'credit_card_bin_invalid_length':
+            case 'credit_card_bin_is_invalid':
+                return 'o número do cartão parece estar incorreto';
+            case 'charges[0].payment_method.card.encrypted':
+                return 'Não foi possível processar o pagamento';
             default:
                 return $parameterName;
         }
