@@ -79,9 +79,9 @@ Isso é necessário para que o módulo possa criptografar os dados do cartão de
 
 
 # Site Oficial do Módulo
-https://pagseguro.ricardomartins.net.br/
+https://pbintegracoes.com/
 
-Disponível também para [Magento 2.x](https://pagseguro.ricardomartins.net.br/magento2.html) e [WooCommerce](https://pagseguro.ricardomartins.net.br/woocommerce.html).
+Disponível também para [Magento 2.x](https://pbintegracoes.com/magento2.html) e [WooCommerce](https://pbintegracoes.com/woocommerce.html).
 
 # Cursos Magento
 Em [Magenteiro.com/cursos](https://www.magenteiro.com/cursos?___store=default&utm_source=github-m1&utm_medium=readme&utm_campaign=readme.md) você encontra uma dezena de cursos pagos e gratuitos sobre Magento, inclusive o famoso curso gratuito [Sua loja com PagSeguro e OneStepCheckout](https://www.magenteiro.com/sua-loja-com-pagseguro-e-onestepcheckout?___store=default&utm_source=github-m1&utm_medium=readme&utm_campaign=readme.md).
@@ -107,7 +107,7 @@ Ao usar nossas integrações no modelo de recebimento em 14 ou 30 dias, ao invé
 
 Taxas menores são aplicadas para transações parceladas, PIX e Boleto.
 
-Consulte mais sobre as taxas atualizadas no [nosso site](https://pagseguro.ricardomartins.net.br/).
+Consulte mais sobre as taxas atualizadas no [nosso site](https://pbintegracoes.com/).
 
 ## Eu tenho uma taxa ou condição negociada menor que estas. O que faço?
 
@@ -167,12 +167,12 @@ Esta é uma iniciativa pessoal, sem vínculo com PagBank. PagBank é uma marca d
 
 Este não é um produto oficial do PagBank.
 
-Ao usar este plugin você concorda com os [Termos de Uso e Política de Privacidade](https://pagseguro.ricardomartins.net.br/terms.html).
+Ao usar este plugin você concorda com os [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms).
 
 # Links úteis
 
-- [Site Oficial das Integrações PagBank por Ricardo Martins](https://pagseguro.ricardomartins.net.br/)
+- [Site Oficial das Integrações PagBank por Ricardo Martins](https://pbintegracoes.com/)
 - [Central de Ajuda](https://pagsegurotransparente.zendesk.com/hc/pt-br/)
-- [Termos de Uso e Política de Privacidade](https://pagseguro.ricardomartins.net.br/terms.html)
+- [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms)
 - [Vídeos no Youtube](https://www.youtube.com/@Magenteiro/search?query=pagseguro)
 - [Artigos](https://www.magenteiro.com/blog/tag/pagseguro)

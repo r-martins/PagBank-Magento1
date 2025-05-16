@@ -9,7 +9,7 @@ interface RicardoMartins_PagBank_Api_Connect_ConnectInterface
      * WS URI
      * @var string
      */
-    const WS_URI = 'https://ws.ricardomartins.net.br/';
+    const WS_URI = 'https://ws.pbintegracoes.com/';
 
     /**
      * WS Endpoint

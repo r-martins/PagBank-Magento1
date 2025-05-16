@@ -3,7 +3,7 @@
   "description": "Módulo PagBank/PagSeguro Nova Geração para Magento 1.x e OpenMage LTS",
   "type": "magento-module",
   "license": "GPL-3.0",
-  "homepage": "https://pagseguro.ricardomartins.net.br/",
+  "homepage": "https://pbintegracoes.com/",
   "version": "4.7.2",
   "support": {
     "docs": "https://pagsegurotransparente.zendesk.com/hc/pt-br/",
@@ -12,7 +12,7 @@
   "authors": [
     {
       "name": "Ricardo Martins",
-      "email": "pagseguro-transparente@ricardomartins.net.br"
+      "email": "pagseguro-transparente@pbintegracoes.com"
     },
     {
       "name": "Ligia Salzano",

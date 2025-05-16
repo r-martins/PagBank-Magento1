@@ -7,9 +7,9 @@
                     <label>PagBank - Ricardo Martins</label>
                     <comment><![CDATA[A forma mais fácil e segura de receber pagamentos. Uma solução completa para que você ofereça de forma simples e transparente o processamento dos pedidos em seu site. <br>
                             Para utilizar o PagBank Connect, você precisa autorizar nossa aplicação e obter suas credenciais connect.<br />
-                            <a href="https://pagseguro.ricardomartins.net.br/connect/autorizar.html?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter Connect Key</a> |
-                            <a href="https://pagseguro.ricardomartins.net.br/connect/sandbox.html?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter Connect Key para Testes</a> |
-                            <a href="https://pagsegurotransparente.zendesk.com/hc/pt-br/?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter ajuda</a>]]></comment>
+                            <a href="https://pbintegracoes.com/connect/autorizar?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter Connect Key</a> |
+                            <a href="https://pbintegracoes.com/connect/sandbox?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter Connect Key para Testes</a> |
+                            <a href="https://ajuda.pbintegracoes.com/hc/pt-br/?utm_source=magentoadmin" target="_blank" class="button action-link secondary">Obter ajuda</a>]]></comment>
                     <sort_order>6</sort_order>
                     <frontend_type>text</frontend_type>
                     <show_in_default>1</show_in_default>
