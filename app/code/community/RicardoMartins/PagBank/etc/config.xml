@@ -2,7 +2,7 @@
 <config>
     <modules>
         <RicardoMartins_PagBank>
-            <version>4.7.3</version>
+            <version>4.7.4</version>
         </RicardoMartins_PagBank>
     </modules>
     <default>
