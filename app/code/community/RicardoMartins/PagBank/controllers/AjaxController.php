@@ -94,7 +94,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
 
         $result = [
             'totalAmount' => $total,
-            'customerName' => $helper->escapeHtml($name),
+            'customerName' => $helper->escapeHtml( Mage::helper('ricardomartins_pagbank')->removeAccentsAndNumbers($name) ),
             'email' => $helper->escapeHtml(strtolower($email)),
             'phone' => $helper->escapeHtml($phone),
             'street' => $helper->escapeHtml($street),

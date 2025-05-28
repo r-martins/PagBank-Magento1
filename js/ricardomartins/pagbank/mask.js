@@ -54,7 +54,7 @@ function mask() {
         const applyMask = (e) => {
             let value = e.target.value;
             if(e.type == 'focusout') {
-                value = value.trimEnd();
+                value = value.trimStart().trimEnd();
             }
             e.target.value = masks[field](value, previousValue);
             previousValue = value;
@@ -67,6 +67,14 @@ function mask() {
 }
 
 document.observe("dom:loaded", function () {
+    const firstNameInput = $$('input[name^="billing[firstname]"]').first();
+    const lastNameInput = $$('input[name^="billing[lastname]"]').first();
+    if (firstNameInput) {
+        firstNameInput.setAttribute('data-js', 'name');
+    }
+    if (lastNameInput) {
+        lastNameInput.setAttribute('data-js', 'name');
+    }
     mask();
 });
 

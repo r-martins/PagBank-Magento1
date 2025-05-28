@@ -379,6 +379,8 @@ RMPagBank.prototype = {
         let name = quote.customerName && quote.customerName?.trim()?.length > 0 ? quote.customerName
             : $$('input[name^="billing[firstname]').first().value + ' '
             + $$('input[name^="billing[lastname]').first().value;
+
+        debugger
         let phone = quote.phone.replace(/\D/g, '');
         phone = phone ? phone : $$('input[name^="billing[telephone]').first();
         phone = phone ? phone : $$('input[name^="billing[fax]').first();
