@@ -81,15 +81,33 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
 
         $oscData = Mage::getSingleton('checkout/session')->getData('onestepcheckout_form_values');
         if ($oscData) {
-            $name = $oscData['billing']['firstname'] . ' ' . $oscData['billing']['lastname'];
-            $email = isset($oscData['billing']['email']) ? $oscData['billing']['email'] : $email;
-            $phone = preg_replace('/[^0-9]/', '', $oscData['billing']['telephone']);
-            $street = $oscData['billing']['street'][0];
-            $number = $oscData['billing']['street'][2];
-            $complement = $oscData['billing']['street'][3];
-            $neighborhood = $oscData['billing']['street'][4];
-            $regionCode = $oscData['billing']['region_id'];
-            $city = $oscData['billing']['city'];
+            $name = (!empty($oscData['billing']['firstname']) && !empty($oscData['billing']['lastname']))
+                ? $oscData['billing']['firstname'] . ' ' . $oscData['billing']['lastname']
+                : $name;
+            $email = isset($oscData['billing']['email'])
+                ? $oscData['billing']['email']
+                : $email;
+            $phone = !empty($oscData['billing']['telephone'])
+                ? preg_replace('/[^0-9]/', '', $oscData['billing']['telephone'])
+                : $phone;
+            $street = !empty($oscData['billing']['street'][0])
+                ? $oscData['billing']['street'][0]
+                : $street;
+            $number = !empty($oscData['billing']['street'][2])
+                ? $oscData['billing']['street'][2]
+                : $number;
+            $complement = !empty($oscData['billing']['street'][3])
+                ? $oscData['billing']['street'][3]
+                : $complement;
+            $neighborhood = !empty($oscData['billing']['street'][4])
+                ? $oscData['billing']['street'][4]
+                : $neighborhood;
+            $regionCode = !empty($oscData['billing']['region_id'])
+                ? $oscData['billing']['region_id']
+                : $regionCode;
+            $city = !empty($oscData['billing']['city'])
+                ? $oscData['billing']['city']
+                : $city;
         }
 
         $result = [
