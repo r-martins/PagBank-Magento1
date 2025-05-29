@@ -17,12 +17,6 @@ function mask() {
                 .replace(/\s+/g, ' ')
                 .toUpperCase();
         },
-        name_billing(value, previousValue) {
-            return value
-                .replace(/[0-9]/g, '')
-                .replace(/[^\p{L} ]+/gu, '')
-                .replace(/\s+/g, ' ');
-        },
         document(value, previousValue) {
             value = value.replace(/\D+/g, '');
             if (value.length > 11) {
@@ -73,14 +67,6 @@ function mask() {
 }
 
 document.observe("dom:loaded", function () {
-    const firstNameInput = $$('input[name^="billing[firstname]"]').first();
-    const lastNameInput = $$('input[name^="billing[lastname]"]').first();
-    if (firstNameInput) {
-        firstNameInput.setAttribute('data-js', 'name_billing');
-    }
-    if (lastNameInput) {
-        lastNameInput.setAttribute('data-js', 'name_billing');
-    }
     mask();
 });
 
