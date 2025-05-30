@@ -42,7 +42,7 @@ class RicardoMartins_PagBank_Model_Payment_Notification
      * Check the notification
      *
      * @param $pagbankOrderId
-     * @return false
+     * @return false|mixed
      * @throws Mage_Core_Exception
      */
     public function checkNotification($pagbankOrderId)
