@@ -13,6 +13,8 @@ function mask() {
         name(value, previousValue) {
             return value
                 .replace(/[0-9]/g, '')
+                .replace(/[^\p{L} ]+/gu, '')
+                .replace(/\s+/g, ' ')
                 .toUpperCase();
         },
         document(value, previousValue) {
@@ -51,6 +53,9 @@ function mask() {
         let previousValue = $input.value;
         const applyMask = (e) => {
             let value = e.target.value;
+            if(e.type == 'focusout') {
+                value = value.trimStart().trimEnd();
+            }
             e.target.value = masks[field](value, previousValue);
             previousValue = value;
         };

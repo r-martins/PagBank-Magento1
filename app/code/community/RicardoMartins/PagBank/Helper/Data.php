@@ -894,16 +894,104 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Remove accents from a string
-     *
+     * Removes special characters from a string and convert accents to their base characters
      * @param $string
-     * @return string
+     *
+     * @return array|string|string[]|null
      */
-    private function removeAccents($string)
+    public function removeAccents($string)
     {
         $string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-        $formats = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜüÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿRr';
-        $replace = 'aaaaaaaceeeeiiiidnoooooouuuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr';
-        return trim(strtr(utf8_decode($string), utf8_decode($formats), $replace));
+        $table = [
+            'Š' => 'S',
+            'š' => 's',
+            'Ð' => 'D',
+            'd' => 'd',
+            'Ž' => 'Z',
+            'ž' => 'z',
+            'C' => 'C',
+            'c' => 'c',
+            'À' => 'A',
+            'Á' => 'A',
+            'Â' => 'A',
+            'Ã' => 'A',
+            'Ä' => 'A',
+            'Å' => 'A',
+            'Æ' => 'A',
+            'Ç' => 'C',
+            'È' => 'E',
+            'É' => 'E',
+            'Ê' => 'E',
+            'Ë' => 'E',
+            'Ì' => 'I',
+            'Í' => 'I',
+            'Î' => 'I',
+            'Ï' => 'I',
+            'Ñ' => 'N',
+            'Ò' => 'O',
+            'Ó' => 'O',
+            'Ô' => 'O',
+            'Õ' => 'O',
+            'Ö' => 'O',
+            'Ø' => 'O',
+            'Ù' => 'U',
+            'Ú' => 'U',
+            'Û' => 'U',
+            'Ü' => 'U',
+            'Ý' => 'Y',
+            'Þ' => 'B',
+            'ß' => 'Ss',
+            'à' => 'a',
+            'á' => 'a',
+            'â' => 'a',
+            'ã' => 'a',
+            'ä' => 'a',
+            'å' => 'a',
+            'æ' => 'a',
+            'ç' => 'c',
+            'è' => 'e',
+            'é' => 'e',
+            'ê' => 'e',
+            'ë' => 'e',
+            'ì' => 'i',
+            'í' => 'i',
+            'î' => 'i',
+            'ï' => 'i',
+            'ð' => 'o',
+            'ñ' => 'n',
+            'ò' => 'o',
+            'ó' => 'o',
+            'ô' => 'o',
+            'õ' => 'o',
+            'ö' => 'o',
+            'ø' => 'o',
+            'ù' => 'u',
+            'ú' => 'u',
+            'û' => 'u',
+            'ý' => 'y',
+            'þ' => 'b',
+            'ÿ' => 'y',
+        ];
+
+        $result = strtr($string, $table);
+        $result = preg_replace('/[^A-Za-z0-9\ ]/', '', $result);
+        return trim(utf8_decode($result));
+    }
+
+    /**
+    * Remove accents, special characters, and numbers, keeping only letters and spaces
+     *
+     * @param string $string
+     * @return string
+     */
+    public function removeAccentsAndNumbers($string)
+    {
+        // First remove accents and special characters
+        $string = $this->removeAccents($string);
+        // Remove numbers (keeps only letters and spaces)
+        $string = preg_replace('/[^A-Za-z\ ]/', '', $string);
+        // Remove duplicate spaces
+        $string = preg_replace('/\s+/', ' ', $string);
+        return trim($string);
     }
 }

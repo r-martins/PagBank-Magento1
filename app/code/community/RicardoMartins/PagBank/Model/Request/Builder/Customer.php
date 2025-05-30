@@ -46,7 +46,11 @@ class RicardoMartins_PagBank_Model_Request_Builder_Customer
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Customer $customer */
         $customer = Mage::getModel('ricardomartins_pagbank/request_object_customer');
-        $customer->setName($this->order->getCustomerFirstname() . ' ' . $this->order->getCustomerLastname());
+        $customer->setName(
+            Mage::helper('ricardomartins_pagbank')->removeAccentsAndNumbers(
+                $this->order->getCustomerFirstname() . ' ' . $this->order->getCustomerLastname()
+            )
+        );
         $customer->setTaxId($document);
         $customer->setPhones([$phones->getData()]);
 
