@@ -34,7 +34,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
      */
     public function build()
     {
-        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getQuote()->getReservedOrderId();
+        $orderIncrementId = $this->getIncrementId();
         return [
             self::REFERENCE_ID => $orderIncrementId,
             self::NOTIFICATION_URLS => $this->getNotificationUrls()
@@ -48,12 +48,25 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
      */
     private function getNotificationUrls()
     {
-        $orderIncrementId = $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getQuote()->getReservedOrderId();
+        $orderIncrementId = $this->getIncrementId();
         $hash = Mage::helper('core')->getHash($orderIncrementId);
         $hash = substr($hash, 0, 5);
         $baseUrl = Mage::app()->getStore()->getBaseUrl(\Mage_Core_Model_Store::URL_TYPE_LINK, true);
         return [
             $baseUrl . RicardoMartins_PagBank_Api_Connect_ConnectInterface::NOTIFICATION_ENDPOINT . '?hash=' . $hash
         ];
+    }
+    
+    /**
+    * Returns the order increment ID or reserved order ID.
+    * @return string|integer
+    */
+    private function getIncrementId()
+    {
+        $quote = $this->order->getQuote();
+        if (empty($quote)) {
+            return $this->order->getReservedOrderId();
+        }
+        return $this->order->getIncrementId() ?: $quote->getReservedOrderId();
     }
 }
