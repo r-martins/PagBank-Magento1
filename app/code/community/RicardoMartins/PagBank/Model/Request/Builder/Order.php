@@ -63,10 +63,10 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
     */
     private function getIncrementId()
     {
-        if(method_exists($this->order,'getQuote') === false){
+        $quote = $this->order->getQuote();
+        if (empty($quote)) {
             return $this->order->getReservedOrderId();
         }
-
-        return $this->order->getIncrementId() ? $this->order->getIncrementId() : $this->order->getQuote()->getReservedOrderId();
+        return $this->order->getIncrementId() ?: $quote->getReservedOrderId();
     }
 }
