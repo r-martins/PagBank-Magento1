@@ -47,7 +47,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Customer
         /** @var RicardoMartins_PagBank_Model_Request_Object_Customer $customer */
         $customer = Mage::getModel('ricardomartins_pagbank/request_object_customer');
         $customer->setName(
-            Mage::helper('ricardomartins_pagbank')->removeAccentsAndNumbers(
+            $helper->sanitizeCustomerName(
                 $this->order->getCustomerFirstname() . ' ' . $this->order->getCustomerLastname()
             )
         );
