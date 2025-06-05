@@ -979,19 +979,23 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-    * Remove accents, special characters, and numbers, keeping only letters and spaces
-     *
-     * @param string $string
-     * @return string
+     * Sanitizes address keeping only useful characters (letters, numbers, some punctuation)
      */
-    public function removeAccentsAndNumbers($string)
+    public function sanitizeString($string)
     {
-        // First remove accents and special characters
         $string = $this->removeAccents($string);
-        // Remove numbers (keeps only letters and spaces)
-        $string = preg_replace('/[^A-Za-z\ ]/', '', $string);
-        // Remove duplicate spaces
-        $string = preg_replace('/\s+/', ' ', $string);
-        return trim($string);
+        $string = preg_replace('/[^a-zA-Z0-9\s\/\-ºª.,]/', '', $string);
+        return trim(preg_replace('/\s+/', ' ', $string));
+
+    }
+
+    /**
+     * Removes accents and numbers, keeping only letters and spaces
+     */
+    public function sanitizeCustomerName($string)
+    {
+        $string = preg_replace('/\d/', '', $string);
+        $string = $this->sanitizeString($string);
+        return $string;
     }
 }

@@ -92,21 +92,28 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
             $city = $oscData['billing']['city'];
         }
 
-        $result = [
-            'totalAmount' => $total,
-            'customerName' => $helper->escapeHtml( Mage::helper('ricardomartins_pagbank')->removeAccentsAndNumbers($name) ),
-            'email' => $helper->escapeHtml(strtolower($email)),
-            'phone' => $helper->escapeHtml($phone),
-            'street' => $helper->escapeHtml($street),
-            'number' => $helper->escapeHtml($number),
-            'complement' => $helper->escapeHtml($complement),
-            'neighborhood' => $helper->escapeHtml($neighborhood),
-            'regionCode'=> $helper->escapeHtml($regionCode),
-            'country'=> 'BRA',
-            'city'=> $helper->escapeHtml($city),
-            'postalCode'=> $helper->escapeHtml($postcode)
+       $_helper = Mage::helper('ricardomartins_pagbank');
+       $rawData = [
+            'customerName' => $_helper->sanitizeCustomerName($name),
+            'email' => strtolower($email),
+            'phone' => $_helper->sanitizeString($phone),
+            'street' => $_helper->sanitizeString($street),
+            'number' => $_helper->sanitizeString($number),
+            'complement' => $_helper->sanitizeString($complement),
+            'neighborhood' => $_helper->sanitizeString($neighborhood),
+            'regionCode' => $_helper->sanitizeString($regionCode),
+            'city' => $_helper->sanitizeString($city),
+            'postalCode' => $_helper->sanitizeString($postcode),
         ];
 
+        $sanitizedData = [];
+        foreach ($rawData as $key => $value) {
+            $sanitizedData[$key] = $helper->escapeHtml($value);
+        }
+        $result = array_merge(
+            ['totalAmount' => $total, 'country' => 'BRA'],
+            $sanitizedData
+        );
         $this->getResponse()->setHeader('Content-type', 'application/json', true);
         return $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
     }
