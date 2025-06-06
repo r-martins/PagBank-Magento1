@@ -431,6 +431,11 @@ RMPagBank.prototype = {
             }
         }
 
+        street = this.sanitizeAddress(street)
+        number = this.sanitizeAddress(number)
+        complement = this.sanitizeAddress(complement)
+        city = this.sanitizeAddress(city)
+
         const request = {
             data: {
                 customer: {
@@ -791,5 +796,8 @@ RMPagBank.prototype = {
 
         region = region.toUpperCase();
         return Object.keys(regionCodes).find(key => regionCodes[key] === region);
+    },
+    sanitizeAddress: function (value) {
+        return value ? value.replace(/\s+/g, ' ').trimStart().trimEnd() : '';
     }
 };
