@@ -137,11 +137,12 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
                 );
             }
 
+            $logMsg = is_array($response) ? var_export($response, true) : $response;
             $helper->writeLog(
-                sprintf('Failure when trying to send parameters to PagBank: %s', $response)
+                sprintf('Failure when trying to send parameters to PagBank: %s', $logMsg)
             );
             Mage::throwException(
-                sprintf('Falha ao tentar enviar parametros ao PagBank: %s', $response)
+                sprintf('Falha ao tentar enviar parametros ao PagBank: %s', is_array($response) ? "Consulte o pagbank.log" : $response)
             );
         }
 
