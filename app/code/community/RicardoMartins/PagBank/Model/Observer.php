@@ -19,6 +19,19 @@ class RicardoMartins_PagBank_Model_Observer
             return;
         }
 
+        if (preg_match('/^PUB[\w]{0,39}$/', $connectKey)) {
+            $link = '<a target="_blank" href="https://pbintegracoes.com/connect/autorizar/?utm_source=magentoadmin">obtenha uma Connect Key</a>';
+            $msg = sprintf(
+                Mage::helper('ricardomartins_pagbank')->__(
+                    'It looks like you entered a Public Key. To use the next generation of our integrations, %s for free.'
+                ),
+                $link
+            );
+
+            $helper->writeLog($msg);
+            Mage::throwException($msg);
+        }
+
         $endpoint = $helper->getPublicKeyEndpoint();
         $body = [
             RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::TYPE => RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::TYPE_CARD
