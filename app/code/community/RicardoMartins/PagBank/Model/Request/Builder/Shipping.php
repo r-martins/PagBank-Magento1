@@ -38,6 +38,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Shipping
 
         $shippingAddress = $this->order->getShippingAddress();
 
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
         $regionCode = strlen($shippingAddress->getRegionCode()) == 2 ? $shippingAddress->getRegionCode() : $helper->getRegionCode($shippingAddress->getRegionCode());
 
@@ -46,13 +47,18 @@ class RicardoMartins_PagBank_Model_Request_Builder_Shipping
         
         /** @var RicardoMartins_PagBank_Model_Request_Object_Customer_Address $address */
         $address = Mage::getModel('ricardomartins_pagbank/request_object_customer_address');
-        $address->setStreet($shippingAddress->getStreet(1));
-        $address->setNumber($shippingAddress->getStreet(2));
+        $street = $shippingAddress->getStreet(1);
+        $number = $shippingAddress->getStreet(2);
+        $locality = end($addressLinesNotEmpty);
+        $city = $shippingAddress->getCity();
+        $address->setStreet($helper->sanitizeString($street));
+        $address->setNumber($helper->sanitizeString($number));
         if (count($addressLinesNotEmpty) > 3) {
-            $address->setComplement($shippingAddress->getStreet(3));
+            $complement = $shippingAddress->getStreet(3);
+            $address->setComplement($helper->sanitizeString($complement));
         }
-        $address->setLocality(end($addressLinesNotEmpty));
-        $address->setCity($shippingAddress->getCity());
+        $address->setLocality($helper->sanitizeString($locality));
+        $address->setCity($helper->sanitizeString($city));
         $address->setRegion($shippingAddress->getRegion());
         $address->setRegionCode($regionCode);
         $address->setPostalCode($shippingAddress->getPostcode());
