@@ -35,6 +35,12 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
         $pagbankOrderId = $body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::PAGBANK_ORDER_ID];
         $body = $notificationModel->checkNotification($pagbankOrderId);
 
+        if(!isset($body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGES][0])){
+            $this->getResponse()->setHttpResponseCode(400);
+            // If charges are not set in the response, return an empty body.
+            $this->getResponse()->setBody('Charges not found in PagBank response.');
+            return;
+        }
         $charges = $body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGES];
         $charge = $charges[0];
         $orderIncrementId = $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID];
