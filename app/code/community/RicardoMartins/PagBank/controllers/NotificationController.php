@@ -22,6 +22,12 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
         $rawBody = $this->getRequest()->getRawBody();
         $body = json_decode($rawBody, true);
 
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->getResponse()->setHttpResponseCode(400);
+            $this->getResponse()->setBody('Invalid JSON format.');
+            return;
+        }
+        
         if (!isset($body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::PAGBANK_ORDER_ID])
             || !isset($body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGES])) {
             $this->getResponse()->setHttpResponseCode(400);
@@ -33,7 +39,13 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
         $notificationModel = Mage::getModel('ricardomartins_pagbank/payment_notification');
 
         $pagbankOrderId = $body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::PAGBANK_ORDER_ID];
-        $body = $notificationModel->checkNotification($pagbankOrderId);
+        try {
+            $body = $notificationModel->checkNotification($pagbankOrderId);
+        } catch (Mage_Core_Exception $e) {
+            $this->getResponse()->setHttpResponseCode(400);
+            $this->getResponse()->setBody($e->getMessage());
+            return;
+        }
 
         if (!isset($body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGES]) 
             || !is_array($body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGES]) 
