@@ -90,7 +90,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
                 $helper->__('Failure in communication with PagBank: %s', $e->getMessage())
             );
             Mage::throwException(
-                $helper->__('Falha na comunicação com o PagBank: %s', $e->getMessage())
+                $helper->__('Failure in communication with PagBank: %s', $e->getMessage())
             );
         }
 
