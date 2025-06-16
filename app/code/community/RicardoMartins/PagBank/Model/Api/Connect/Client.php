@@ -117,6 +117,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         $info = curl_getinfo($ch);
         $httpCode = $info['http_code'];
         if ($httpCode != 200 && $httpCode != 201) {
+            $errors = "";
             if ($response['error_messages']) {
                 $errors = $helper->handleErrorMessages($response['error_messages']);
                 $helper->writeLog(
@@ -136,12 +137,23 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
                     sprintf('Falha ao tentar enviar parametros ao PagBank: %s', $errors)
                 );
             }
+            if ($httpCode == 401) {
+                $errors = 'Invalid or expired Connect Key';
+                $helper->writeLog(
+                    sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
+                );
+                Mage::throwException(
+                    sprintf('Falha ao tentar enviar parametros ao PagBank: %s', $errors)
+                );
+            }
 
+            // Fallback — log
+            $errors = var_export($response, true);
             $helper->writeLog(
-                sprintf('Failure when trying to send parameters to PagBank: %s', $response)
+                sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
             );
             Mage::throwException(
-                sprintf('Falha ao tentar enviar parametros ao PagBank: %s', $response)
+                sprintf('Falha ao tentar enviar parametros ao PagBank: Consulte o pagbank.log')
             );
         }
 
