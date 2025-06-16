@@ -47,7 +47,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
         $paramsString = json_encode($params);
 
         $helper->writeLog(
-            sprintf('Sending request to %s with the parameters: %s', $endpoint, $paramsString)
+            $helper->__('Sending request to %s with the parameters: %s', $endpoint, $paramsString)
         );
 
         $ch = curl_init();
@@ -79,27 +79,27 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
             $response = curl_exec($ch);
             if ($log) {
                 $helper->writeLog(
-                    sprintf('Request to PagBank %s: %s', $endpoint, $paramsString)
+                    $helper->__('Request to PagBank %s: %s', $endpoint, $paramsString)
                 );
                 $helper->writeLog(
-                    sprintf('Response from the request to %s: %s', $endpoint, $response)
+                    $helper->__('Response from the request to %s: %s', $endpoint, $response)
                 );
             }
         } catch (Exception $e) {
             $helper->writeLog(
-                sprintf('Failure in communication with PagBank: %s', $e->getMessage())
+                $helper->__('Failure in communication with PagBank: %s', $e->getMessage())
             );
             Mage::throwException(
-                sprintf('Falha na comunicação com o PagBank: %s', $e->getMessage())
+                $helper->__('Falha na comunicação com o PagBank: %s', $e->getMessage())
             );
         }
 
         if (curl_error($ch)) {
             $helper->writeLog(
-                sprintf('Failure when trying to send parameters to PagBank: %s (%s)', curl_error($ch), curl_errno($ch))
+                $helper->__('Failure when trying to send parameters to PagBank: %s (%s)', curl_error($ch), curl_errno($ch))
             );
             Mage::throwException(
-                sprintf('Falha ao tentar enviar parametros ao PagBank: %s (%s)', curl_error($ch), curl_errno($ch))
+                $helper->__('Failure when trying to send parameters to PagBank: %s (%s)', curl_error($ch), curl_errno($ch))
             );
         }
 
@@ -121,39 +121,39 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
             if ($response['error_messages']) {
                 $errors = $helper->handleErrorMessages($response['error_messages']);
                 $helper->writeLog(
-                    sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
                 Mage::throwException(
-                    sprintf('Falha ao tentar enviar parametros ao PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
             }
 
             if ($response['message']) {
                 $errors = $response['message'];
                 $helper->writeLog(
-                    sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
                 Mage::throwException(
-                    sprintf('Falha ao tentar enviar parametros ao PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
             }
             if ($httpCode == 401) {
-                $errors = 'Invalid or expired Connect Key';
+                $errors = $helper->__('Invalid or expired Connect Key');
                 $helper->writeLog(
-                    sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
                 Mage::throwException(
-                    sprintf('Falha ao tentar enviar parametros ao PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
             }
 
             // Fallback — log
             $errors = var_export($response, true);
             $helper->writeLog(
-                sprintf('Failure when trying to send parameters to PagBank: %s', $errors)
+                $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
             );
             Mage::throwException(
-                sprintf('Falha ao tentar enviar parametros ao PagBank: Consulte o pagbank.log')
+                $helper->__('Failure when trying to send parameters to PagBank: Consulte o pagbank.log')
             );
         }
 

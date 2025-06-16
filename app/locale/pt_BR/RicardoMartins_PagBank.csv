@@ -95,3 +95,4 @@
 "Hide order items in the payment request sent to PagBank (required in credit card transactions).","Ocultar itens do pedido na requisição de pagamento enviada ao PagBank (obrigatório em transações com cartão de crédito)."
 "It looks like you entered a Public Key. To use the next generation of our integrations, %s for free.", "Parece que você digitou uma Public Key. Para usar a nova geração das nossas integrações %s gratuitamente."
 "Invalid or expired Connect Key", "Connect Key Inválida ou expirada"
+"Failure when trying to send parameters to PagBank: %s","Falha ao tentar enviar parametros ao PagBank: %s"
