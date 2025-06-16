@@ -792,6 +792,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
                 return 'Limite de uso da API excedido';
             case '40005':
                 return 'Método não permitido';
+            case 'UNAUTHORIZED':
+                return 'Não autorizado';
             default:
                 return 'Erro desconhecido';
         }
