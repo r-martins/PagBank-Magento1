@@ -31,14 +31,14 @@ class RicardoMartins_PagBank_Model_Observer
             $publicKey = $response[RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY];
         } catch (\Exception $e) {
             $helper->writeLog(sprintf('Error generating public key: %s', $e->getMessage()));
-            throw new \Exception(__('Error generating public key: %s', $e->getMessage()));
+            throw new \Exception($helper->__('Error generating public key: %s', $e->getMessage()));
         }
 
         try {
             Mage::getConfig()->saveConfig(RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY_CONFIG_PATH, $publicKey);
         } catch (\Exception $e) {
             $helper->writeLog(sprintf('Error saving public key: %s', $e->getMessage()));
-            throw new \Exception(__('Error saving public key: %s', $e->getMessage()));
+            throw new \Exception($helper->__('Error saving public key: %s', $e->getMessage()));
         }
     }
 
