@@ -41,7 +41,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Shipping
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
         $regionCode = strlen($shippingAddress->getRegionCode()) == 2 ? $shippingAddress->getRegionCode() : $helper->getRegionCode($shippingAddress->getRegionCode());
-
+        $regionCode = strtoupper($regionCode); // Ensure region code is in uppercase
         /* Determining how many lines we have in the address */
         $addressLinesNotEmpty = array_filter($shippingAddress->getStreet());
         
