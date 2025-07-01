@@ -34,7 +34,7 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Billet
 
         $billingAddress = $this->order->getBillingAddress();
         $regionCode = strlen($billingAddress->getRegionCode()) == 2 ? $billingAddress->getRegionCode() : $helper->getRegionCode($billingAddress->getRegionCode());
-
+        $regionCode = strtoupper($regionCode); // Ensure region code is in uppercase
         /* Determining how many lines we have in the address */
         $addressLinesNotEmpty = array_filter($billingAddress->getStreet());
         
