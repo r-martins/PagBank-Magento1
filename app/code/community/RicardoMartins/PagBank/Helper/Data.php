@@ -397,14 +397,14 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             "SE"=>"SERGIPE",
             "TO"=>"TOCANTINS"
         ];
-        if(strlen($region) == 2) {
-            $regions = array_flip($regions);
-        }
 
         $region = $this->removeAccents($region);
         $region = str_replace(' ', '', $region);
         $region = strtoupper($region);
 
+        if(strlen($region) == 2 && array_key_exists($region, $regions)) {
+            return $region;
+        }
         return array_search($region, $regions);
     }
 
