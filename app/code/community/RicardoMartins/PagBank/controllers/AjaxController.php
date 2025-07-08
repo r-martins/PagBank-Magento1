@@ -56,8 +56,8 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
      */
     public function getQuoteDataAction()
     {
-        /** @var Mage_Core_Helper_Data $helper */
-        $helper = Mage::helper('core');
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
 
         /** @var Mage_Sales_Model_Quote $quote */
         $quote = Mage::helper('checkout/cart')->getQuote();
@@ -77,6 +77,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $complement = $quote->getBillingAddress()->getStreet(3);
         $neighborhood = $quote->getBillingAddress()->getStreet(4);
         $regionCode = $quote->getBillingAddress()->getRegionCode();
+        $regionCode = $helper->getRegionCode($regionCode);
         $city = $quote->getBillingAddress()->getCity();
 
         $oscData = Mage::getSingleton('checkout/session')->getData('onestepcheckout_form_values');
