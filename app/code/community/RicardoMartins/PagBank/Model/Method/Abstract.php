@@ -112,6 +112,7 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
 
         /** @var Mage_Sales_Model_Order_Payment $invoice */
         $invoice = $order->prepareInvoice();
+        $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE);
         $invoice->register()->pay();
         $invoice->sendEmail(true);
         $order->addStatusHistoryComment(sprintf('Fatura #%s criada com sucesso.', $invoice->getIncrementId()));

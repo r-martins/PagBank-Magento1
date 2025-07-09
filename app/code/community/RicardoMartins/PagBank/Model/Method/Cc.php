@@ -24,6 +24,15 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
     protected $_formBlockType = 'ricardomartins_pagbank/form_cc';
     protected $_infoBlockType = 'ricardomartins_pagbank/form_info_cc';
     protected $_canUseForMultishipping  = false;
+    protected $_isGateway = true;
+    protected $_canAuthorize = true;
+    protected $_canCapture = true;
+    protected $_canRefund = true;
+    protected $_canRefundInvoicePartial = true;
+    protected $_canVoid = true;
+    protected $_canUseInternal = false;
+    protected $_canUseCheckout = true;
+    protected $_canSaveCc = false;
 
     /**
      * @param $data
@@ -93,6 +102,10 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
             }
 
             $payment->setAdditionalData(serialize($addData));
+            if (isset($charges['id'])) {
+                $payment->setTransactionId($charges['id']);
+                $payment->setIsTransactionClosed(0);
+            }
             $payment->save();
         } else {
             Mage::throwException($this->_getHelper()->__(
@@ -147,5 +160,52 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
         $endpoint = $helper->getOrdersEndpoint();
 
         return $api->placePostRequest($endpoint, $data);
+    }
+
+    /**
+     * Refund payment
+     * @param Varien_Object $payment
+     * @param float $amount
+     * @return $this
+     * @throws Mage_Core_Exception
+     */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        $order = $payment->getOrder();
+        $additionalData = @unserialize($payment->getAdditionalData());
+        $chargeId = isset($additionalData[self::CHARGE_ID]) ? $additionalData[self::CHARGE_ID] : null;
+
+        if (!$chargeId) {
+            Mage::throwException($this->_getHelper()->__('Não foi possível localizar o ID da transação para reembolso.'));
+        }
+
+        $order = $payment->getOrder();
+        $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+        $amountObj = Mage::getModel('ricardomartins_pagbank/request_object_amount');
+        $amountObj->setValue($amount);
+
+        $currencyCode = 'BRL';
+        if ($order->getOrderCurrency()) {
+            $currencyCode = $order->getOrderCurrency()->getCode();
+        }
+        if ($order->getQuoteCurrencyCode()) {
+            $currencyCode = $order->getQuoteCurrencyCode();
+        }
+        $amountObj->setCurrency($currencyCode);
+
+        $endpoint = $helper->getRefundEndpoint($chargeId, $order->getStoreId());
+        $response = $api->placePostRequest($endpoint, ['amount' => $amountObj->getData()]);
+
+        if (isset($response['errors'])) {
+            Mage::throwException($this->_getHelper()->__('Refund failed: %s', $response['errors'][0]['description']));
+        }
+
+        $payment->setTransactionId($chargeId . '-refund-' . time())
+            ->setIsTransactionClosed(1)
+            ->setShouldCloseParentTransaction(1);
+
+        return parent::refund($payment, $amount);
     }
 }
