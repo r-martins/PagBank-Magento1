@@ -110,6 +110,16 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
             Mage::throwException(sprintf("The order #%s cannot be invoiced.", $order->getIncrementId()));
         }
 
+        if (!$payment->getLastTransId()) {
+            $additionalData = unserialize($payment->getAdditionalData());
+            if (is_array($additionalData) && isset($additionalData['charge_id'])) {
+                $charge_id = $additionalData['charge_id'];
+                $payment->setTransactionId($charge_id)
+                    ->setIsTransactionClosed(0)
+                    ->save();
+            }
+        }
+        
         /** @var Mage_Sales_Model_Order_Payment $invoice */
         $invoice = $order->prepareInvoice();
         $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE);
@@ -138,5 +148,50 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
         }
 
         return $this->_order;
+    }
+    /**
+     * Refund payment
+     * @param Varien_Object $payment
+     * @param mixed $amount
+     * @return Mage_Payment_Model_Method_Abstract
+     */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        $order = $payment->getOrder();
+        $additionalData = @unserialize($payment->getAdditionalData());
+        $chargeId = isset($additionalData['charge_id']) ? $additionalData['charge_id'] : null;
+
+        if (!$chargeId) {
+            Mage::throwException($this->_getHelper()->__('Não foi possível localizar o ID da transação para reembolso.'));
+        }
+
+        $order = $payment->getOrder();
+        $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+        $amountObj = Mage::getModel('ricardomartins_pagbank/request_object_amount');
+        $amountObj->setValue($amount);
+
+        $currencyCode = 'BRL';
+        if ($order->getOrderCurrency()) {
+            $currencyCode = $order->getOrderCurrency()->getCode();
+        }
+        if ($order->getQuoteCurrencyCode()) {
+            $currencyCode = $order->getQuoteCurrencyCode();
+        }
+        $amountObj->setCurrency($currencyCode);
+
+        $endpoint = $helper->getRefundEndpoint($chargeId, $order->getStoreId());
+        $response = $api->placePostRequest($endpoint, ['amount' => $amountObj->getData()]);
+
+        if (isset($response['errors'])) {
+            Mage::throwException($this->_getHelper()->__('Refund failed: %s', $response['errors'][0]['description']));
+        }
+
+        $payment->setTransactionId($chargeId . '-refund-' . time())
+            ->setIsTransactionClosed(1)
+            ->setShouldCloseParentTransaction(1);
+
+        return parent::refund($payment, $amount);
     }
 }
