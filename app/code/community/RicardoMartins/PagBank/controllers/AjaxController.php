@@ -57,7 +57,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
     public function getQuoteDataAction()
     {
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
-        $helper = Mage::helper('ricardomartins_pagbank');
+        $_helper = Mage::helper('ricardomartins_pagbank');
 
         /** @var Mage_Sales_Model_Quote $quote */
         $quote = Mage::helper('checkout/cart')->getQuote();
@@ -77,7 +77,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $complement = $quote->getBillingAddress()->getStreet(3);
         $neighborhood = $quote->getBillingAddress()->getStreet(4);
         $regionCode = $quote->getBillingAddress()->getRegionCode();
-        $regionCode = $helper->getRegionCode($regionCode);
+        $regionCode = $_helper->getRegionCode($regionCode);
         $city = $quote->getBillingAddress()->getCity();
 
         $oscData = Mage::getSingleton('checkout/session')->getData('onestepcheckout_form_values');
@@ -110,8 +110,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
                 ? $oscData['billing']['city']
                 : $city;
         }
-
-       $_helper = Mage::helper('ricardomartins_pagbank');
+        
        $rawData = [
             'customerName' => $_helper->sanitizeCustomerName($name),
             'email' => strtolower($email),
@@ -127,7 +126,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
 
         $sanitizedData = [];
         foreach ($rawData as $key => $value) {
-            $sanitizedData[$key] = $helper->escapeHtml($value);
+            $sanitizedData[$key] = $_helper->escapeHtml($value);
         }
         $result = array_merge(
             ['totalAmount' => $total, 'country' => 'BRA'],
