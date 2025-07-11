@@ -19,6 +19,24 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Summary of getRefundEndpoint
+     * @param mixed $chargeId
+     * @param mixed $storeId
+     * @return string
+     */
+    public function getRefundEndpoint($chargeId, $storeId = null)
+    {
+        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_CHARGES;
+        $endpoint .= '/';
+        $endpoint .= $chargeId;
+        $endpoint .= '/cancel';
+        if ($this->isSandbox($storeId)) {
+            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        }
+
+        return $endpoint;
+    }
+    /**
      * Get the public key endpoint
      *
      * @param $storeId
@@ -795,6 +813,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
                 return 'Limite de uso da API excedido';
             case '40005':
                 return 'Método não permitido';
+            case '40008':
+                return 'Reembolso temporariamente indisponível';
             case 'UNAUTHORIZED':
                 return 'Não autorizado';
             default:

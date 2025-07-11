@@ -7,7 +7,9 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
     protected $_formBlockType = 'ricardomartins_pagbank/form_billet';
     protected $_infoBlockType = 'ricardomartins_pagbank/form_info_billet';
     protected $_canUseForMultishipping  = false;
-
+    protected $_canCapture = true;
+    protected $_canRefund = true;
+    protected $_canRefundInvoicePartial = true;
     /**
      * @param $data
      * @return $this|RicardoMartins_PagBank_Model_Method_Billet
@@ -123,5 +125,16 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
         $endpoint = $helper->getOrdersEndpoint();
 
         return $api->placePostRequest($endpoint, $data);
+    }
+    /**
+     * Refund payment
+     * @param Varien_Object $payment
+     * @param float $amount
+     * @return Mage_Payment_Model_Method_Abstract
+     * @throws Mage_Core_Exception
+     */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        return parent::refund($payment, $amount);
     }
 }

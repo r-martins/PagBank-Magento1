@@ -48,6 +48,13 @@ interface RicardoMartins_PagBank_Api_Connect_ConnectInterface
     const WS_ENDPOINT_ORDERS = self::WS_URI . self::WS_ENDPOINT . 'orders';
 
     /**
+     * Orders WS Endpoint.
+     * This endpoint is used to get charges.
+     * Request Method: POST|GET
+     * @var string
+     */
+    const WS_ENDPOINT_CHARGES = self::WS_URI . self::WS_ENDPOINT . 'charges';
+    /**
      * Interest WS Endpoint.
      * This endpoint is used to calculate the installments and the interest of a charge.
      * Request Method: GET
