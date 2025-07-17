@@ -116,7 +116,7 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
     } catch (e) {
         // shhh
     }
-    document.observe("dom:loaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         preparePagBank();
     });
     //]]>
