@@ -66,7 +66,7 @@ function mask() {
     });
 }
 
-document.observe("dom:loaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     mask();
 });
 

@@ -87,6 +87,8 @@ app/locale/pt_BR/RicardoMartins_PagBank.csv app/locale/pt_BR/RicardoMartins_PagB
 js/ricardomartins/pagbank/mask.js js/ricardomartins/pagbank/mask.js
 js/ricardomartins/pagbank/creditcard-moip.js js/ricardomartins/pagbank/creditcard-moip.js
 js/ricardomartins/pagbank/creditcard.js js/ricardomartins/pagbank/creditcard.js
+js/ricardomartins/pagbank/creditcard-jquery.js js/ricardomartins/pagbank/creditcard-jquery.js
+js/ricardomartins/pagbank/lib/jquery-3.7.1.min.js js/ricardomartins/pagbank/lib/jquery-3.7.1.min.js
 js/ricardomartins/pagbank/moip-place-order-compatibility.js js/ricardomartins/pagbank/moip-place-order-compatibility.js
 skin/adminhtml/base/default/images/ricardomartins/pagbank/3d-secure.svg skin/adminhtml/base/default/images/ricardomartins/pagbank/3d-secure.svg
 skin/frontend/base/default/css/ricardomartins/pagbank/styles.css skin/frontend/base/default/css/ricardomartins/pagbank/styles.css
