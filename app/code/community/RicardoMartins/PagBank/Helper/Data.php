@@ -566,24 +566,14 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         $scriptBlock = Mage::app()->getLayout()->createBlock('core/text', "ricardomartins.pagbank.cc.js");
         $secure = Mage::getStoreConfigFlag('web/secure/use_in_frontend');
 
-        $scriptJquery = '';
-        if(Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/js_jquery')){
-            $url_jquery = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/jsdelivr_enabled') 
-            ? 'https://code.jquery.com/jquery-3.7.1.min.js'
-            : Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, $secure) . 'ricardomartins/pagbank/lib/jquery-3.7.1.min.js';
-            
-            $scriptJquery = sprintf( '<script type="text/javascript" src="%s"></script>', $url_jquery);
-        }
-
         $scripts = sprintf(
-            '<script type="text/javascript" src="%s"></script>'
-            . $scriptJquery .
-            '<script type="text/javascript" src="%s"></script>',
+            '
+                <script type="text/javascript" src="%s"></script>
+                <script type="text/javascript" src="%s"></script>
+                ',
             'https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js',
             $this->getModuleJsUrl($secure)
         );
-
-       
 
         $scriptBlock->setText($scripts);
         return $scriptBlock;
@@ -622,18 +612,12 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, $secure) . 'ricardomartins/pagbank/creditcard-moip.js';
         }
 
-        $enable_jquery = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/js_jquery');
         if (Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/jsdelivr_enabled')) {
-            $js = $enable_jquery ? 'creditcard-jquery%s.js' : 'creditcard%s.js';
             $min = (Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/jsdelivr_minify')) ? '.min' : '';
             $moduleVersion = (string)Mage::getConfig()->getModuleConfig('RicardoMartins_PagBank')->version;
-            $url = 'https://cdn.jsdelivr.net/gh/r-martins/PagBank-Magento1@%s/js/ricardomartins/pagbank/' . $js;
+            $url = 'https://cdn.jsdelivr.net/gh/r-martins/PagBank-Magento1@%s/js/ricardomartins/pagbank/creditcard%s.js';
             $url = sprintf($url, $moduleVersion, $min);
             return $url;
-        }
-
-        if(Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/js_jquery')){
-            return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, $secure) . 'ricardomartins/pagbank/creditcard-jquery.js';
         }
 
         return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, $secure) . 'ricardomartins/pagbank/creditcard.js';
