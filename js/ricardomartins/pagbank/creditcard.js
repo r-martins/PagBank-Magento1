@@ -1,6 +1,5 @@
-RMPagBank = Class.create();
-RMPagBank.prototype = {
-    initialize: function (config, pagseguro_connect_3d_session) {
+class RMPagBank {
+    constructor(config, pagseguro_connect_3d_session) {
         console.log('PagBank: Inicializando módulo de cartão de crédito');
         this.config = config;
         this.formElementAndSubmit = false;
@@ -16,9 +15,10 @@ RMPagBank.prototype = {
         }
 
         this.placeOrderEvent();
-    },
-    placeOrderEvent: function () {
-        let methodForm = $$('#payment_form_ricardomartins_pagbank_cc');
+    }
+
+    placeOrderEvent() {
+        const methodForm = document.querySelectorAll('#payment_form_ricardomartins_pagbank_cc');
         if (!methodForm.length) {
             console.log('PagBank: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
             return;
@@ -37,12 +37,11 @@ RMPagBank.prototype = {
                 if (mutation.target.hasAttribute('id')) {
                     let id = mutation.target.getAttribute('id');
                     let button = document.getElementById(id);
-                    button.classList.value = mutation.target.classList.value;
+                    button.className = mutation.target.className;
 
                     if (mutation.target.hasAttribute('disabled') === false) {
                         button.removeAttribute('disabled');
-                    }
-                    if (mutation.target.hasAttribute('disabled')) {
+                    } else {
                         button.setAttribute('disabled', '');
                     }
                 }
@@ -50,9 +49,13 @@ RMPagBank.prototype = {
         }
         const observer = new MutationObserver(mutationAttributesCallback);
 
-        let form = methodForm.first().closest('form');
+        let form = methodForm[0].closest('form');
 
-        let buttons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button'];
+        let buttons = [
+            '#onestepcheckout-place-order-button',
+            '.btn-checkout',
+            '#payment-buttons-container .button'
+        ];
         let configuredButton = this.config.placeorder_button;
         if (configuredButton) {
             console.log('PagBank: um botão de finalização foi configurado.', configuredButton);
@@ -66,14 +69,14 @@ RMPagBank.prototype = {
         }
 
         let eventAlreadyAttached = false;
-        buttons.forEach(function(btn) {
-            let button = $$(btn).first();
+        buttons.forEach((btn) => {
+            let button = document.querySelector(btn);
 
-            if (typeof button === 'undefined' || eventAlreadyAttached) {
+            if (!button || eventAlreadyAttached) {
                 return;
             }
 
-            observer.observe(button, { attributes: true })
+            observer.observe(button, { attributes: true });
 
             let onclickEvent = button.getAttribute('onclick');
             button.removeAttribute('onclick');
@@ -91,15 +94,16 @@ RMPagBank.prototype = {
                 event.preventDefault();
                 event.stopImmediatePropagation();
 
-                RMPagBankObj.cardActions().then(result => {
-                    if (RMPagBankObj.proceedCheckout) {
-                        button.setAttribute('onclick', onclickEvent);
-                        button.click();
-                        return true;
-                    }
-                }).catch(error => {
-                    console.error('Erro ao executar os eventos do cartão:', error);
-                });
+                RMPagBankObj.cardActions().then((result) => {
+                  if (RMPagBankObj.proceedCheckout) {
+                    button.setAttribute("onclick", onclickEvent)
+                    button.click()
+                    return true
+                  }
+                })
+                .catch((error) => {
+                  console.error("Erro ao executar os eventos do cartão:", error)
+                })
             }
 
             newButton.addEventListener('click', validateAndPreventDefault, false);
@@ -111,18 +115,20 @@ RMPagBank.prototype = {
         if (!eventAlreadyAttached) {
             throw new Error('PagBank: Não foi possível adicionar o evento de clique ao botão de finalizar compra.');
         }
-    },
-    addCardFieldsObserver: function () {
+    }
+
+    addCardFieldsObserver() {
         try {
-            let numberElem = $$('#ricardomartins_pagbank_cc_cc_number').first();
-            Element.observe(numberElem,'change',function(e){RMPagBankObj.updateInstallments();});
-            Element.observe(numberElem,'change',function(e){RMPagBankObj.setBrand();});
-        } catch(e) {
+            let numberElem = document.getElementById('ricardomartins_pagbank_cc_cc_number');
+            if (!numberElem) throw new Error('Elemento não encontrado');
+            numberElem.addEventListener('change', (e) => { RMPagBankObj.updateInstallments(); });
+            numberElem.addEventListener('change', (e) => { RMPagBankObj.setBrand(); });
+        } catch (e) {
             console.error('PagBank: Não foi possível adicionar observevação aos cartões. ' + e.message);
         }
+    }
 
-    },
-    cardActions: async function () {
+    async cardActions() {
         RMPagBankObj.proceedCheckout = false;
         if (RMPagBankObj.config.debug) {
             console.log('Iniciando criptografia do cartão');
@@ -150,8 +156,9 @@ RMPagBank.prototype = {
 
         this.enablePlaceOrderButton();
         return result;
-    },
-    setBrand: function () {
+    }
+
+    setBrand() {
         let brandInput = document.getElementById('ricardomartins_pagbank_cc_cc_brand');
         let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
         let urlPrefix = 'https://stc.pagseguro.uol.com.br/';
@@ -159,13 +166,9 @@ RMPagBank.prototype = {
             urlPrefix = 'https://stcpagseguro.ricardomartins.net.br/';
         }
         let flagSrc = urlPrefix + 'public/img/payment-methods-flags/68x30/{brand}.png';
-        let style = 'background-image: url(' + flagSrc + ');' +
-            'background-repeat: no-repeat;' +
-            'background-position: calc(100% - 5px) center;' +
-            'background-size: auto calc(100% - 6px);';
+        let style = `background-image: url(${flagSrc});background-repeat: no-repeat;background-position: calc(100% - 5px) center;background-size: auto calc(100% - 6px);`;
 
-        let ccNumber = numberInput.value;
-        ccNumber = ccNumber.replace(/\s/g, '');
+        let ccNumber = numberInput.value.replace(/\s/g, '');
 
         let cardTypes = this.getCardTypes(ccNumber);
         if (cardTypes.length > 0) {
@@ -181,8 +184,9 @@ RMPagBank.prototype = {
                 console.log("Bandeira não encontrada");
             }
         }
-    },
-    encryptCard: function () {
+    }
+
+    encryptCard() {
         if (RMPagBankObj.config.debug) {
             console.log('Encrypting card');
         }
@@ -204,16 +208,14 @@ RMPagBank.prototype = {
             return false;
         }
 
-        let holderName, card, ccNumber, ccCvc, expMonth, expYear;
-
-        //replace trim and remove duplicated spaces from input values
-        holderName = holderInput.trim().replace(/\s+/g, ' ');
-        ccNumber = numberInput.replace(/\s/g, '');
-        ccCvc = cvcInput.replace(/\s/g, '');
-        expMonth = expInput.split('/')[0].replace(/\s/g, '');
-        expYear = '20' + expInput.split('/')[1].slice(-2).replace(/\s/g, '');
+        let holderName = holderInput.trim().replace(/\s+/g, ' ');
+        let ccNumber = numberInput.replace(/\s/g, '');
+        let ccCvc = cvcInput.replace(/\s/g, '');
+        let expMonth = expInput.split('/')[0].replace(/\s/g, '');
+        let expYear = '20' + expInput.split('/')[1].slice(-2).replace(/\s/g, '');
 
         this.disablePlaceOrderButton();
+        let card;
         try {
             const publicKey = this.config.publicKey;
             card = PagSeguro.encryptCard({
@@ -242,20 +244,13 @@ RMPagBank.prototype = {
 
         if (card.hasErrors) {
             let errorCodes = [
-                {code: 'INVALID_NUMBER', message: 'Número do cartão inválido'},
-                {
-                    code: 'INVALID_SECURITY_CODE',
-                    message: 'CVV Inválido. Você deve passar um valor com 3, 4 ou mais dígitos.'
-                },
-                {
-                    code: 'INVALID_EXPIRATION_MONTH',
-                    message: 'Mês de expiração incorreto. Passe um valor entre 1 e 12.'
-                },
-                {code: 'INVALID_EXPIRATION_YEAR', message: 'Ano de expiração inválido.'},
-                {code: 'INVALID_PUBLIC_KEY', message: 'Chave Pública inválida.'},
-                {code: 'INVALID_HOLDER', message: 'Nome do titular do cartão inválido.'},
-            ]
-            //extract error message
+                { code: 'INVALID_NUMBER', message: 'Número do cartão inválido' },
+                { code: 'INVALID_SECURITY_CODE', message: 'CVV Inválido. Você deve passar um valor com 3, 4 ou mais dígitos.' },
+                { code: 'INVALID_EXPIRATION_MONTH', message: 'Mês de expiração incorreto. Passe um valor entre 1 e 12.' },
+                { code: 'INVALID_EXPIRATION_YEAR', message: 'Ano de expiração inválido.' },
+                { code: 'INVALID_PUBLIC_KEY', message: 'Chave Pública inválida.' },
+                { code: 'INVALID_HOLDER', message: 'Nome do titular do cartão inválido.' }
+            ];
             let error = '';
             for (let i = 0; i < card.errors.length; i++) {
                 //loop through error codes to find the message
@@ -278,8 +273,9 @@ RMPagBank.prototype = {
 
         numberEncryptedInput.value = card.encryptedCard;
         return true;
-    },
-    updateInstallments: function () {
+    }
+
+    updateInstallments() {
         let cardNumber = document.getElementById('ricardomartins_pagbank_cc_cc_number').value;
         let ccBin = cardNumber.replace(/\s/g, '').substring(0, 6);
         let ccBinInput = document.getElementById('ricardomartins_pagbank_cc_cc_bin');
@@ -288,18 +284,17 @@ RMPagBank.prototype = {
             this.getInstallments();
             ccBinInput.value = ccBin;
         }
-    },
-    getInstallments: function () {
+    }
+
+    getInstallments() {
         let ccBin = typeof window.pb_cc_bin === 'undefined' || window.pb_cc_bin.replace(/[^0-9]/g, '').length < 6 ? '555566' : window.pb_cc_bin;
-
-        new Ajax.Request(this.config.installments_endpoint, {
+        fetch(this.config.installments_endpoint, {
             method: 'POST',
-            parameters: {
-                cc_bin: ccBin
-            },
-            onSuccess: function(transport) {
-                let response = transport.responseText || "no response text";
-
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `cc_bin=${ccBin}`
+        })
+            .then(response => response.text())
+            .then(response => {
                 if (RMPagBankObj.config.debug) {
                     console.log('Installments response:', response);
                 }
@@ -307,7 +302,7 @@ RMPagBank.prototype = {
                 response = JSON.parse(response);
 
                 let select = document.getElementById('ricardomartins_pagbank_cc_cc_installments');
-                select.innerHTML = null;
+                select.innerHTML = '';
 
                 for (let i = 0; i < response.length; i++) {
                     let installmentValue = parseInt(response[i].installment_value) / 100;
@@ -327,24 +322,23 @@ RMPagBank.prototype = {
                     option.text = text + additionalText;
                     select.appendChild(option);
                 }
-            },
-            onFailure:  function() {
+            })
+            .catch(() => {
                 alert('Error getting installments. Please try again.');
                 if (RMPagBankObj.config.debug) {
-                    console.error('Error getting installments. Please try again.', response);
+                    console.error('Error getting installments. Please try again.');
                 }
-            }
-        });
-    },
-    setUp3DS: function (pagseguro_connect_3d_session) {
-        //region 3ds authentication method
+            });
+    }
+
+    setUp3DS(pagseguro_connect_3d_session) {
         PagSeguro.setUp({
             session: pagseguro_connect_3d_session,
             env: this.config.environment,
         });
-    },
-    authenticate3DS: async function () {
-        //inputs
+    }
+
+    async authenticate3DS() {
         let holderInput = document.getElementById('ricardomartins_pagbank_cc_cc_owner');
         let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
         let expInput = document.getElementById('ricardomartins_pagbank_cc_cc_exp');
@@ -383,21 +377,23 @@ RMPagBank.prototype = {
         name.replace(/[0-9]/g, '').replace(/[^\p{L} ]+/gu, '').replace(/\s+/g, ' ').trimStart().trimEnd()
 
         let phone = quote.phone.replace(/\D/g, '');
-        phone = phone ? phone : $$('input[name^="billing[telephone]').first();
-        phone = phone ? phone : $$('input[name^="billing[fax]').first();
-        phone = phone.value ? phone.value.replace(/\D/g, '') : phone;
-        let street = quote.street ? quote.street : $$('input[name^="billing[street]').first().value;
-        let number = quote.number ? quote.number : $$('input[name^="billing[street]')[1].value;
+        if (!phone) {
+            let tel = document.querySelector('input[name^="billing[telephone"]');
+            let fax = document.querySelector('input[name^="billing[fax"]');
+            phone = tel ? tel.value.replace(/\D/g, '') : fax ? fax.value.replace(/\D/g, '') : '';
+        }
+        let street = quote.street ? quote.street : document.querySelector('input[name^="billing[street"]').value;
+        let number = quote.number ? quote.number : document.querySelectorAll('input[name^="billing[street"]')[1].value;
         let complement = quote.complement ? quote.complement : quote.neighborhood;
-        complement = complement ? complement : $$('input[name^="billing[street]')[2].value;
+        complement = complement ? complement : document.querySelectorAll('input[name^="billing[street"]')[2].value;
         complement = complement ? complement : 'n/d';
-        let city = quote.city ? quote.city : $$('input[name^="billing[city]').first().value;
+        let city = quote.city ? quote.city : document.querySelector('input[name^="billing[city"]').value;
         let regionCode = quote.regionCode ? quote.regionCode : null;
         let postalCode = quote.postalCode ? quote.postalCode :
-            $$('input[name^="billing[postcode]').first().value.replace(/\D/g, '');
+            document.querySelector('input[name^="billing[postcode"]').value.replace(/\D/g, '');
 
         if (regionCode === null || !isNaN(regionCode)) {
-            let regionId = $$('select[name^="billing[region_id]"]').first();
+            let regionId = document.querySelector('select[name^="billing[region_id]"]');
             let selectedIndex = regionId.selectedIndex;
             let region = regionId.options[selectedIndex].text;
             regionCode = this.getRegionCode(region);
@@ -520,8 +516,9 @@ RMPagBank.prototype = {
                 return false;
             }
         });
-    },
-    pagBankParseErrorMessage: function(errorMessage) {
+    }
+
+    pagBankParseErrorMessage(errorMessage) {
         const codes = {
             '40001': 'Parâmetro obrigatório',
             '40002': 'Parâmetro inválido',
@@ -567,28 +564,24 @@ RMPagBank.prototype = {
 
         // Concatenate the translations into a single string
         return `${codeTranslation}: ${parameterTranslation} - ${descriptionTranslation}`;
-    },
-    disablePlaceOrderButton: function () {
+    }
+
+    disablePlaceOrderButton() {
         if (RMPagBankObj.config.placeorder_button) {
+            let placeOrderButton = document.querySelector(RMPagBankObj.config.placeorder_button);
+            if (placeOrderButton) {
+                let loaderDiv = document.createElement('div');
+                loaderDiv.id = 'pagbank-loader';
+                placeOrderButton.parentNode.insertBefore(loaderDiv, placeOrderButton.nextSibling);
 
-            let placeOrderButton = $$(RMPagBankObj.config.placeorder_button).first();
-            if (typeof placeOrderButton != 'undefined') {
-                placeOrderButton.up().insert({
-                    'after': new Element('div', {
-                        'id': 'pagbank-loader'
-                    })
-                });
-
-                $$('#pagbank-loader').first().setStyle({
-                    'background': '#000000a1 url(\'' + RMPagBankObj.config.loader_url + '\') no-repeat center',
-                    'height': $$(RMPagBankObj.config.placeorder_button).first().getStyle('height'),
-                    'width': $$(RMPagBankObj.config.placeorder_button).first().getStyle('width'),
-                    'left': document.querySelector(RMPagBankObj.config.placeorder_button).offsetLeft + 'px',
-                    'z-index': 99,
-                    'opacity': .5,
-                    'position': 'absolute',
-                    'top': document.querySelector(RMPagBankObj.config.placeorder_button).offsetTop + 'px'
-                });
+                loaderDiv.style.background = `#000000a1 url('${RMPagBankObj.config.loader_url}') no-repeat center`;
+                loaderDiv.style.height = placeOrderButton.offsetHeight + 'px';
+                loaderDiv.style.width = placeOrderButton.offsetWidth + 'px';
+                loaderDiv.style.left = placeOrderButton.offsetLeft + 'px';
+                loaderDiv.style.zIndex = 99;
+                loaderDiv.style.opacity = .5;
+                loaderDiv.style.position = 'absolute';
+                loaderDiv.style.top = placeOrderButton.offsetTop + 'px';
                 return;
             }
 
@@ -596,18 +589,20 @@ RMPagBank.prototype = {
                 console.error('PagBank: Botão configurado não encontrado (' + RMPagBankObj.config.placeorder_button + '). Verifique as configurações do módulo.');
             }
         }
-    },
-    enablePlaceOrderButton: function () {
-        let element = $$('#pagbank-loader').first();
-        if (typeof element == 'undefined') {
+    }
+
+    enablePlaceOrderButton() {
+        let element = document.getElementById('pagbank-loader');
+        if (!element) {
             return;
         }
 
-        if (RMPagBankObj.config.placeorder_button && typeof $$(RMPagBankObj.config.placeorder_button).first() != 'undefined') {
-            $$('#pagbank-loader').first().remove();
+        if (RMPagBankObj.config.placeorder_button && document.querySelector(RMPagBankObj.config.placeorder_button)) {
+            element.remove();
         }
-    },
-    enablePageLoader: function () {
+    }
+
+    enablePageLoader() {
         let overlay = document.createElement("div");
         overlay.id = 'pagbank-page-loader-overlay';
 
@@ -621,29 +616,27 @@ RMPagBank.prototype = {
         spinnerContainer.appendChild(spinnerText);
         overlay.appendChild(spinnerContainer);
         document.body.appendChild(overlay);
-    },
-    disablePageLoader: function () {
+    }
+
+    disablePageLoader() {
         let element = document.getElementById("pagbank-page-loader-overlay");
-        if (typeof element != 'undefined') {
+        if (element) {
             element.remove();
         }
-    },
-    getQuoteData: async function () {
+    }
+
+    getQuoteData() {
         let endpoint = this.config.quotedata_endpoint;
         return new Promise((resolve, reject) => {
-            new Ajax.Request(endpoint, {
-                method: 'GET',
-                onSuccess: function(response) {
-                    resolve(response.responseJSON);
-                },
-                onFailure: function(error) {
-                    reject(error);
-                }
-            });
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => resolve(data))
+                .catch(error => reject(error));
         });
-    },
-    getCardTypes: function (cardNumber) {
-        const typesPagBank = [
+    }
+
+    getCardTypes(cardNumber) {
+       const typesPagBank = [
             {
                 title: 'MasterCard',
                 type: 'mastercard',
@@ -748,8 +741,9 @@ RMPagBank.prototype = {
         }
 
         return result.slice(-1);
-    },
-    getRegionCode: function (region) {
+    }
+
+    getRegionCode(region) {
         const regionCodes = {
             "AC": "ACRE",
             "AL": "ALAGOAS",
@@ -782,8 +776,11 @@ RMPagBank.prototype = {
 
         region = region.toUpperCase();
         return Object.keys(regionCodes).find(key => regionCodes[key] === region);
-    },
-    sanitizeAddress: function (value) {
-        return value ? value.replace(/\s+/g, ' ').trimStart().trimEnd() : '';
     }
-};
+
+    sanitizeAddress(value) {
+        return value ? value.replace(/\s+/g, ' ').trim() : '';
+    }
+}
+
+window.RMPagBank = RMPagBank
