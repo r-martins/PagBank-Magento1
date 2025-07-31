@@ -2,6 +2,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Seleciona todos os botões com classe copy-btn
   const copyButtons = document.querySelector(".copy-btn");
+
+  if(copyButtons === null) return;
   copyButtons.addEventListener("click", function () {
     // Pega o valor do input/textarea com classe payment-code
     const copyTextElement = document.querySelector(".payment-code");
