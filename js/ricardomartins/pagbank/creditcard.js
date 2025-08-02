@@ -382,15 +382,21 @@ class RMPagBank {
             let fax = document.querySelector('input[name^="billing[fax"]');
             phone = tel ? tel.value.replace(/\D/g, '') : fax ? fax.value.replace(/\D/g, '') : '';
         }
-        let street = quote.street ? quote.street : document.querySelector('input[name^="billing[street"]').value;
-        let number = quote.number ? quote.number : document.querySelectorAll('input[name^="billing[street"]')[1].value;
+        // Safe access to street fields with fallback
+        let streetElements = document.querySelectorAll('input[name^="billing[street"]');
+        let street = quote.street ? quote.street : (streetElements[0] ? streetElements[0].value : '');
+        let number = quote.number ? quote.number : (streetElements[1] ? streetElements[1].value : '');
         let complement = quote.complement ? quote.complement : quote.neighborhood;
-        complement = complement ? complement : document.querySelectorAll('input[name^="billing[street"]')[2].value;
+        complement = complement ? complement : (streetElements[2] ? streetElements[2].value : '');
         complement = complement ? complement : 'n/d';
-        let city = quote.city ? quote.city : document.querySelector('input[name^="billing[city"]').value;
+        
+        let cityElement = document.querySelector('input[name^="billing[city"]');
+        let city = quote.city ? quote.city : (cityElement ? cityElement.value : '');
         let regionCode = quote.regionCode ? quote.regionCode : null;
+        
+        let postcodeElement = document.querySelector('input[name^="billing[postcode"]');
         let postalCode = quote.postalCode ? quote.postalCode :
-            document.querySelector('input[name^="billing[postcode"]').value.replace(/\D/g, '');
+            (postcodeElement ? postcodeElement.value.replace(/\D/g, '') : '');
 
         if (regionCode === null || !isNaN(regionCode)) {
             let regionId = document.querySelector('select[name^="billing[region_id]"]');
