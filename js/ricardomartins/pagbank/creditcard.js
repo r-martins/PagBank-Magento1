@@ -383,24 +383,35 @@ RMPagBank.prototype = {
         name.replace(/[0-9]/g, '').replace(/[^\p{L} ]+/gu, '').replace(/\s+/g, ' ').trimStart().trimEnd()
 
         let phone = quote.phone.replace(/\D/g, '');
-        phone = phone ? phone : $$('input[name^="billing[telephone]').first();
-        phone = phone ? phone : $$('input[name^="billing[fax]').first();
-        phone = phone.value ? phone.value.replace(/\D/g, '') : phone;
-        let street = quote.street ? quote.street : $$('input[name^="billing[street]').first().value;
-        let number = quote.number ? quote.number : $$('input[name^="billing[street]')[1].value;
+        let phoneElement = $$('input[name^="billing[telephone]').first();
+        phone = phone ? phone : phoneElement;
+        let faxElement = $$('input[name^="billing[fax]').first();
+        phone = phone ? phone : faxElement;
+        phone = (phone && phone.value) ? phone.value.replace(/\D/g, '') : (typeof phone === 'string' ? phone : '');
+        
+        // Safe access to street fields with fallback
+        let streetElements = $$('input[name^="billing[street]"]');
+        let street = quote.street ? quote.street : (streetElements[0] ? streetElements[0].value : '');
+        let number = quote.number ? quote.number : (streetElements[1] ? streetElements[1].value : '');
         let complement = quote.complement ? quote.complement : quote.neighborhood;
-        complement = complement ? complement : $$('input[name^="billing[street]')[2].value;
+        complement = complement ? complement : (streetElements[2] ? streetElements[2].value : '');
         complement = complement ? complement : 'n/d';
-        let city = quote.city ? quote.city : $$('input[name^="billing[city]').first().value;
+        
+        let cityElement = $$('input[name^="billing[city]').first();
+        let city = quote.city ? quote.city : (cityElement ? cityElement.value : '');
         let regionCode = quote.regionCode ? quote.regionCode : null;
+        
+        let postcodeElement = $$('input[name^="billing[postcode]').first();
         let postalCode = quote.postalCode ? quote.postalCode :
-            $$('input[name^="billing[postcode]').first().value.replace(/\D/g, '');
+            (postcodeElement ? postcodeElement.value.replace(/\D/g, '') : '');
 
         if (regionCode === null || !isNaN(regionCode)) {
             let regionId = $$('select[name^="billing[region_id]"]').first();
-            let selectedIndex = regionId.selectedIndex;
-            let region = regionId.options[selectedIndex].text;
-            regionCode = this.getRegionCode(region);
+            if (regionId && regionId.options && regionId.selectedIndex >= 0) {
+                let selectedIndex = regionId.selectedIndex;
+                let region = regionId.options[selectedIndex].text;
+                regionCode = this.getRegionCode(region);
+            }
         }
 
         let amount = Math.round(quote.totalAmount * 100);
