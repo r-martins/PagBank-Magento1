@@ -382,21 +382,30 @@ class RMPagBank {
             let fax = document.querySelector('input[name^="billing[fax"]');
             phone = tel ? tel.value.replace(/\D/g, '') : fax ? fax.value.replace(/\D/g, '') : '';
         }
-        // Safe access to street fields with fallback
-        let streetElements = document.querySelectorAll('input[name^="billing[street"]');
-        let street = quote.street ? quote.street : (streetElements[0] ? streetElements[0].value : '');
-        let number = quote.number ? quote.number : (streetElements[1] ? streetElements[1].value : '');
-        let complement = quote.complement ? quote.complement : quote.neighborhood;
-        complement = complement ? complement : (streetElements[2] ? streetElements[2].value : '');
-        complement = complement ? complement : 'n/d';
+        let street = quote.street ? quote.street : document.querySelector('input[name^="billing[street"]').value;
+        let number = quote.number ? quote.number : document.querySelectorAll('input[name^="billing[street"]')[1].value;
         
-        let cityElement = document.querySelector('input[name^="billing[city"]');
-        let city = quote.city ? quote.city : (cityElement ? cityElement.value : '');
+        // Get all street fields to mimic PHP logic
+        let streetFields = document.querySelectorAll('input[name^="billing[street"]');
+        let addressLinesNotEmpty = Array.from(streetFields).map(field => field.value).filter(value => value.trim() !== '');
+        
+        // Complement only if there are more than 3 address lines (same as PHP logic)
+        let complement = quote.complement ? quote.complement : null;
+        if (!complement && addressLinesNotEmpty.length > 3 && streetFields[2]) {
+            complement = streetFields[2].value;
+        }
+        // If still no complement, use neighborhood as fallback
+        if (!complement) {
+            complement = quote.neighborhood ? quote.neighborhood : 'n/d';
+        }
+        // Final fallback to 'n/d' if still empty
+        complement = complement || 'n/d';
+        
+        let city = quote.city ? quote.city : document.querySelector('input[name^="billing[city"]').value;
         let regionCode = quote.regionCode ? quote.regionCode : null;
         
-        let postcodeElement = document.querySelector('input[name^="billing[postcode"]');
         let postalCode = quote.postalCode ? quote.postalCode :
-            (postcodeElement ? postcodeElement.value.replace(/\D/g, '') : '');
+            document.querySelector('input[name^="billing[postcode"]').value.replace(/\D/g, '');
 
         if (regionCode === null || !isNaN(regionCode)) {
             let regionId = document.querySelector('select[name^="billing[region_id]"]');
