@@ -71,11 +71,11 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $name = $hasCustomer ? $quote->getCustomer()->getName() : $quote->getBillingAddress()->getFirstname() . ' ' . $quote->getBillingAddress()->getLastname();
         $email = $hasCustomer ? $quote->getCustomer()->getEmail() : $quote->getBillingAddress()->getEmail();
         $phone = preg_replace('/[^0-9]/', '', $quote->getBillingAddress()->getTelephone());
-
+        $addressLinesNotEmpty = array_filter($quote->getBillingAddress()->getStreet());
         $street = $quote->getBillingAddress()->getStreet(1);
         $number = $quote->getBillingAddress()->getStreet(2);
-        $complement = $quote->getBillingAddress()->getStreet(3);
-        $neighborhood = $quote->getBillingAddress()->getStreet(4);
+        $complement = count($addressLinesNotEmpty) > 3 ? $quote->getBillingAddress()->getStreet(3) : null;
+        $neighborhood = end($addressLinesNotEmpty);
         $regionCode = $quote->getBillingAddress()->getRegionCode();
         $regionCode = $_helper->getRegionCode($regionCode);
         $city = $quote->getBillingAddress()->getCity();
@@ -97,12 +97,9 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
             $number = !empty($oscData['billing']['street'][2])
                 ? $oscData['billing']['street'][2]
                 : $number;
-            $complement = !empty($oscData['billing']['street'][3])
-                ? $oscData['billing']['street'][3]
-                : $complement;
-            $neighborhood = !empty($oscData['billing']['street'][4])
-                ? $oscData['billing']['street'][4]
-                : $neighborhood;
+            $addressLinesNotEmpty = array_filter($oscData['billing']['street']);
+            $complement = count($addressLinesNotEmpty) > 3 ? $oscData['billing']['street'][3] : null;
+            $neighborhood = end($addressLinesNotEmpty);
             $regionCode = !empty($oscData['billing']['region_id'])
                 ? $oscData['billing']['region_id']
                 : $regionCode;
