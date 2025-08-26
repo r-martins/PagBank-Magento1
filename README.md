@@ -76,15 +76,15 @@ Você pode usar [modman](https://github.com/colinmollenhour/modman) para instala
 
 
 ## Criptografia do cartão no checkout ℹ️
-Dependendo do checkout que estiver utilizando ou de customizações no tema, você também precisará [configurar o "Identificador CSS do botão de Finalizar Compra"](https://pagsegurotransparente.zendesk.com/hc/pt-br/articles/360039820711-Configurando-o-bot%C3%A3o-de-Finalizar-Compra).
+Dependendo do checkout que estiver utilizando ou de customizações no tema, você também precisará [configurar o "Identificador CSS do botão de Finalizar Compra"](https://ajuda.pbintegracoes.com/hc/pt-br/articles/360039820711-Configurando-o-bot%C3%A3o-de-Finalizar-Compra).
 
 Isso é necessário para que o módulo possa criptografar os dados do cartão de crédito antes de enviá-los ao PagBank e também para o correto funcionamento do recurso de 3D Secure (quando ativado).
 
 
 # Site Oficial do Módulo
-https://pbintegracoes.com/
+[https://pbintegracoes.com/](https://pbintegracoes.com/?utm_source=github-m1&utm_medium=readme)
 
-Disponível também para [Magento 2.x](https://pbintegracoes.com/magento2.html) e [WooCommerce](https://pbintegracoes.com/woocommerce.html).
+Disponível também para [Magento 2.x](https://pbintegracoes.com/magento2/?utm_source=github=m1&utm_content=readme) e [WooCommerce](https://pbintegracoes.com/woocommerce/?utm_source=github=m1&utm_content=readme).
 
 # Cursos Magento
 Em [Magenteiro.com/cursos](https://www.magenteiro.com/cursos?___store=default&utm_source=github-m1&utm_medium=readme&utm_campaign=readme.md) você encontra uma dezena de cursos pagos e gratuitos sobre Magento, inclusive o famoso curso gratuito [Sua loja com PagSeguro e OneStepCheckout](https://www.magenteiro.com/sua-loja-com-pagseguro-e-onestepcheckout?___store=default&utm_source=github-m1&utm_medium=readme&utm_campaign=readme.md).
@@ -92,7 +92,7 @@ Em [Magenteiro.com/cursos](https://www.magenteiro.com/cursos?___store=default&ut
 Veja tamém o [canal Magenteiro no YouTube](https://youtube.com/@Magenteiro).
 
 # Central de ajuda e suporte
-https://pagsegurotransparente.zendesk.com/hc/pt-br/
+https://ajuda.pbintegracoes.com/
 
 
 
@@ -123,7 +123,7 @@ Se mesmo assim você possuir uma taxa ou condição melhor, e se compromete a fa
 
 ## Tenho outra pergunta não listada aqui
 
-Consulte nossa [Central de ajuda](https://pagsegurotransparente.zendesk.com/hc/pt-br/) e [entre em contato](https://pagsegurotransparente.zendesk.com/hc/pt-br/requests/new) conosco se não encontrar sua dúvida respondida por lá.
+Consulte nossa [Central de ajuda](https://ajuda.pbintegracoes.com/hc/pt-br/) e [entre em contato](https://ajuda.pbintegracoes.com/hc/pt-br/requests/new) conosco se não encontrar sua dúvida respondida por lá.
 
 A maioria das dúvidas estão respondidas lá. As outras são respondidas em até 2 dias após entrar em contato.
 
@@ -133,7 +133,7 @@ Sim.
 
 E quando há uma transação no PagBank, um link para ela é exibida na página do pedido. Assim você pode confirmar novamente o status do mesmo.
 
-Certifique-se de [configurar seu Firewall (ou Cloudflare)](https://pagsegurotransparente.zendesk.com/hc/pt-br/articles/115002699823-Usu%C3%A1rios-Cloudflare-e-CDN-s) para permitir conexões de entrada em sualoja.com/pagbank/notification/ para evitar problemas.
+Certifique-se de [configurar seu Firewall (ou Cloudflare)](https://ajuda.pbintegracoes.com/hc/pt-br/articles/115002699823-Usu%C3%A1rios-Cloudflare-e-CDN-s) para permitir conexões de entrada em sualoja.com/pagbank/notification/ para evitar problemas.
 
 ## Como posso testar usando a Sandbox?
 
@@ -141,7 +141,7 @@ Basta clicar no botão 'Obter Connect Key para Testes' localizado nas configura�
 
 Depois é só informar sua Connect Key de testes no campo "Chave Connect".
 
-Utilize estes [cartões de teste](https://pagsegurotransparente.zendesk.com/hc/pt-br/articles/22375426666253) de acordo com as configurações e cenário que deseja testar.
+Utilize estes [cartões de teste](https://ajuda.pbintegracoes.com/hc/pt-br/articles/22375426666253) de acordo com as configurações e cenário que deseja testar.
 
 Note que há diferenças entre cartões de teste e cartões para testar compras com 3D Secure habilitado.
 
@@ -170,12 +170,12 @@ Esta é uma iniciativa pessoal, sem vínculo com PagBank. PagBank é uma marca d
 
 Este não é um produto oficial do PagBank.
 
-Ao usar este plugin você concorda com os [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms/?utm_source=github&utm_content=readme).
+Ao usar este plugin você concorda com os [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms/?utm_source=github-m1&utm_content=readme).
 
 # Links úteis
 
-- [Site Oficial das Integrações PagBank por Ricardo Martins](https://pbintegracoes.com/?utm_source=github&utm_content=readme)
+- [Site Oficial das Integrações PagBank por Ricardo Martins](https://pbintegracoes.com/?utm_source=github-m1&utm_content=readme)
 - [Central de Ajuda](https://ajuda.pbintegracoes.com/hc/pt-br/)
-- [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms/?utm_source=github&utm_content=readme)
+- [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms/?utm_source=github-m1&utm_content=readme)
 - [Vídeos no Youtube](https://www.youtube.com/@Magenteiro/search?query=pagseguro)
 - [Artigos](https://www.magenteiro.com/blog/tag/pagseguro)
