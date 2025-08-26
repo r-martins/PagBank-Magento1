@@ -2,11 +2,12 @@
 [![GitHub release](https://img.shields.io/github/v/release/r-martins/PagBank-Magento1)](https://github.com/r-martins/PagBank-Magento1)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r-martins/PagBank-Magento1/develop)
 # Módulo PagBank(PagSeguro) Connect para Magento1
-![Módulo PagBank para Magento 2](https://i.ibb.co/Z2Bbnz6/Banner-Magento1-Pag-Bank.jpg?1=1)
+### Compatível com OpenMage e Maho Commerce
+![Módulo PagBank para Magento 1, OpenMage ou Maho Commerce](https://i.ibb.co/wkqbjg2/Banner-Magento1-Pag-Bank-1544x500px.jpg?1=1)
 ## Nova Geração - Novas APIs, Novos Recursos, Mais Estabilidade
-Aceite mais de 30 cartões de crédito, PIX e boleto em sua loja [Magento 1.x](http://bit.ly/m1download) ou [OpenMage LTS](https://www.openmage.org/), usando o meio de pagamento mais aceito pelos brasileiros.
+Aceite mais de 30 cartões de crédito, PIX e boleto em sua loja [Magento 1.x](https://www.magenteiro.com/blog/magento-1/magento1-download/?utm_source=github&utm_content=pagbank-magento1), [OpenMage LTS](https://www.openmage.org/) ou [Maho Commerce](https://mahocommerce.com/?utm_source=github-rmartins-pagbank-magento1), usando o meio de pagamento mais aceito pelos brasileiros.
 
-Chega de reprovações e chargebacks! Nosso novo módulo tem suporte a PIX transparente e 3D Secure, alcançando até 99% de aprovação no cartão de crédito sem necessidade de antifraude.
+Chega de reprovações e chargebacks! Nosso novo módulo tem suporte a PIX transparente e [3D Secure](https://ajuda.pbintegracoes.com/hc/pt-br/articles/22375922278157-Autentica%C3%A7%C3%A3o-3DS-Sua-prote%C3%A7%C3%A3o-contra-Chargeback), alcançando até 99% de aprovação no cartão de crédito sem necessidade de antifraude.
 
 Agora usando as Novas APIs do PagBank.
 
@@ -15,12 +16,13 @@ A integração mais usada do Brasil, agora com mais recursos, mais estabilidade 
 # Recursos
 
 - Aceite pagamentos com Cartão de Crédito, PIX ou Boleto de forma transparente (sem sair da loja)
-- [Autenticação 3D Secure](https://pagsegurotransparente.zendesk.com/hc/pt-br/articles/22375922278157) para evitar chargebacks e aumentar aprovação
+- [Autenticação 3D Secure](https://ajuda.pbintegracoes.com/hc/pt-br/articles/22375922278157-Autentica%C3%A7%C3%A3o-3DS-Sua-prote%C3%A7%C3%A3o-contra-Chargeback) para evitar chargebacks e aumentar aprovação
 - PIX e Boleto com validades configuráveis
 - Atualização automática do status do pedido
 - Pagamento em 1x ou parcelado, com várias configurações de parcelamento
+- Opção de [ocultar itens do pedido](https://ajuda.pbintegracoes.com/hc/pt-br/articles/28100721158413-Ocultar-itens-do-pedido) ou [e-mail do comprador](https://ajuda.pbintegracoes.com/hc/pt-br/articles/28100677681677-Ocultar-e-mail-do-cliente-hash-pagbankconnect-pag)
 - Identificador do nome da loja na fatura
-- Descontos nas taxa oficiais do PagBank (ou use suas taxas)
+- [Descontos nas taxas](https://pbintegracoes.com/compare/?utm_source=github&utm_content=readme) oficiais do PagBank (ou use suas taxas)
 - Suporte a Sandbox
 - Link direto para a transação disponível no admin
 - Suporte a todos os tipos de produtos
@@ -30,12 +32,13 @@ A integração mais usada do Brasil, agora com mais recursos, mais estabilidade 
 
 <details>
   <summary>Veja alguns Screenshots (clique aqui para expandir)</summary>
-  <img src="https://i.imgur.com/TNU3sgW.png" alt="Cartão de crédito PagBank(PagSeguro) no front end" title="Cartão de crédito PagBank(PagSeguro) no front end"/>
-  <img src="https://i.imgur.com/qpIkGT8.png" alt="PIX - Tela de Sucesso" title="PIX - Tela de Sucesso"/>
-  <img src="https://i.imgur.com/fjirExl.png" alt="Configurações de cartão de crédito" title="Configurações de cartão de crédito"/>
-  <img alt="Admin - Tela do pedido" src="https://i.imgur.com/rfx75Rt.png" title="Admin - Tela do pedido"/>
-  <img alt="Autenticação 3D Secure" src="https://i.imgur.com/IrhEgMN.png" title="Autenticação 3D Secure"/>
-  <img alt="Compatibilidade com OpenMage e os principais checkouts do mercado" src="https://i.imgur.com/gdUCw42.png" title="Compatibilidade com OpenMage e os principais checkouts do mercado"/>
+  <img src="https://i.ibb.co/cc3vmV4S/screenshot-1.webp?1=1" alt="Cartão de crédito PagBank(PagSeguro) no front end" title="Cartão de crédito PagBank(PagSeguro) no front end"/>
+  <img src="https://i.ibb.co/d4KtFGfb/screenshot-2.webp?1=1" alt="PIX - Tela de Sucesso" title="PIX - Tela de Sucesso"/>
+  <img src="https://i.ibb.co/wFdQFP58/screenshot-3.webp?1=1" alt="Configurações de cartão de crédito" title="Configurações de cartão de crédito"/>
+  <img src="https://i.ibb.co/v4c93f5N/screenshot-4.webp?1=1" alt="PIX - Configurações Magento 1" title="PIX - Configurações Magento 1"/>
+  <img alt="Admin - Tela do pedido" src="https://i.ibb.co/gZ2s4bcD/screenshot-5.webp?1=1" title="Admin - Tela do pedido"/>
+  <img alt="Autenticação 3D Secure" src="https://i.ibb.co/N6JHr9Rn/screenshot-6.webp?1=1" title="Autenticação 3D Secure"/>
+  <img alt="Compatibilidade com OpenMage e os principais checkouts do mercado" src="https://i.ibb.co/B5p3mzyt/screenshot-7.webp?1=1" title="Compatibilidade com OpenMage e os principais checkouts do mercado"/>
 </details>
 
 # Pré-requisitos
@@ -66,8 +69,8 @@ Você pode usar [modman](https://github.com/colinmollenhour/modman) para instala
 
 # Configuração do Módulo PagBank(PagSeguro) Connect
 - Navegue até Lojas &gt; Configurações &gt; Vendas &gt; Formas de Pagamento &gt; **PagBank - Ricardo Martins**.
-  - Clique em "Obter Connect Key" ou "Obter Connect Key para Testes" e siga as instruções para obter sua Connect Key e preenche-la no campo indicado logo abaixo.
-  - Salve as configurações e você está pronto para vender.
+    - Clique em "Obter Connect Key" ou "Obter Connect Key para Testes" e siga as instruções para obter sua Connect Key e preenche-la no campo indicado logo abaixo.
+    - Salve as configurações e você está pronto para vender.
 - Se desejar, configure opções de parcelamento, e validade do boleto e código pix de acordo com suas necessidades.
 - Em Clientes &gt; Configurações &gt; Opções de Nome e Endereço, configure o campo "Número de Linhas p/ Endereço" para 4.
 
@@ -144,7 +147,7 @@ Note que há diferenças entre cartões de teste e cartões para testar compras 
 
 ## Este é um plugin oficial?
 
-Não. Este é um plugin desenvolvido por Ligia Salzano, Ricardo Martins (e equipe/colaboradores), assim como outros para Magento e WooCommerce desenvolvidos no passado.
+Não. Mas sim por um parceiro oficial. Este é um plugin desenvolvido por Ligia Salzano, Ricardo Martins (e equipe/colaboradores), assim como outros para Magento e WooCommerce desenvolvidos no passado.
 
 Apesar da parceria entre o desenvolvedor e o PagBank que concede descontos e benefícios, este NÃO é um produto oficial.
 
@@ -167,12 +170,12 @@ Esta é uma iniciativa pessoal, sem vínculo com PagBank. PagBank é uma marca d
 
 Este não é um produto oficial do PagBank.
 
-Ao usar este plugin você concorda com os [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms).
+Ao usar este plugin você concorda com os [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms/?utm_source=github&utm_content=readme).
 
 # Links úteis
 
-- [Site Oficial das Integrações PagBank por Ricardo Martins](https://pbintegracoes.com/)
-- [Central de Ajuda](https://pagsegurotransparente.zendesk.com/hc/pt-br/)
-- [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms)
+- [Site Oficial das Integrações PagBank por Ricardo Martins](https://pbintegracoes.com/?utm_source=github&utm_content=readme)
+- [Central de Ajuda](https://ajuda.pbintegracoes.com/hc/pt-br/)
+- [Termos de Uso e Política de Privacidade](https://pbintegracoes.com/terms/?utm_source=github&utm_content=readme)
 - [Vídeos no Youtube](https://www.youtube.com/@Magenteiro/search?query=pagseguro)
 - [Artigos](https://www.magenteiro.com/blog/tag/pagseguro)
