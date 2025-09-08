@@ -2,9 +2,9 @@
   "name": "ricardomartins/pagbank-magento1",
   "description": "Módulo PagBank/PagSeguro Nova Geração para Magento 1.x e OpenMage LTS",
   "type": "magento-module",
-  "license": "GPL-3.0",
+  "license": "OSL-3.0",
   "homepage": "https://pbintegracoes.com/",
-  "version": "4.10.0",
+  "version": "4.11.0",
   "support": {
     "docs": "https://pagsegurotransparente.zendesk.com/hc/pt-br/",
     "source": "https://github.com/r-martins/PagBank-Magento1"

@@ -156,7 +156,7 @@ PagSeguro e PagBank são marcas do UOL.
 
 ## Posso modificar e comercializar este plugin?
 
-O plugin é licenciado sob GPL v3. Você pode modificar e distribuir, contanto que suas melhorias e correções sejam contribuidas de volta com o projeto.
+O plugin é licenciado sob OSL 3.0 Você pode modificar e distribuir, contanto que suas melhorias e correções sejam contribuidas de volta com o projeto.
 
 Você deve fazer isso através de Pull Requests ao [repositório oficial no github](https://github.com/r-martins/PagBank-Magento1).
 
