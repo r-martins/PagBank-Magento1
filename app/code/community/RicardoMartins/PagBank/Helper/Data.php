@@ -170,6 +170,16 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Check if the 3DS is enabled
+     *
+     * @param $storeId
+     * @return mixed
+     */    public function isNotificationsPagbank($storeId = null)
+    {
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/notifications_pagbank', $storeId);
+    }
+
+    /**
      * Check if the STC mirror is enabled
      *
      * @param $storeId
@@ -442,7 +452,8 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             'enabled_3ds' => $this->isCc3dsEnabled($storeId),
             'cc_3ds_allow_continue' => $this->allowContinueWithout3ds($storeId),
             'environment' => $this->isSandbox($storeId) ? 'SANDBOX' : 'PROD',
-            'stc_mirror' => $this->isStcMirrorEnabled($storeId)
+            'stc_mirror' => $this->isStcMirrorEnabled($storeId),
+            'enable_proxy' => $this->isNotificationsPagbank($storeId),
         ];
 
         try {
@@ -678,6 +689,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         $info['RicardoMartins_PagBank']['debug'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/debug');
         $info['RicardoMartins_PagBank']['sandbox'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/sandbox');
         $info['RicardoMartins_PagBank']['settings'] = $this->getConfig();
+        $info['RicardoMartins_PagBank']['enable_proxy'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/notifications_pagbank');
 
         $info['RicardoMartins_PagBank']['compilation'] = $this->getCompilerState();
 
@@ -775,6 +787,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             'stc_mirror' => Mage::getStoreConfig('payment/ricardomartins_pagbank/stc_mirror', $storeId),
             'jsdelivr_enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_enabled', $storeId),
             'jsdelivr_minify' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_minify', $storeId),
+            'enable_proxy' => Mage::getStoreConfig('payment/ricardomartins_pagbank/notifications_pagbank', $storeId),
             'cc' => [
                 'enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/active', $storeId),
                 'cc_3ds' => Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/cc_3ds', $storeId),
