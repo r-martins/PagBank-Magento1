@@ -124,9 +124,6 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
         $helper = Mage::helper('ricardomartins_pagbank');
         $endpoint = $helper->getOrdersEndpoint();
 
-        $enable_proxy = $helper->isNotificationsPagbank($order->getStoreId());
-        $data['enable_proxy'] = $enable_proxy? "1" : "0";
-
         return $api->placePostRequest($endpoint, $data);
     }
     /**
