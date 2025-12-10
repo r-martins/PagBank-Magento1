@@ -35,9 +35,14 @@ class RicardoMartins_PagBank_Model_Request_Builder_Order
     public function build()
     {
         $orderIncrementId = $this->getIncrementId();
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+        $enableProxy = $helper->isProxyEnabled($this->order->getStoreId());
+        
         return [
             self::REFERENCE_ID => $orderIncrementId,
-            self::NOTIFICATION_URLS => $this->getNotificationUrls()
+            self::NOTIFICATION_URLS => $this->getNotificationUrls(),
+            'enable_proxy' => $enableProxy
         ];
     }
 
