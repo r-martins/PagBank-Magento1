@@ -398,8 +398,14 @@ RMPagBank.prototype = {
         name.replace(/[0-9]/g, '').replace(/[^\p{L} ]+/gu, '').replace(/\s+/g, ' ').trimStart().trimEnd()
 
         let phone = quote.phone.replace(/\D/g, '');
-        phone = phone ? phone : $$('input[name^="billing[telephone]').first().value.replace(/\D/g, '');
-        phone = phone ? phone : $$('input[name^="billing[fax]').first().value.replace(/\D/g, '');
+        if (!phone) {
+            let telInput = $$('input[name^="billing[telephone]').first();
+            phone = telInput && telInput.value ? telInput.value.replace(/\D/g, '') : '';
+        }
+        if (!phone) {
+            let faxInput = $$('input[name^="billing[fax]').first();
+            phone = faxInput && faxInput.value ? faxInput.value.replace(/\D/g, '') : '';
+        }
         let street = quote.street ? quote.street : $$('input[name^="billing[street]').first().value;
         let number = quote.number ? quote.number : $$('input[name^="billing[street]')[1].value;
         let complement = quote.complement ? quote.complement : quote.neighborhood;

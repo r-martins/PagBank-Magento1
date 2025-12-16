@@ -380,7 +380,10 @@ class RMPagBank {
         if (!phone) {
             let tel = document.querySelector('input[name^="billing[telephone"]');
             let fax = document.querySelector('input[name^="billing[fax"]');
-            phone = tel ? tel.value.replace(/\D/g, '') : fax ? fax.value.replace(/\D/g, '') : '';
+            phone = tel && tel.value ? tel.value.replace(/\D/g, '') : '';
+            if (!phone && fax && fax.value) {
+                phone = fax.value.replace(/\D/g, '');
+            }
         }
         let street = quote.street ? quote.street : document.querySelector('input[name^="billing[street"]').value;
         let number = quote.number ? quote.number : document.querySelectorAll('input[name^="billing[street"]')[1].value;

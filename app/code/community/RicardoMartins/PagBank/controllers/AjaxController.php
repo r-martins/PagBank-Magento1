@@ -71,6 +71,9 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $name = $hasCustomer ? $quote->getCustomer()->getName() : $quote->getBillingAddress()->getFirstname() . ' ' . $quote->getBillingAddress()->getLastname();
         $email = $hasCustomer ? $quote->getCustomer()->getEmail() : $quote->getBillingAddress()->getEmail();
         $phone = preg_replace('/[^0-9]/', '', $quote->getBillingAddress()->getTelephone());
+        if (!$phone) {
+            $phone = preg_replace('/[^0-9]/', '', $quote->getBillingAddress()->getFax());
+        }
         $addressLinesNotEmpty = array_filter($quote->getBillingAddress()->getStreet());
         $street = $quote->getBillingAddress()->getStreet(1);
         $number = $quote->getBillingAddress()->getStreet(2);
@@ -91,6 +94,9 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
             $phone = !empty($oscData['billing']['telephone'])
                 ? preg_replace('/[^0-9]/', '', $oscData['billing']['telephone'])
                 : $phone;
+            if (!$phone && !empty($oscData['billing']['fax'])) {
+                $phone = preg_replace('/[^0-9]/', '', $oscData['billing']['fax']);
+            }
             $street = !empty($oscData['billing']['street'][0])
                 ? $oscData['billing']['street'][0]
                 : $street;
