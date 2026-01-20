@@ -387,11 +387,11 @@ class RMPagBank {
         }
         let street = quote.street ? quote.street : document.querySelector('input[name^="billing[street"]').value;
         let number = quote.number ? quote.number : document.querySelectorAll('input[name^="billing[street"]')[1].value;
-        
+
         // Get all street fields to mimic PHP logic
         let streetFields = document.querySelectorAll('input[name^="billing[street"]');
         let addressLinesNotEmpty = Array.from(streetFields).map(field => field.value).filter(value => value.trim() !== '');
-        
+
         // Complement only if there are more than 3 address lines (same as PHP logic)
         let complement = quote.complement ? quote.complement : null;
         if (!complement && addressLinesNotEmpty.length > 3 && streetFields[2]) {
@@ -403,10 +403,10 @@ class RMPagBank {
         }
         // Final fallback to 'n/d' if still empty
         complement = complement || 'n/d';
-        
+
         let city = quote.city ? quote.city : document.querySelector('input[name^="billing[city"]').value;
         let regionCode = quote.regionCode ? quote.regionCode : null;
-        
+
         let postalCode = quote.postalCode ? quote.postalCode :
             document.querySelector('input[name^="billing[postcode"]').value.replace(/\D/g, '');
 
@@ -426,7 +426,7 @@ class RMPagBank {
             if (match) {
                 let totalValue = match[1];
                 totalValue = totalValue.replace(',', '.');
-                totalValue = parseInt(parseFloat(totalValue.toString()).toFixed(2) * 100);
+                totalValue = Math.round(Number(totalValue) * 100);
                 amount = totalValue;
             }
         }
