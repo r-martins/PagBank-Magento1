@@ -86,11 +86,6 @@ parameters:
 			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
 
 		-
-			message: "#^Instantiated class Zend_Date not found\\.$#"
-			count: 1
-			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
-
-		-
 			message: "#^RicardoMartins_PagBank_Block_Form_Info_Billet\\:\\:_construct\\(\\) calls parent\\:\\:_construct\\(\\) but RicardoMartins_PagBank_Block_Form_Info_Billet does not extend any class\\.$#"
 			count: 1
 			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Billet.php
@@ -122,11 +117,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Form_Info_Pix\\:\\:setTemplate\\(\\)\\.$#"
-			count: 1
-			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php
-
-		-
-			message: "#^Instantiated class Zend_Date not found\\.$#"
 			count: 1
 			path: app/code/community/RicardoMartins/PagBank/Block/Form/Info/Pix.php
 
@@ -171,34 +161,9 @@ parameters:
 			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Billet.php
 
 		-
-			message: "#^Caught class Zend_Date_Exception not found\\.$#"
-			count: 1
-			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Billet.php
-
-		-
-			message: "#^Instantiated class Zend_Date not found\\.$#"
-			count: 1
-			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Billet.php
-
-		-
 			message: "#^Call to an undefined method RicardoMartins_PagBank_Block_Onepage_Success_Pix\\:\\:getOrder\\(\\)\\.$#"
 			count: 2
 			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php
-
-		-
-			message: "#^Caught class Zend_Date_Exception not found\\.$#"
-			count: 1
-			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php
-
-		-
-			message: "#^Instantiated class Zend_Date not found\\.$#"
-			count: 1
-			path: app/code/community/RicardoMartins/PagBank/Block/Onepage/Success/Pix.php
-
-		-
-			message: "#^Access to constant DEBUG on an unknown class Zend_Log\\.$#"
-			count: 2
-			path: app/code/community/RicardoMartins/PagBank/Helper/Data.php
 
 		-
 			message: "#^Access to constant URL_TYPE_JS on an unknown class Mage_Core_Model_Store\\.$#"

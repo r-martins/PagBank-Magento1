@@ -4,7 +4,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
 {
 
     /**
-     * @return Mage_Core_Controller_Response_Http|Zend_Controller_Response_Abstract
+     * @return Mage_Core_Controller_Response_Http
      * @throws Mage_Core_Model_Store_Exception|Mage_Core_Exception
      */
     public function getInstallmentsAction()
@@ -52,7 +52,7 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
     }
 
     /**
-     * @return Mage_Core_Controller_Response_Http|Zend_Controller_Response_Abstract
+     * @return Mage_Core_Controller_Response_Http
      */
     public function getQuoteDataAction()
     {

@@ -7,8 +7,6 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
      *
      * @return void
      * @throws Mage_Core_Exception
-     * @throws Zend_Cache_Exception
-     * @throws Zend_Controller_Response_Exception
      */
     public function indexAction()
     {

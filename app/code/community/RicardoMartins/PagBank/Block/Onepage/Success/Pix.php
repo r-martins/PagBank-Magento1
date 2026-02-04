@@ -35,14 +35,18 @@ class RicardoMartins_PagBank_Block_Onepage_Success_Pix extends Mage_Checkout_Blo
     }
 
     /**
-     * @return mixed|Zend_Date
+     * Returns expiration date as Unix timestamp for use with block's formatDate().
+     *
+     * @return int|null
      */
     public function getExpirationDate()
     {
         $date = $this->getAdditionalData()['pix']['due_date'];
         try {
-            $date = new Zend_Date($date);
-        } catch (Zend_Date_Exception $e) {}
+            $date = (new DateTime($date))->getTimestamp();
+        } catch (Exception $e) {
+            $date = null;
+        }
 
         return $date;
     }

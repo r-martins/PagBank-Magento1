@@ -531,9 +531,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if ($this->isDebugActive()) {
             if (is_string($obj)) {
-                Mage::log($obj, Zend_Log::DEBUG, 'pagbank.log', true);
+                Mage::log($obj, null, 'pagbank.log', true);
             } else {
-                Mage::log(var_export($obj, true), Zend_Log::DEBUG, 'pagbank.log', true);
+                Mage::log(var_export($obj, true), null, 'pagbank.log', true);
             }
         }
     }

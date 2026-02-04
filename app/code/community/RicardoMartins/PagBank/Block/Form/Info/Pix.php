@@ -33,17 +33,16 @@ class RicardoMartins_PagBank_Block_Form_Info_Pix extends Mage_Payment_Block_Info
     }
 
     /**
-     * @param $date
+     * @param string $date
      * @return string
      */
     public function formatDateFromString($date)
     {
         try {
-            $date = new Zend_Date($date);
+            $dateTime = new DateTime($date);
+            return $this->formatDate($dateTime->getTimestamp(), 'short', true);
         } catch (Exception $e) {
             return $date;
         }
-
-        return $this->formatDate($date, 'short', true);
     }
 }
