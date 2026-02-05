@@ -1,5 +1,10 @@
 <?php
 
+// Maho/OpenMage/Magento compatibility: alias Varien_Object when missing (Maho uses Maho\DataObject)
+if (!class_exists('Varien_Object', false) && class_exists('Maho\DataObject')) {
+    class_alias('Maho\DataObject', 'Varien_Object');
+}
+
 class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Method_Abstract
 {
     const ORDER_ID = 'pagbank_order_id';
@@ -151,11 +156,11 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
     }
     /**
      * Refund payment
-     * @param Varien_Object $payment
+     * @param Varien_Object|\Maho\DataObject $payment
      * @param mixed $amount
      * @return Mage_Payment_Model_Method_Abstract
      */
-    public function refund(Varien_Object $payment, $amount)
+    public function refund($payment, $amount)
     {
         $order = $payment->getOrder();
         $additionalData = @unserialize($payment->getAdditionalData());

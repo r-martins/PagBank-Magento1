@@ -1,15 +1,20 @@
 <?php
 
+// Maho/OpenMage/Magento compatibility: alias Varien_Object when missing (Maho uses Maho\DataObject)
+if (!class_exists('Varien_Object', false) && class_exists('Maho\DataObject')) {
+    class_alias('Maho\DataObject', 'Varien_Object');
+}
+
 class RicardoMartins_PagBank_Model_Observer
 {
     /**
      * Generate public key on save connect key
      *
-     * @param Varien_Event_Observer $observer
+     * @param Varien_Event_Observer|Maho\Event\Observer $observer
      * @return void
      * @throws Exception
      */
-    public function generatePublicKey(Varien_Event_Observer $observer)
+    public function generatePublicKey($observer)
     {
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
@@ -152,10 +157,10 @@ class RicardoMartins_PagBank_Model_Observer
     }
 
     /**
-     * @param Varien_Event_Observer $observer
+     * @param Varien_Event_Observer|Maho\Event\Observer $observer
      * @return void
      */
-    public function addMoipCompatibility(Varien_Event_Observer $observer)
+    public function addMoipCompatibility($observer)
     {
         $layout = $observer->getEvent()->getLayout();
 
@@ -178,5 +183,79 @@ class RicardoMartins_PagBank_Model_Observer
         }
 
         $update->addHandle('ricardomartins_pagbank_moip');
+    }
+
+    /**
+     * Capture taxvat directly from estimateBilling POST request
+     * This intercepts the data BEFORE it's processed by estimateBillingAction
+     * Only active when document_from is set to 'billing_taxvat'
+     * 
+     * @param Varien_Event_Observer|Maho\Event\Observer $observer
+     * @return void
+     */
+    public function captureTaxvatFromEstimateBillingRequest($observer)
+    {
+        // Only process if billing_taxvat option is selected
+        $documentFrom = Mage::getStoreConfig('payment/ricardomartins_pagbank/document_from');
+        if ($documentFrom !== 'billing_taxvat') {
+            return;
+        }
+        
+        $controller = $observer->getEvent()->getControllerAction();
+        if (!$controller || !$controller->getRequest()->isPost()) {
+            return;
+        }
+
+        $billingData = $controller->getRequest()->getPost('billing', []);
+        if (empty($billingData)) {
+            return;
+        }
+
+        // Extract taxvat from POST data
+        $taxvat = null;
+        if (isset($billingData['taxvat']) && !empty($billingData['taxvat'])) {
+            $taxvat = $billingData['taxvat'];
+        } elseif (isset($billingData['vat_id']) && !empty($billingData['vat_id'])) {
+            $taxvat = $billingData['vat_id'];
+        }
+
+        if (!$taxvat) {
+            return;
+        }
+
+        // Get quote and ensure payment exists
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        if (!$quote || !$quote->getId()) {
+            return;
+        }
+
+        // Ensure payment exists
+        $payment = $quote->getPayment();
+        if (!$payment) {
+            $payment = Mage::getModel('sales/quote_payment');
+            $payment->setQuote($quote);
+            $quote->setPayment($payment);
+        }
+
+        // Save taxvat to payment additional information
+        // This is where getDocumentValue() will retrieve it from when billing_taxvat is selected
+        $payment->setAdditionalInformation('tax_id', $taxvat);
+        $payment->setAdditionalInformation('taxvat', $taxvat);
+        
+        // Also save directly to additional_data field as backup (serialized)
+        $additionalData = $payment->getAdditionalData();
+        if (empty($additionalData)) {
+            $additionalData = array();
+        } else {
+            $additionalData = unserialize($additionalData);
+            if (!is_array($additionalData)) {
+                $additionalData = array();
+            }
+        }
+        $additionalData['tax_id'] = $taxvat;
+        $additionalData['taxvat'] = $taxvat;
+        $payment->setAdditionalData(serialize($additionalData));
+        
+        $payment->save();
     }
 }

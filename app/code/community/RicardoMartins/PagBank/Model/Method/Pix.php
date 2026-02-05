@@ -1,5 +1,10 @@
 <?php
 
+// Maho/OpenMage/Magento compatibility: alias Varien_Object when missing (Maho uses Maho\DataObject)
+if (!class_exists('Varien_Object', false) && class_exists('Maho\DataObject')) {
+    class_alias('Maho\DataObject', 'Varien_Object');
+}
+
 class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Model_Method_Abstract
 {
     const METHOD_CODE = 'ricardomartins_pagbank_pix';
@@ -31,13 +36,13 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
     }
 
     /**
-     * @param Varien_Object $payment
+     * @param Varien_Object|\Maho\DataObject $payment
      * @param $amount
      * @return $this|RicardoMartins_PagBank_Model_Method_Pix
      * @throws Mage_Core_Exception
      * @throws Mage_Core_Model_Store_Exception
      */
-    public function order(Varien_Object $payment, $amount)
+    public function order($payment, $amount)
     {
         $response = $this->pixPayment($this->getOrder());
 

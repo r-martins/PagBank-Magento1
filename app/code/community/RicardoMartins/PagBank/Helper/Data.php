@@ -1,5 +1,10 @@
 <?php
 
+// Maho/OpenMage/Magento compatibility: alias Varien_Object when missing (Maho uses Maho\DataObject)
+if (!class_exists('Varien_Object', false) && class_exists('Maho\DataObject')) {
+    class_alias('Maho\DataObject', 'Varien_Object');
+}
+
 class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
 {
     /**
@@ -348,22 +353,129 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $payment = $order->getPayment();
         $documentFrom = Mage::getStoreConfig('payment/ricardomartins_pagbank/document_from');
+        $document = null;
+        $billingAddress = $order->getBillingAddress();
+        
+        // Get quote for fallback sources
+        $quote = null;
+        if ($order->getQuoteId()) {
+            $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+        } elseif ($order->getQuote()) {
+            $quote = $order->getQuote();
+        }
 
         switch ($documentFrom) {
+            case 'billing_taxvat':
+                // For billing_taxvat option, get from quote payment additional_information
+                // This is where captureTaxvatFromEstimateBillingRequest saves it
+                if ($quote && $quote->getPayment()) {
+                    $quotePayment = $quote->getPayment();
+                    
+                    // Reload from database to ensure we have latest data
+                    if ($quotePayment->getId()) {
+                        $quotePaymentReloaded = Mage::getModel('sales/quote_payment')->load($quotePayment->getId());
+                        if ($quotePaymentReloaded && $quotePaymentReloaded->getId()) {
+                            $document = $quotePaymentReloaded->getAdditionalInformation('tax_id');
+                            if (!$document) {
+                                $document = $quotePaymentReloaded->getAdditionalInformation('taxvat');
+                            }
+                            
+                            // Also try additional_data serialized
+                            if (!$document) {
+                                $additionalData = $quotePaymentReloaded->getAdditionalData();
+                                if ($additionalData) {
+                                    $additionalDataArray = unserialize($additionalData);
+                                    if (is_array($additionalDataArray)) {
+                                        $document = isset($additionalDataArray['tax_id']) ? $additionalDataArray['tax_id'] : null;
+                                        if (!$document) {
+                                            $document = isset($additionalDataArray['taxvat']) ? $additionalDataArray['taxvat'] : null;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Fallback to current payment object
+                    if (!$document) {
+                        $document = $quotePayment->getAdditionalInformation('tax_id');
+                        if (!$document) {
+                            $document = $quotePayment->getAdditionalInformation('taxvat');
+                        }
+                    }
+                }
+                break;
+                
             case 'taxvat':
+                // Try order customer taxvat first
                 $document = $order->getCustomerTaxvat();
+                
+                // If not found, try billing address taxvat
+                if (!$document && $billingAddress) {
+                    $document = $billingAddress->getTaxvat();
+                }
+                
+                // If still not found, try quote billing address taxvat
+                if (!$document && $quote && $quote->getBillingAddress()) {
+                    $document = $quote->getBillingAddress()->getTaxvat();
+                }
                 break;
+                
             case 'vat_id':
-                $document = $order->getBillingAddress()->getVatId();
+                // Try billing address vat_id first
+                if ($billingAddress) {
+                    $document = $billingAddress->getVatId();
+                }
+                
+                // If not found, try quote billing address vat_id
+                if (!$document && $quote && $quote->getBillingAddress()) {
+                    $document = $quote->getBillingAddress()->getVatId();
+                }
+                
+                // If still not found, try billing address taxvat
+                if (!$document && $billingAddress) {
+                    $document = $billingAddress->getTaxvat();
+                }
+                
+                // If still not found, try quote billing address taxvat
+                if (!$document && $quote && $quote->getBillingAddress()) {
+                    $document = $quote->getBillingAddress()->getTaxvat();
+                }
                 break;
+                
             default:
-                $document = $payment->getAdditionalInformation('tax_id');
+                // Try payment additional information
+                if ($payment) {
+                    $document = $payment->getAdditionalInformation('tax_id');
+                    if (!$document) {
+                        $document = $payment->getAdditionalInformation('taxvat');
+                    }
+                }
+                
+                // If not found, try quote billing address taxvat
+                if (!$document && $quote && $quote->getBillingAddress()) {
+                    $document = $quote->getBillingAddress()->getTaxvat();
+                }
+                
+                // If still not found, try quote billing address vat_id
+                if (!$document && $quote && $quote->getBillingAddress()) {
+                    $document = $quote->getBillingAddress()->getVatId();
+                }
+                
+                // If still not found, try billing address taxvat
+                if (!$document && $billingAddress) {
+                    $document = $billingAddress->getTaxvat();
+                }
+                
+                // If still not found, try billing address vat_id
+                if (!$document && $billingAddress) {
+                    $document = $billingAddress->getVatId();
+                }
                 break;
         }
 
-        if (!$document) {
-            $document = $payment->getAdditionalInformation('tax_id');
-        }
+        // Ensure $document is a string to avoid PHP 8.1+ deprecation warning
+        $document = $document !== null ? (string)$document : '';
 
         return preg_replace('/[^0-9]/','', $document);
     }
@@ -938,6 +1050,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function removeAccents($string)
     {
+        // Ensure $string is a string to avoid PHP 8.1+ deprecation warning
+        $string = $string !== null ? (string)$string : '';
+        
         $string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
         $table = [
             'Š' => 'S',
@@ -1012,7 +1127,13 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
 
         $result = strtr($string, $table);
         $result = preg_replace('/[^A-Za-z0-9\ ]/', '', $result);
-        return trim(utf8_decode($result));
+        // Replace deprecated utf8_decode() with mb_convert_encoding for PHP 8.2+ compatibility
+        if (function_exists('mb_convert_encoding')) {
+            $result = mb_convert_encoding($result, 'ISO-8859-1', 'UTF-8');
+        } elseif (function_exists('iconv')) {
+            $result = iconv('UTF-8', 'ISO-8859-1//IGNORE', $result);
+        }
+        return trim($result);
     }
 
     /**
@@ -1020,6 +1141,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function sanitizeString($string)
     {
+        // Ensure $string is a string to avoid PHP 8.1+ deprecation warning
+        $string = $string !== null ? (string)$string : '';
+        
         $string = $this->removeAccents($string);
         $string = preg_replace('/[^a-zA-Z0-9\s\/\-ºª.,]/', '', $string);
         return trim(preg_replace('/\s+/', ' ', $string));
@@ -1031,6 +1155,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function sanitizeCustomerName($string)
     {
+        // Ensure $string is a string to avoid PHP 8.1+ deprecation warning
+        $string = $string !== null ? (string)$string : '';
+        
         $string = preg_replace('/\d/', '', $string);
         $string = $this->sanitizeString($string);
         return $string;

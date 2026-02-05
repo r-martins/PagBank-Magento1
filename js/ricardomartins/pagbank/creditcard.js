@@ -7,7 +7,10 @@ class RMPagBank {
         this.getInstallments();
 
         if (pagseguro_connect_3d_session !== '' && this.config.enabled_3ds) {
-            document.getElementById('ricardomartins_pagbank_cc_cc_has_session').value = 1;
+            const sessionInput = document.getElementById('ricardomartins_pagbank_cc_cc_has_session');
+            if (sessionInput) {
+                sessionInput.value = 1;
+            }
         }
 
         if (this.config.enabled_3ds && pagseguro_connect_3d_session !== '') {
@@ -18,11 +21,25 @@ class RMPagBank {
     }
 
     placeOrderEvent() {
+        console.log('PagBank: placeOrderEvent() chamado');
         const methodForm = document.querySelectorAll('#payment_form_ricardomartins_pagbank_cc');
         if (!methodForm.length) {
+            // Form not found yet, try again after a short delay (max 5 attempts)
+            if (!this._placeOrderRetries) {
+                this._placeOrderRetries = 0;
+            }
+            if (this._placeOrderRetries < 5) {
+                this._placeOrderRetries++;
+                console.log(`PagBank: Formulário não encontrado. Tentativa ${this._placeOrderRetries}/5...`);
+                setTimeout(() => {
+                    this.placeOrderEvent();
+                }, 500);
+                return;
+            }
             console.log('PagBank: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
             return;
         }
+        console.log('PagBank: Formulário encontrado. Procurando botões...');
 
         const mutationAttributesCallback = (mutationsList) => {
             const observedAttributes = ['class', 'disabled'];
@@ -37,12 +54,14 @@ class RMPagBank {
                 if (mutation.target.hasAttribute('id')) {
                     let id = mutation.target.getAttribute('id');
                     let button = document.getElementById(id);
-                    button.className = mutation.target.className;
+                    if (button) {
+                        button.className = mutation.target.className;
 
-                    if (mutation.target.hasAttribute('disabled') === false) {
-                        button.removeAttribute('disabled');
-                    } else {
-                        button.setAttribute('disabled', '');
+                        if (mutation.target.hasAttribute('disabled') === false) {
+                            button.removeAttribute('disabled');
+                        } else {
+                            button.setAttribute('disabled', '');
+                        }
                     }
                 }
             }
@@ -50,6 +69,10 @@ class RMPagBank {
         const observer = new MutationObserver(mutationAttributesCallback);
 
         let form = methodForm[0].closest('form');
+        if (!form) {
+            console.warn('PagBank: Formulário não encontrado para anexar eventos do botão.');
+            return;
+        }
 
         let buttons = [
             '#onestepcheckout-place-order-button',
@@ -69,92 +92,317 @@ class RMPagBank {
         }
 
         let eventAlreadyAttached = false;
-        buttons.forEach((btn) => {
-            let button = document.querySelector(btn);
+        buttons.forEach((btnSelector) => {
+            let button = document.querySelector(btnSelector);
 
-            if (!button || eventAlreadyAttached) {
+            if (!button) {
+                console.log(`PagBank: Botão não encontrado com seletor: ${btnSelector}`);
                 return;
             }
+            
+            console.log(`PagBank: Botão encontrado com seletor: ${btnSelector}`);
+            
+            // Check if events are already attached to this button instance
+            // Use a data attribute to track if this specific button instance has listeners
+            const buttonTimestamp = button.getAttribute('data-pagbank-button-timestamp');
+            const storedTimestamp = this._lastButtonTimestamp || null;
+            
+            console.log(`PagBank: Timestamp do botão: ${buttonTimestamp}, Timestamp armazenado: ${storedTimestamp}, Listeners anexados: ${button.dataset.pagbankButtonListenersAttached}`);
+            
+            // If timestamp matches and listeners are marked as attached, skip
+            // BUT: if _lastButtonTimestamp was reset to null, force reattachment
+            if (storedTimestamp !== null && buttonTimestamp && buttonTimestamp === storedTimestamp && button.dataset.pagbankButtonListenersAttached === 'true') {
+                console.log('PagBank: Eventos do botão já anexados a esta instância. Pulando...');
+                return;
+            }
+            
+            // If stored timestamp is null (forced reset), remove old timestamp from button
+            if (storedTimestamp === null && buttonTimestamp) {
+                console.log('PagBank: Removendo timestamp antigo do botão para forçar reaplicação.');
+                button.removeAttribute('data-pagbank-button-timestamp');
+                delete button.dataset.pagbankButtonListenersAttached;
+            }
+            
+            // Generate or update timestamp for this button instance
+            const timestamp = Date.now().toString();
+            button.setAttribute('data-pagbank-button-timestamp', timestamp);
+            this._lastButtonTimestamp = timestamp;
+            
+            // Remove the flag first to allow reattachment if needed
+            delete button.dataset.pagbankButtonListenersAttached;
 
             observer.observe(button, { attributes: true });
 
             let onclickEvent = button.getAttribute('onclick');
-            button.removeAttribute('onclick');
-
-            let newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
+            // Store onclick but don't remove it yet - we'll wrap it
+            const storedOnclickEvent = onclickEvent;
+            const storedBtnSelector = btnSelector; // Store selector for later use
+            
+            // Don't clone the button - attach listeners directly to the existing button
+            // Cloning removes event listeners and the button might be replaced anyway
 
             let validateAndPreventDefault = function (event) {
-                let paymentMethod = document.querySelector('input[name="payment[method]"]:checked').value;
-                if (paymentMethod !== 'ricardomartins_pagbank_cc') {
-                    button.setAttribute('onclick', onclickEvent);
-                    button.click();
+                // Prevent duplicate execution
+                if (event._pagbankProcessed) {
+                    console.log('PagBank: Evento já processado, ignorando...');
+                    return;
+                }
+                
+                console.log('PagBank: Botão de finalizar compra clicado ou formulário submetido.');
+                console.log('PagBank: Event type:', event.type, 'Target:', event.target, 'Current target:', event.currentTarget);
+                
+                // Mark as processed to prevent duplicate execution
+                event._pagbankProcessed = true;
+                
+                // Get current button reference (may have changed after DOM updates)
+                let currentButton = document.querySelector(storedBtnSelector);
+                if (!currentButton) {
+                    console.warn('PagBank: Botão não encontrado no DOM. Tentando continuar...');
+                    // Try to get button from event target
+                    if (event.target && (event.target.matches && event.target.matches(storedBtnSelector))) {
+                        currentButton = event.target;
+                        console.log('PagBank: Botão encontrado via event.target');
+                    } else if (event.currentTarget && event.currentTarget.matches && event.currentTarget.matches(storedBtnSelector)) {
+                        currentButton = event.currentTarget;
+                        console.log('PagBank: Botão encontrado via event.currentTarget');
+                    } else {
+                        currentButton = button; // Fallback to stored reference
+                    }
+                }
+                
+                let paymentMethod = document.querySelector('input[name="payment[method]"]:checked');
+                if (!paymentMethod || paymentMethod.value !== 'ricardomartins_pagbank_cc') {
+                    console.log('PagBank: Método de pagamento não é PagBank. Continuando checkout normal.');
+                    // Restore original onclick and execute it
+                    if (storedOnclickEvent) {
+                        // Use eval to execute the original onclick code
+                        try {
+                            eval(storedOnclickEvent);
+                        } catch (e) {
+                            console.error('PagBank: Erro ao executar onclick original:', e);
+                            // Fallback: set as attribute and click
+                            currentButton.setAttribute('onclick', storedOnclickEvent);
+                            currentButton.click();
+                        }
+                    }
                     return true;
                 }
+                
+                console.log('PagBank: Método PagBank detectado. Prevenindo submit padrão.');
                 event.preventDefault();
                 event.stopImmediatePropagation();
+                event.stopPropagation();
 
+                console.log('PagBank: Iniciando cardActions...');
                 RMPagBankObj.cardActions().then((result) => {
+                  console.log('PagBank: cardActions concluído. proceedCheckout:', RMPagBankObj.proceedCheckout);
                   if (RMPagBankObj.proceedCheckout) {
-                    button.setAttribute("onclick", onclickEvent)
-                    button.click()
-                    return true
+                    console.log('PagBank: Prosseguindo com checkout...');
+                    if (storedOnclickEvent) {
+                        // Execute original onclick
+                        try {
+                            eval(storedOnclickEvent);
+                        } catch (e) {
+                            console.error('PagBank: Erro ao executar onclick original:', e);
+                            // Fallback: set as attribute and click
+                            currentButton.setAttribute("onclick", storedOnclickEvent);
+                            currentButton.click();
+                        }
+                    } else {
+                        // If no onclick, try to submit the form
+                        const formElement = currentButton.closest('form');
+                        if (formElement) {
+                            console.log('PagBank: Submetendo formulário...');
+                            formElement.submit();
+                        } else {
+                            console.error('PagBank: Formulário não encontrado para submit.');
+                        }
+                    }
+                    return true;
+                  } else {
+                    console.warn('PagBank: proceedCheckout é false. Checkout não prosseguirá.');
                   }
                 })
                 .catch((error) => {
-                  console.error("Erro ao executar os eventos do cartão:", error)
-                })
+                  console.error("PagBank: Erro ao executar os eventos do cartão:", error);
+                });
+                
+                return false;
             }
 
-            newButton.addEventListener('click', validateAndPreventDefault, false);
-            form.addEventListener('submit', validateAndPreventDefault, false);
+            // Wrap the original onclick if it exists
+            if (onclickEvent) {
+                // Remove the inline onclick to prevent it from running before our handler
+                button.removeAttribute('onclick');
+                // Store it so we can call it later if needed
+                button._pagbankOriginalOnclick = onclickEvent;
+            }
+            
+            // Use capture phase to ensure our handler runs first
+            button.addEventListener('click', validateAndPreventDefault, true); // true = capture phase
+            button.addEventListener('click', validateAndPreventDefault, false); // Also add in bubble phase
+            form.addEventListener('submit', validateAndPreventDefault, true); // capture phase
+            form.addEventListener('submit', validateAndPreventDefault, false); // bubble phase
+            
+            // Also add event delegation on document as fallback (only if button doesn't have onclick)
+            // This ensures we catch clicks even if button is replaced
+            const delegationHandler = function(event) {
+                // Check if clicked element matches our button selector
+                if (event.target && event.target.matches && event.target.matches(btnSelector)) {
+                    // Only process if not already processed by direct listener
+                    if (!event._pagbankProcessed) {
+                        console.log('PagBank: Evento capturado via delegation no botão:', btnSelector);
+                        validateAndPreventDefault(event);
+                    }
+                }
+            };
+            document.addEventListener('click', delegationHandler, true); // capture phase
+            
+            // Store delegation handler and selector for cleanup (if needed)
+            button._pagbankDelegationHandler = delegationHandler;
+            button._pagbankSelector = btnSelector;
+            
+            // Mark as attached
+            button.dataset.pagbankButtonListenersAttached = 'true';
+            button.dataset.pagbankSelector = btnSelector; // Store selector for verification
+            
+            // Verify listeners are attached
+            const hasListeners = button.onclick !== null || 
+                                 (button.getEventListeners && button.getEventListeners('click')?.length > 0);
+            
+            console.log(`PagBank: Eventos do botão de finalizar compra anexados com sucesso ao botão: ${btnSelector}`);
+            console.log(`PagBank: Timestamp do botão definido como: ${timestamp}`);
+            console.log(`PagBank: Event listeners anexados em ambas as fases (capture e bubble)`);
+            console.log(`PagBank: Botão verificado - ID: ${button.id || 'sem ID'}, Classes: ${button.className || 'sem classes'}`);
+            
+            // Test click handler by checking if button still exists and has listeners
+            setTimeout(() => {
+                const testButton = document.querySelector(btnSelector);
+                if (testButton) {
+                    if (testButton.dataset.pagbankButtonListenersAttached === 'true') {
+                        console.log(`PagBank: Botão ainda presente no DOM após anexação: ${btnSelector}`);
+                        // Verify listeners are actually attached by checking if button has our data attribute
+                        console.log(`PagBank: Verificação - Botão tem timestamp: ${testButton.getAttribute('data-pagbank-button-timestamp') || 'não'}`);
+                    } else {
+                        console.warn(`PagBank: Botão encontrado mas sem flag de listeners anexados: ${btnSelector}`);
+                        console.warn(`PagBank: Botão foi substituído após anexação! Reaplicando...`);
+                        // Button was replaced, reapply
+                        if (typeof RMPagBankObj !== "undefined" && RMPagBankObj) {
+                            RMPagBankObj._lastButtonTimestamp = null;
+                            RMPagBankObj._placeOrderRetries = 0;
+                            setTimeout(() => {
+                                RMPagBankObj.placeOrderEvent();
+                            }, 100);
+                        }
+                    }
+                } else {
+                    console.warn(`PagBank: Botão não encontrado no DOM após anexação: ${btnSelector}`);
+                }
+            }, 500);
 
             eventAlreadyAttached = true;
         });
 
         if (!eventAlreadyAttached) {
-            throw new Error('PagBank: Não foi possível adicionar o evento de clique ao botão de finalizar compra.');
+            console.warn('PagBank: Nenhum botão de finalizar compra encontrado. Verifique a configuração placeorder_button.');
+            console.warn('PagBank: Botões procurados:', buttons);
+        } else {
+            console.log('PagBank: placeOrderEvent() concluído com sucesso.');
         }
     }
 
     addCardFieldsObserver() {
         try {
             let numberElem = document.getElementById('ricardomartins_pagbank_cc_cc_number');
-            if (!numberElem) throw new Error('Elemento não encontrado');
-            numberElem.addEventListener('change', (e) => { RMPagBankObj.updateInstallments(); });
-            numberElem.addEventListener('change', (e) => { RMPagBankObj.setBrand(); });
+            if (!numberElem) {
+                // Element not found yet, try again after a short delay (max 10 attempts)
+                if (!this._cardObserverRetries) {
+                    this._cardObserverRetries = 0;
+                }
+                if (this._cardObserverRetries < 10) {
+                    this._cardObserverRetries++;
+                    setTimeout(() => {
+                        this.addCardFieldsObserver();
+                    }, 200);
+                } else {
+                    console.warn('PagBank: Campo de número do cartão não encontrado após múltiplas tentativas.');
+                }
+                return;
+            }
+            
+            // Check if listeners are already attached to THIS specific element instance
+            // We use a timestamp to detect if element was replaced
+            const currentTimestamp = numberElem.getAttribute('data-pagbank-timestamp');
+            const storedTimestamp = this._lastElementTimestamp || null;
+            
+            // If timestamp matches and listeners are marked as attached, skip
+            if (currentTimestamp && currentTimestamp === storedTimestamp && numberElem.dataset.pagbankListenersAttached === 'true') {
+                // Same element instance, listeners already attached
+                return;
+            }
+            
+            // Generate or update timestamp for this element instance
+            const timestamp = Date.now().toString();
+            numberElem.setAttribute('data-pagbank-timestamp', timestamp);
+            this._lastElementTimestamp = timestamp;
+            
+            // Remove the flag first to allow reattachment if needed
+            delete numberElem.dataset.pagbankListenersAttached;
+            
+            // Attach listeners to the element
+            const updateInstallmentsHandler = (e) => { 
+                if (RMPagBankObj && typeof RMPagBankObj.updateInstallments === 'function') {
+                    RMPagBankObj.updateInstallments(); 
+                }
+            };
+            
+            const setBrandHandler = (e) => { 
+                if (RMPagBankObj && typeof RMPagBankObj.setBrand === 'function') {
+                    RMPagBankObj.setBrand(); 
+                }
+            };
+            
+            numberElem.addEventListener('change', updateInstallmentsHandler);
+            numberElem.addEventListener('change', setBrandHandler);
+            numberElem.addEventListener('input', updateInstallmentsHandler);
+            numberElem.addEventListener('input', setBrandHandler);
+            
+            // Store handlers for potential cleanup (though not strictly necessary)
+            numberElem._pagbankHandlers = {
+                updateInstallments: updateInstallmentsHandler,
+                setBrand: setBrandHandler
+            };
+            
+            // Mark as attached
+            numberElem.dataset.pagbankListenersAttached = 'true';
+            console.log('PagBank: Observers de cartão anexados com sucesso.');
         } catch (e) {
             console.error('PagBank: Não foi possível adicionar observevação aos cartões. ' + e.message);
         }
     }
 
     async cardActions() {
+        console.log('PagBank: cardActions() chamado');
         RMPagBankObj.proceedCheckout = false;
-        if (RMPagBankObj.config.debug) {
-            console.log('Iniciando criptografia do cartão');
-        }
+        console.log('PagBank: Iniciando criptografia do cartão');
 
         let result = RMPagBankObj.encryptCard();
-
-        if (RMPagBankObj.config.debug) {
-            console.log('Criptografia do cartão finalizada', result);
-        }
+        console.log('PagBank: encryptCard() retornou:', result);
+        console.log('PagBank: Criptografia do cartão finalizada', result);
 
         if (RMPagBankObj.config.enabled_3ds) {
-            if (RMPagBankObj.config.debug) {
-                console.log('3DS iniciando...');
-            }
+            console.log('PagBank: 3DS iniciando...');
 
             result = await RMPagBankObj.authenticate3DS();
 
-            if (RMPagBankObj.config.debug) {
-                console.log('3DS finalizado');
-            }
+            console.log('PagBank: 3DS finalizado');
         } else {
             RMPagBankObj.proceedCheckout = true;
+            console.log('PagBank: 3DS desabilitado. proceedCheckout definido como true.');
         }
 
         this.enablePlaceOrderButton();
+        console.log('PagBank: cardActions() concluído. proceedCheckout:', RMPagBankObj.proceedCheckout);
         return result;
     }
 
@@ -276,17 +524,44 @@ class RMPagBank {
     }
 
     updateInstallments() {
-        let cardNumber = document.getElementById('ricardomartins_pagbank_cc_cc_number').value;
-        let ccBin = cardNumber.replace(/\s/g, '').substring(0, 6);
-        let ccBinInput = document.getElementById('ricardomartins_pagbank_cc_cc_bin');
-        if (ccBin !== window.pb_cc_bin && ccBin.length === 6) {
-            window.pb_cc_bin = ccBin;
-            this.getInstallments();
-            ccBinInput.value = ccBin;
+        try {
+            let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
+            if (!numberInput) {
+                return;
+            }
+            
+            let cardNumber = numberInput.value;
+            let ccBin = cardNumber.replace(/\s/g, '').substring(0, 6);
+            let ccBinInput = document.getElementById('ricardomartins_pagbank_cc_cc_bin');
+            
+            if (!ccBinInput) {
+                return;
+            }
+            
+            // Only update if BIN changed and we have at least 6 digits
+            if (ccBin !== window.pb_cc_bin && ccBin.length === 6) {
+                window.pb_cc_bin = ccBin;
+                ccBinInput.value = ccBin;
+                if (this.config.debug) {
+                    console.log('PagBank: BIN detectado:', ccBin, '- Buscando parcelas...');
+                }
+                this.getInstallments();
+            }
+        } catch (e) {
+            console.error('PagBank: Erro ao atualizar parcelas:', e);
         }
     }
 
     getInstallments() {
+        let select = document.getElementById('ricardomartins_pagbank_cc_cc_installments');
+        if (!select) {
+            // Element not found yet, try again after a short delay
+            setTimeout(() => {
+                this.getInstallments();
+            }, 200);
+            return;
+        }
+        
         let ccBin = typeof window.pb_cc_bin === 'undefined' || window.pb_cc_bin.replace(/[^0-9]/g, '').length < 6 ? '555566' : window.pb_cc_bin;
         fetch(this.config.installments_endpoint, {
             method: 'POST',
@@ -301,7 +576,6 @@ class RMPagBank {
 
                 response = JSON.parse(response);
 
-                let select = document.getElementById('ricardomartins_pagbank_cc_cc_installments');
                 select.innerHTML = '';
 
                 for (let i = 0; i < response.length; i++) {
@@ -801,4 +1075,429 @@ class RMPagBank {
     }
 }
 
-window.RMPagBank = RMPagBank
+window.RMPagBank = RMPagBank;
+
+// Auto-initialization: Monitor DOM for PagBank form and initialize automatically
+(function() {
+    const FORM_ID = 'payment_form_ricardomartins_pagbank_cc';
+    let initializationAttempts = 0;
+    const MAX_ATTEMPTS = 100; // Try for ~10 seconds (100 * 100ms)
+    let isInitializing = false;
+    let lastFormElement = null;
+    
+    const reapplyObservers = function() {
+        // Reapply observers if RMPagBankObj exists and form is present
+        if (typeof RMPagBankObj !== "undefined" && RMPagBankObj) {
+            const formElement = document.getElementById(FORM_ID);
+            if (formElement) {
+                console.log('PagBank: Formulário recarregado detectado. Reaplicando observers...');
+                try {
+                    // Reset the timestamps to force reattachment
+                    RMPagBankObj._lastElementTimestamp = null;
+                    RMPagBankObj._lastButtonTimestamp = null; // Reset button timestamp too!
+                    RMPagBankObj._cardObserverRetries = 0;
+                    RMPagBankObj._placeOrderRetries = 0; // Reset place order retries
+                    
+                    // Remove old timestamps from any existing buttons to force reattachment
+                    const buttonSelectors = [
+                        '#onestepcheckout-place-order-button',
+                        '.btn-checkout',
+                        '#payment-buttons-container .button'
+                    ];
+                    // Also get configured buttons
+                    let configuredButton = RMPagBankObj.config.placeorder_button;
+                    if (configuredButton) {
+                        configuredButton.split(',').forEach(btn => {
+                            buttonSelectors.push(btn.trim());
+                        });
+                    }
+                    // Remove duplicates
+                    const uniqueSelectors = [...new Set(buttonSelectors)];
+                    
+                    uniqueSelectors.forEach(selector => {
+                        const buttons = document.querySelectorAll(selector);
+                        buttons.forEach(btn => {
+                            btn.removeAttribute('data-pagbank-button-timestamp');
+                            delete btn.dataset.pagbankButtonListenersAttached;
+                            console.log(`PagBank: Timestamp removido do botão: ${selector}`);
+                        });
+                    });
+                    
+                    RMPagBankObj.addCardFieldsObserver();
+                    RMPagBankObj.getInstallments();
+                    
+                    // Also reapply place order button events
+                    // Use a small delay to ensure button is in DOM
+                    setTimeout(() => {
+                        console.log('PagBank: Chamando placeOrderEvent() após delay...');
+                        RMPagBankObj.placeOrderEvent();
+                    }, 200);
+                    console.log('PagBank: Observers reaplicados com sucesso.');
+                } catch (e) {
+                    console.error('PagBank: Erro ao reaplicar observers:', e);
+                }
+            }
+        }
+    };
+    
+    // Monitor buttons for replacement
+    let buttonObserver = null;
+    const setupButtonObserver = function() {
+        if (typeof MutationObserver === 'undefined') {
+            return;
+        }
+        
+        // Get button selectors
+        const buttonSelectors = [
+            '#onestepcheckout-place-order-button',
+            '.btn-checkout',
+            '#payment-buttons-container .button'
+        ];
+        
+        if (typeof RMPagBankObj !== "undefined" && RMPagBankObj && RMPagBankObj.config) {
+            let configuredButton = RMPagBankObj.config.placeorder_button;
+            if (configuredButton) {
+                configuredButton.split(',').forEach(btn => {
+                    buttonSelectors.push(btn.trim());
+                });
+            }
+        }
+        
+        // Find common parent for all buttons (usually the checkout form or container)
+        const checkoutForm = document.querySelector('form#checkout-form, form#co-checkout-form, #checkout, .checkout');
+        if (!checkoutForm) {
+            setTimeout(setupButtonObserver, 500);
+            return;
+        }
+        
+        if (buttonObserver) {
+            buttonObserver.disconnect();
+        }
+        
+        buttonObserver = new MutationObserver(function(mutations) {
+            let shouldReapply = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1) { // Element node
+                            // Check if any added node matches our button selectors
+                            buttonSelectors.forEach(selector => {
+                                if (node.matches && node.matches(selector)) {
+                                    console.log(`PagBank: Novo botão detectado: ${selector}`);
+                                    shouldReapply = true;
+                                }
+                                // Also check children
+                                if (node.querySelectorAll) {
+                                    const matchingButtons = node.querySelectorAll(selector);
+                                    if (matchingButtons.length > 0) {
+                                        console.log(`PagBank: Botões encontrados dentro do nó adicionado: ${selector}`);
+                                        shouldReapply = true;
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            
+            if (shouldReapply) {
+                console.log('PagBank: Botão substituído detectado. Reaplicando eventos...');
+                setTimeout(() => {
+                    if (typeof RMPagBankObj !== "undefined" && RMPagBankObj) {
+                        RMPagBankObj._lastButtonTimestamp = null;
+                        RMPagBankObj._placeOrderRetries = 0;
+                        RMPagBankObj.placeOrderEvent();
+                    }
+                }, 100);
+            }
+        });
+        
+        buttonObserver.observe(checkoutForm, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log('PagBank: Observer de botões configurado.');
+    };
+    
+    // Setup button observer when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupButtonObserver);
+    } else {
+        setTimeout(setupButtonObserver, 500);
+    }
+    
+    const tryAutoInitialize = function(forceReinit = false) {
+        // Don't initialize if already initialized or initializing (unless forced)
+        if ((typeof RMPagBankObj !== "undefined" && !forceReinit) || isInitializing) {
+            // Check if form was replaced (different element instance)
+            const formElement = document.getElementById(FORM_ID);
+            if (formElement && formElement !== lastFormElement && typeof RMPagBankObj !== "undefined") {
+                // Form was replaced, reapply observers
+                lastFormElement = formElement;
+                reapplyObservers();
+            }
+            return;
+        }
+        
+        initializationAttempts++;
+        
+        if (initializationAttempts > MAX_ATTEMPTS) {
+            return;
+        }
+        
+        // Check if form exists
+        const formElement = document.getElementById(FORM_ID);
+        if (!formElement) {
+            setTimeout(tryAutoInitialize, 100);
+            return;
+        }
+        
+        // Check if form is visible (not display:none)
+        const formStyle = window.getComputedStyle(formElement);
+        if (formStyle.display === 'none') {
+            setTimeout(tryAutoInitialize, 100);
+            return;
+        }
+        
+        // Try to get config from global variable or data attribute
+        let config = null;
+        let pagseguro_connect_3d_session = '';
+        
+        // Try to get from global variable (set by template)
+        if (typeof window.pagbankConfig !== "undefined" && window.pagbankConfig) {
+            // If it's a string, parse it; if it's already an object, use it directly
+            if (typeof window.pagbankConfig === 'string') {
+                try {
+                    config = JSON.parse(window.pagbankConfig);
+                } catch (e) {
+                    console.error('PagBank: Erro ao parsear window.pagbankConfig:', e);
+                }
+            } else {
+                config = window.pagbankConfig;
+            }
+            if (config) {
+                console.log('PagBank: Config obtida de window.pagbankConfig');
+            }
+        }
+        
+        // Try to get from data attribute on form (fallback)
+        if (!config) {
+            const configAttr = formElement.getAttribute('data-pagbank-config');
+            if (configAttr) {
+                try {
+                    config = JSON.parse(configAttr);
+                    console.log('PagBank: Config obtida de data-attribute');
+                } catch (e) {
+                    console.error('PagBank: Erro ao parsear config do data-attribute:', e);
+                }
+            }
+        }
+        
+        // Try to get 3D session from global variable
+        if (typeof window.pagbank3dSession !== "undefined") {
+            pagseguro_connect_3d_session = window.pagbank3dSession;
+        }
+        
+        // Try to get 3D session from data attribute (fallback)
+        if (!pagseguro_connect_3d_session) {
+            const sessionAttr = formElement.getAttribute('data-pagbank-3d-session');
+            if (sessionAttr) {
+                pagseguro_connect_3d_session = sessionAttr;
+            }
+        }
+        
+        if (!config || typeof config !== 'object') {
+            // Config not available yet or invalid, try again
+            console.log('PagBank: Config ainda não disponível ou inválida, tentando novamente...', config);
+            setTimeout(tryAutoInitialize, 100);
+            return;
+        }
+        
+        // Initialize
+        try {
+            isInitializing = true;
+            console.log('PagBank: Auto-inicializando com config:', config);
+            RMPagBankObj = new RMPagBank(config, pagseguro_connect_3d_session);
+            console.log('PagBank: Auto-inicializado com sucesso!');
+            lastFormElement = formElement;
+            isInitializing = false;
+        } catch (e) {
+            console.error('PagBank: Erro na auto-inicialização:', e);
+            isInitializing = false;
+            setTimeout(() => tryAutoInitialize(forceReinit), 500);
+        }
+    };
+    
+    // Start monitoring immediately
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(tryAutoInitialize, 100);
+        });
+    } else {
+        setTimeout(tryAutoInitialize, 100);
+    }
+    
+    // Monitor form content changes to detect when it's reloaded
+    let formContentObserver = null;
+    
+    // Also use MutationObserver to detect when form is added or replaced
+    if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver(function(mutations) {
+            let formWasReplaced = false;
+            
+            mutations.forEach(function(mutation) {
+                // Check for removed nodes first (form was removed/replaced)
+                mutation.removedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        const removedForm = node.id === FORM_ID 
+                            ? node 
+                            : (node.querySelector && node.querySelector('#' + FORM_ID));
+                        
+                        if (removedForm && removedForm === lastFormElement) {
+                            console.log('PagBank: Formulário removido do DOM. Aguardando recarregamento...');
+                            formWasReplaced = true;
+                            lastFormElement = null;
+                            if (formContentObserver) {
+                                formContentObserver.disconnect();
+                            }
+                        }
+                    }
+                });
+                
+                // Check for added nodes
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        const formElement = node.id === FORM_ID 
+                            ? node 
+                            : (node.querySelector && node.querySelector('#' + FORM_ID));
+                        
+                        if (formElement) {
+                            console.log('PagBank: Formulário detectado no DOM');
+                            // Check if this is a replacement (form already existed and was removed)
+                            if ((formWasReplaced || (lastFormElement && lastFormElement !== formElement)) && typeof RMPagBankObj !== "undefined") {
+                                console.log('PagBank: Formulário substituído detectado. Reaplicando observers...');
+                                lastFormElement = formElement;
+                                setTimeout(reapplyObservers, 200);
+                                // Start observing the new form
+                                if (formContentObserver) {
+                                    formContentObserver.observe(formElement, {
+                                        childList: true,
+                                        subtree: true,
+                                        attributes: true,
+                                        attributeFilter: ['style', 'class']
+                                    });
+                                }
+                            } else if (!lastFormElement) {
+                                // New form, initialize
+                                initializationAttempts = 0;
+                                setTimeout(() => tryAutoInitialize(false), 200);
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        
+        const targetNode = document.body || document.documentElement;
+        if (targetNode) {
+            observer.observe(targetNode, {
+                childList: true,
+                subtree: true
+            });
+        }
+        
+        // Create form content observer
+        formContentObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                // Check if form content was modified
+                if (mutation.type === 'childList' && mutation.target.id === FORM_ID) {
+                    console.log('PagBank: Conteúdo do formulário modificado. Reaplicando observers...');
+                    setTimeout(reapplyObservers, 100);
+                }
+                // Check if form attributes changed (like style display)
+                if (mutation.type === 'attributes' && mutation.target.id === FORM_ID) {
+                    const formStyle = window.getComputedStyle(mutation.target);
+                    if (formStyle.display !== 'none' && typeof RMPagBankObj !== "undefined") {
+                        // Form became visible, ensure observers are attached
+                        setTimeout(reapplyObservers, 100);
+                    }
+                }
+                // Check if child elements were added/removed (form fields replaced)
+                if (mutation.type === 'childList' && mutation.target.closest && mutation.target.closest('#' + FORM_ID)) {
+                    const formElement = document.getElementById(FORM_ID);
+                    if (formElement && typeof RMPagBankObj !== "undefined") {
+                        // Check if number input was replaced
+                        const numberElem = document.getElementById('ricardomartins_pagbank_cc_cc_number');
+                        if (numberElem && !numberElem.dataset.pagbankListenersAttached) {
+                            console.log('PagBank: Campos do formulário substituídos. Reaplicando observers...');
+                            setTimeout(reapplyObservers, 100);
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Start observing form when it appears
+        const startFormObserver = function() {
+            const formElement = document.getElementById(FORM_ID);
+            if (formElement && formContentObserver) {
+                formContentObserver.observe(formElement, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['style', 'class']
+                });
+            }
+        };
+        
+        // Try to start observer immediately and after form appears
+        startFormObserver();
+        setTimeout(startFormObserver, 500);
+        setTimeout(startFormObserver, 1000);
+    }
+    
+    // Listen for payment method changes
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.name === 'payment[method]' && e.target.value === 'ricardomartins_pagbank_cc') {
+            console.log('PagBank: Método de pagamento selecionado');
+            initializationAttempts = 0;
+            lastFormElement = null; // Reset to detect new form instance
+            setTimeout(() => tryAutoInitialize(false), 300);
+        }
+    }, true);
+    
+    // Also listen for AJAX completion events that might reload the form
+    const originalFetch = window.fetch;
+    if (originalFetch) {
+        window.fetch = function(...args) {
+            return originalFetch.apply(this, args).then(response => {
+                // Check if this might be a checkout AJAX request
+                const url = args[0];
+                if (typeof url === 'string' && (url.includes('checkout') || url.includes('payment'))) {
+                    setTimeout(() => {
+                        const formElement = document.getElementById(FORM_ID);
+                        if (formElement) {
+                            if (formElement !== lastFormElement && typeof RMPagBankObj !== "undefined") {
+                                console.log('PagBank: Possível recarregamento via AJAX detectado. Reaplicando observers...');
+                                lastFormElement = formElement;
+                                reapplyObservers();
+                            }
+                            // Restart form content observer if needed
+                            if (formContentObserver) {
+                                formContentObserver.disconnect();
+                                formContentObserver.observe(formElement, {
+                                    childList: true,
+                                    subtree: true,
+                                    attributes: true,
+                                    attributeFilter: ['style', 'class']
+                                });
+                            }
+                        }
+                    }, 500);
+                }
+                return response;
+            });
+        };
+    }
+})();

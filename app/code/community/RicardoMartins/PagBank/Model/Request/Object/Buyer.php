@@ -1,5 +1,10 @@
 <?php
 
+// Maho/OpenMage/Magento compatibility: alias Varien_Object when missing (Maho uses Maho\DataObject)
+if (!class_exists('Varien_Object', false) && class_exists('Maho\DataObject')) {
+    class_alias('Maho\DataObject', 'Varien_Object');
+}
+
 class RicardoMartins_PagBank_Model_Request_Object_Buyer extends Varien_Object implements RicardoMartins_PagBank_Api_Connect_BuyerInterface
 {
     /**

@@ -103,6 +103,15 @@
                     </ricardomartins_pagbank>
                 </observers>
             </sales_model_service_quote_submit_failure>
+            <controller_action_predispatch_checkout_onepage_estimatebilling>
+                <observers>
+                    <ricardomartins_pagbank>
+                        <class>ricardomartins_pagbank/observer</class>
+                        <method>captureTaxvatFromEstimateBillingRequest</method>
+                        <type>singleton</type>
+                    </ricardomartins_pagbank>
+                </observers>
+            </controller_action_predispatch_checkout_onepage_estimatebilling>
         </events>
     </global>
     <frontend>

@@ -7,7 +7,10 @@ $_grandTotal = (!$_grandTotal)?'null':$_grandTotal;
 /** @var RicardoMartins_PagBank_Helper_Data $pagbankHelper */
 $pagbankHelper = Mage::helper('ricardomartins_pagbank');
 ?>
-<ul class="form-list ricardomartins-pagbank ricardomartins-pagbank-cc" id="payment_form_<?php echo $_code ?>" style="display:none;">
+<ul class="form-list ricardomartins-pagbank ricardomartins-pagbank-cc" id="payment_form_<?php echo $_code ?>" 
+    style="display:none;"
+    data-pagbank-config="<?php echo htmlspecialchars($pagbankHelper->getConfigJs(), ENT_QUOTES, 'UTF-8') ?>"
+    data-pagbank-3d-session="<?php echo htmlspecialchars($this->getPagSeguroConnect3dSession(), ENT_QUOTES, 'UTF-8') ?>">
     <li class="ricardomartins-pagbank-cc-number-row">
         <div>
             <label for="<?php echo $_code ?>_cc_number" class="required">
@@ -95,29 +98,14 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
 </ul>
 <script type="text/javascript">
     //<![CDATA[
-    const preparePagBank = function(){
-        if(typeof RMPagBankObj != "undefined"){
-            <?php if ($pagbankHelper->isDebugActive()): ?>
-            console.info('PagBank já inicializado.');
-            <?php endif; ?>
-            RMPagBankObj.addCardFieldsObserver();
-            RMPagBankObj.getInstallments();
-            return;
-        }
-        let pagseguro_connect_3d_session = '<?php echo $this->getPagSeguroConnect3dSession() ?>';
-        <?php if ($pagbankHelper->isDebugActive()): ?>
-        console.info('PagBank inicializando. Aguarde a mensagem de confirmação.');
-        <?php endif; ?>
-        RMPagBankObj = new RMPagBank(<?php echo $pagbankHelper->getConfigJs()?>, pagseguro_connect_3d_session);
-        console.info('PagBank inicializado.');
-    }
+    // Set global variables for auto-initialization in creditcard.js
+    // These will be picked up by the auto-initialization function
     try {
-        preparePagBank();
+        window.pagbankConfig = <?php echo $pagbankHelper->getConfigJs() ?>;
+        window.pagbank3dSession = '<?php echo $this->getPagSeguroConnect3dSession() ?>';
+        console.log('PagBank: Variáveis globais definidas');
     } catch (e) {
-        // shhh
+        console.error('PagBank: Erro ao definir variáveis globais:', e);
     }
-    document.addEventListener("DOMContentLoaded", function() {
-        preparePagBank();
-    });
     //]]>
 </script>

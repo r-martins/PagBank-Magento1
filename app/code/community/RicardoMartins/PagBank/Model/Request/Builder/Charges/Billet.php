@@ -61,9 +61,54 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Billet
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Holder $holder */
         $holder = Mage::getModel('ricardomartins_pagbank/request_object_holder');
-        $holder->setName($this->order->getCustomerFirstname() . ' ' . $this->order->getCustomerLastname());
+        
+        // Get customer name - try from customer first, then from billing address
+        // This handles cases where customer is not logged in (guest checkout)
+        $firstname = $this->order->getCustomerFirstname();
+        $lastname = $this->order->getCustomerLastname();
+        
+        // If customer name is empty, get from billing address (common in Maho/Magento guest checkout)
+        if ((empty($firstname) || empty($lastname)) && $billingAddress) {
+            if (empty($firstname)) {
+                $firstname = $billingAddress->getFirstname();
+            }
+            if (empty($lastname)) {
+                $lastname = $billingAddress->getLastname();
+            }
+        }
+        
+        // Ensure we have at least something
+        $firstname = $firstname ?: '';
+        $lastname = $lastname ?: '';
+        
+        $holderName = trim($firstname . ' ' . $lastname);
+        if (empty($holderName)) {
+            // Last resort: try to get from quote billing address
+            $quote = $this->order->getQuote();
+            if ($quote && $quote->getBillingAddress()) {
+                $quoteBilling = $quote->getBillingAddress();
+                $firstname = $quoteBilling->getFirstname() ?: $firstname;
+                $lastname = $quoteBilling->getLastname() ?: $lastname;
+                $holderName = trim($firstname . ' ' . $lastname);
+            }
+        }
+        
+        $holder->setName($helper->sanitizeCustomerName($holderName));
         $holder->setTaxId($document);
-        $holder->setEmail($this->order->getCustomerEmail());
+        
+        // Get email - try from customer first, then from billing address
+        $email = $this->order->getCustomerEmail();
+        if (empty($email) && $billingAddress) {
+            $email = $billingAddress->getEmail();
+        }
+        if (empty($email)) {
+            // Last resort: try to get from quote billing address
+            $quote = $this->order->getQuote();
+            if ($quote && $quote->getBillingAddress()) {
+                $email = $quote->getBillingAddress()->getEmail();
+            }
+        }
+        $holder->setEmail($email);
         $holder->setAddress($address->getData());
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Billet_Instructionlines $instructionLines */

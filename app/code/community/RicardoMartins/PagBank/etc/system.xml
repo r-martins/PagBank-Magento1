@@ -3,7 +3,7 @@
     <sections>
         <payment>
             <groups>
-                <ricardomartins_pagbank translate="label comment" module="ricardomartins_pagbank">
+                <ricardomartins_pagbank translate="label comment" module="adminhtml">
                     <label>PagBank - Ricardo Martins</label>
                     <comment><![CDATA[A forma mais fácil e segura de receber pagamentos. Uma solução completa para que você ofereça de forma simples e transparente o processamento dos pedidos em seu site.<br><br>
                             
@@ -142,7 +142,7 @@
                         </enable_proxy>
                     </fields>
                 </ricardomartins_pagbank>
-                <ricardomartins_pagbank_cc translate="label comment" module="ricardomartins_pagbank">
+                <ricardomartins_pagbank_cc translate="label comment" module="adminhtml">
                     <label>PagBank - Credit Card - Ricardo Martins</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>7</sort_order>
@@ -282,7 +282,7 @@
                         </installments_limit>
                     </fields>
                 </ricardomartins_pagbank_cc>
-                <ricardomartins_pagbank_billet translate="label comment" module="ricardomartins_pagbank">
+                <ricardomartins_pagbank_billet translate="label comment" module="adminhtml">
                     <label>PagBank - Billet - Ricardo Martins</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>8</sort_order>
@@ -357,7 +357,7 @@
                         </instruction_line_two>
                     </fields>
                 </ricardomartins_pagbank_billet>
-                <ricardomartins_pagbank_pix translate="label comment" module="ricardomartins_pagbank">
+                <ricardomartins_pagbank_pix translate="label comment" module="adminhtml">
                     <label>PagBank - Pix - Ricardo Martins</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>9</sort_order>

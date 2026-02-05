@@ -157,8 +157,6 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
             );
         }
 
-        curl_close($ch);
-
         return $response;
     }
 }

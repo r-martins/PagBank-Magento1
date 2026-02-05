@@ -1,5 +1,10 @@
 <?php
 
+// Maho/OpenMage/Magento compatibility: alias Varien_Object when missing (Maho uses Maho\DataObject)
+if (!class_exists('Varien_Object', false) && class_exists('Maho\DataObject')) {
+    class_alias('Maho\DataObject', 'Varien_Object');
+}
+
 class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_Model_Method_Abstract
 {
     const METHOD_CODE = 'ricardomartins_pagbank_billet';
@@ -33,13 +38,13 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
     }
 
     /**
-     * @param Varien_Object $payment
+     * @param Varien_Object|\Maho\DataObject $payment
      * @param $amount
      * @return $this|RicardoMartins_PagBank_Model_Method_Billet
      * @throws Mage_Core_Exception
      * @throws Mage_Core_Model_Store_Exception
      */
-    public function order(Varien_Object $payment, $amount)
+    public function order($payment, $amount)
     {
         $response = $this->billetPayment($this->getOrder());
         $charges = $response['charges'][0];
@@ -128,12 +133,12 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
     }
     /**
      * Refund payment
-     * @param Varien_Object $payment
+     * @param Varien_Object|\Maho\DataObject $payment
      * @param float $amount
      * @return Mage_Payment_Model_Method_Abstract
      * @throws Mage_Core_Exception
      */
-    public function refund(Varien_Object $payment, $amount)
+    public function refund($payment, $amount)
     {
         return parent::refund($payment, $amount);
     }
