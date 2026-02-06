@@ -98,7 +98,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
             $helper->writeLog(
                 $helper->__('Failure when trying to send parameters to PagBank: %s (%s)', curl_error($ch), curl_errno($ch))
             );
-            Mage::throwException(
+            throw new \Mage_Payment_Model_Info_Exception(
                 $helper->__('Failure when trying to send parameters to PagBank: %s (%s)', curl_error($ch), curl_errno($ch))
             );
         }
@@ -123,7 +123,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
                 $helper->writeLog(
                     $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
-                Mage::throwException(
+                throw new \Mage_Payment_Model_Info_Exception(
                     $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
             }
@@ -142,7 +142,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
                 $helper->writeLog(
                     $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
-                Mage::throwException(
+                throw new \Mage_Payment_Model_Info_Exception(
                     $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
                 );
             }
@@ -152,7 +152,7 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
             $helper->writeLog(
                 $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
             );
-            Mage::throwException(
+            throw new \Mage_Payment_Model_Info_Exception(
                 $helper->__('Failure when trying to send parameters to PagBank: Consulte o pagbank.log')
             );
         }

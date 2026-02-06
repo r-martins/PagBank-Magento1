@@ -41,32 +41,9 @@ class RMPagBank {
         }
         console.log('PagBank: Formulário encontrado. Procurando botões...');
 
-        const mutationAttributesCallback = (mutationsList) => {
-            const observedAttributes = ['class', 'disabled'];
-            for (const mutation of mutationsList) {
-                if (
-                    mutation.type !== 'attributes' ||
-                    !observedAttributes.includes(mutation.attributeName)
-                ) {
-                    return
-                }
-
-                if (mutation.target.hasAttribute('id')) {
-                    let id = mutation.target.getAttribute('id');
-                    let button = document.getElementById(id);
-                    if (button) {
-                        button.className = mutation.target.className;
-
-                        if (mutation.target.hasAttribute('disabled') === false) {
-                            button.removeAttribute('disabled');
-                        } else {
-                            button.setAttribute('disabled', '');
-                        }
-                    }
-                }
-            }
-        }
-        const observer = new MutationObserver(mutationAttributesCallback);
+        // Removed mutationAttributesCallback and observer - they were causing performance issues
+        // by doing expensive DOM operations (set Element.className) on every mutation.
+        // Not needed since we're no longer cloning buttons.
 
         let form = methodForm[0].closest('form');
         if (!form) {
@@ -109,29 +86,41 @@ class RMPagBank {
             
             console.log(`PagBank: Timestamp do botão: ${buttonTimestamp}, Timestamp armazenado: ${storedTimestamp}, Listeners anexados: ${button.dataset.pagbankButtonListenersAttached}`);
             
-            // If timestamp matches and listeners are marked as attached, skip
-            // BUT: if _lastButtonTimestamp was reset to null, force reattachment
-            if (storedTimestamp !== null && buttonTimestamp && buttonTimestamp === storedTimestamp && button.dataset.pagbankButtonListenersAttached === 'true') {
-                console.log('PagBank: Eventos do botão já anexados a esta instância. Pulando...');
+            // Check if listeners are already attached to THIS button instance
+            // Verify by checking timestamp AND handler reference
+            if (storedTimestamp !== null && 
+                buttonTimestamp && 
+                buttonTimestamp === storedTimestamp && 
+                button.dataset.pagbankButtonListenersAttached === 'true' &&
+                button._pagbankClickHandler) {
+                console.log('PagBank: Eventos do botão já anexados a esta instância. Pulando para evitar duplicação.');
                 return;
             }
             
-            // If stored timestamp is null (forced reset), remove old timestamp from button
+            // If stored timestamp is null (forced reset), remove old timestamp and listeners from button
             if (storedTimestamp === null && buttonTimestamp) {
                 console.log('PagBank: Removendo timestamp antigo do botão para forçar reaplicação.');
                 button.removeAttribute('data-pagbank-button-timestamp');
                 delete button.dataset.pagbankButtonListenersAttached;
+                
+                // Also remove old listeners if they exist
+                if (button._pagbankClickHandler) {
+                    console.log('PagBank: Removendo listeners antigos do botão (reset forçado).');
+                    button.removeEventListener('click', button._pagbankClickHandler, true);
+                    button.removeEventListener('click', button._pagbankClickHandler, false);
+                    delete button._pagbankClickHandler;
+                }
+                if (form._pagbankSubmitHandler) {
+                    form.removeEventListener('submit', form._pagbankSubmitHandler, true);
+                    form.removeEventListener('submit', form._pagbankSubmitHandler, false);
+                    delete form._pagbankSubmitHandler;
+                }
             }
             
             // Generate or update timestamp for this button instance
             const timestamp = Date.now().toString();
             button.setAttribute('data-pagbank-button-timestamp', timestamp);
             this._lastButtonTimestamp = timestamp;
-            
-            // Remove the flag first to allow reattachment if needed
-            delete button.dataset.pagbankButtonListenersAttached;
-
-            observer.observe(button, { attributes: true });
 
             let onclickEvent = button.getAttribute('onclick');
             // Store onclick but don't remove it yet - we'll wrap it
@@ -148,14 +137,22 @@ class RMPagBank {
                     return;
                 }
                 
+                // Get current button reference (may have changed after DOM updates)
+                let currentButton = document.querySelector(storedBtnSelector);
+                
+                // If this is a programmatic click (after restoring onclick), let it proceed normally
+                if (event.isTrusted === false && currentButton && currentButton.dataset.pagbankRestoringOnclick === 'true') {
+                    console.log('PagBank: Click programático após restaurar onclick, permitindo execução normal.');
+                    return true; // Let the onclick handler execute normally
+                }
+                
                 console.log('PagBank: Botão de finalizar compra clicado ou formulário submetido.');
                 console.log('PagBank: Event type:', event.type, 'Target:', event.target, 'Current target:', event.currentTarget);
                 
                 // Mark as processed to prevent duplicate execution
                 event._pagbankProcessed = true;
                 
-                // Get current button reference (may have changed after DOM updates)
-                let currentButton = document.querySelector(storedBtnSelector);
+                // Re-get button reference if not found
                 if (!currentButton) {
                     console.warn('PagBank: Botão não encontrado no DOM. Tentando continuar...');
                     // Try to get button from event target
@@ -175,15 +172,16 @@ class RMPagBank {
                     console.log('PagBank: Método de pagamento não é PagBank. Continuando checkout normal.');
                     // Restore original onclick and execute it
                     if (storedOnclickEvent) {
-                        // Use eval to execute the original onclick code
-                        try {
-                            eval(storedOnclickEvent);
-                        } catch (e) {
-                            console.error('PagBank: Erro ao executar onclick original:', e);
-                            // Fallback: set as attribute and click
-                            currentButton.setAttribute('onclick', storedOnclickEvent);
+                        // Mark that we're restoring onclick to prevent our handler from intercepting
+                        currentButton.dataset.pagbankRestoringOnclick = 'true';
+                        currentButton.setAttribute('onclick', storedOnclickEvent);
+                        setTimeout(() => {
                             currentButton.click();
-                        }
+                            // Remove flag after click
+                            setTimeout(() => {
+                                delete currentButton.dataset.pagbankRestoringOnclick;
+                            }, 100);
+                        }, 10);
                     }
                     return true;
                 }
@@ -199,15 +197,19 @@ class RMPagBank {
                   if (RMPagBankObj.proceedCheckout) {
                     console.log('PagBank: Prosseguindo com checkout...');
                     if (storedOnclickEvent) {
-                        // Execute original onclick
-                        try {
-                            eval(storedOnclickEvent);
-                        } catch (e) {
-                            console.error('PagBank: Erro ao executar onclick original:', e);
-                            // Fallback: set as attribute and click
-                            currentButton.setAttribute("onclick", storedOnclickEvent);
+                        // Restore onclick attribute and trigger click (safer than eval)
+                        // This properly handles onclick with "return false;" statements
+                        // Mark that we're restoring onclick to prevent our handler from intercepting
+                        currentButton.dataset.pagbankRestoringOnclick = 'true';
+                        currentButton.setAttribute("onclick", storedOnclickEvent);
+                        // Use a small delay to ensure onclick is restored before clicking
+                        setTimeout(() => {
                             currentButton.click();
-                        }
+                            // Remove flag after click
+                            setTimeout(() => {
+                                delete currentButton.dataset.pagbankRestoringOnclick;
+                            }, 100);
+                        }, 10);
                     } else {
                         // If no onclick, try to submit the form
                         const formElement = currentButton.closest('form');
@@ -230,6 +232,17 @@ class RMPagBank {
                 return false;
             }
 
+            // Always remove old listeners before adding new ones (prevent duplication)
+            if (button._pagbankClickHandler) {
+                console.log('PagBank: Removendo listeners antigos do botão antes de adicionar novos.');
+                button.removeEventListener('click', button._pagbankClickHandler, true);
+                button.removeEventListener('click', button._pagbankClickHandler, false);
+            }
+            if (form._pagbankSubmitHandler) {
+                form.removeEventListener('submit', form._pagbankSubmitHandler, true);
+                form.removeEventListener('submit', form._pagbankSubmitHandler, false);
+            }
+            
             // Wrap the original onclick if it exists
             if (onclickEvent) {
                 // Remove the inline onclick to prevent it from running before our handler
@@ -238,29 +251,16 @@ class RMPagBank {
                 button._pagbankOriginalOnclick = onclickEvent;
             }
             
-            // Use capture phase to ensure our handler runs first
-            button.addEventListener('click', validateAndPreventDefault, true); // true = capture phase
-            button.addEventListener('click', validateAndPreventDefault, false); // Also add in bubble phase
-            form.addEventListener('submit', validateAndPreventDefault, true); // capture phase
-            form.addEventListener('submit', validateAndPreventDefault, false); // bubble phase
+            // Store handler reference for cleanup (AFTER defining the function)
+            button._pagbankClickHandler = validateAndPreventDefault;
+            form._pagbankSubmitHandler = validateAndPreventDefault;
             
-            // Also add event delegation on document as fallback (only if button doesn't have onclick)
-            // This ensures we catch clicks even if button is replaced
-            const delegationHandler = function(event) {
-                // Check if clicked element matches our button selector
-                if (event.target && event.target.matches && event.target.matches(btnSelector)) {
-                    // Only process if not already processed by direct listener
-                    if (!event._pagbankProcessed) {
-                        console.log('PagBank: Evento capturado via delegation no botão:', btnSelector);
-                        validateAndPreventDefault(event);
-                    }
-                }
-            };
-            document.addEventListener('click', delegationHandler, true); // capture phase
+            // Use ONLY capture phase to avoid duplication (capture runs before bubble)
+            // This ensures our handler runs first without needing both phases
+            button.addEventListener('click', validateAndPreventDefault, true);
+            form.addEventListener('submit', validateAndPreventDefault, true);
             
-            // Store delegation handler and selector for cleanup (if needed)
-            button._pagbankDelegationHandler = delegationHandler;
-            button._pagbankSelector = btnSelector;
+            // Removed event delegation to prevent duplication - reapplyObservers will handle button replacement
             
             // Mark as attached
             button.dataset.pagbankButtonListenersAttached = 'true';
@@ -270,19 +270,19 @@ class RMPagBank {
             const hasListeners = button.onclick !== null || 
                                  (button.getEventListeners && button.getEventListeners('click')?.length > 0);
             
-            console.log(`PagBank: Eventos do botão de finalizar compra anexados com sucesso ao botão: ${btnSelector}`);
-            console.log(`PagBank: Timestamp do botão definido como: ${timestamp}`);
-            console.log(`PagBank: Event listeners anexados em ambas as fases (capture e bubble)`);
-            console.log(`PagBank: Botão verificado - ID: ${button.id || 'sem ID'}, Classes: ${button.className || 'sem classes'}`);
+            console.debug(`PagBank: Eventos do botão de finalizar compra anexados com sucesso ao botão: ${btnSelector}`);
+            console.debug(`PagBank: Timestamp do botão definido como: ${timestamp}`);
+            console.debug(`PagBank: Event listeners anexados em ambas as fases (capture e bubble)`);
+            console.debug(`PagBank: Botão verificado - ID: ${button.id || 'sem ID'}, Classes: ${button.className || 'sem classes'}`);
             
             // Test click handler by checking if button still exists and has listeners
             setTimeout(() => {
                 const testButton = document.querySelector(btnSelector);
                 if (testButton) {
                     if (testButton.dataset.pagbankButtonListenersAttached === 'true') {
-                        console.log(`PagBank: Botão ainda presente no DOM após anexação: ${btnSelector}`);
+                        console.debug(`PagBank: Botão ainda presente no DOM após anexação: ${btnSelector}`);
                         // Verify listeners are actually attached by checking if button has our data attribute
-                        console.log(`PagBank: Verificação - Botão tem timestamp: ${testButton.getAttribute('data-pagbank-button-timestamp') || 'não'}`);
+                        console.debug(`PagBank: Verificação - Botão tem timestamp: ${testButton.getAttribute('data-pagbank-button-timestamp') || 'não'}`);
                     } else {
                         console.warn(`PagBank: Botão encontrado mas sem flag de listeners anexados: ${btnSelector}`);
                         console.warn(`PagBank: Botão foi substituído após anexação! Reaplicando...`);
@@ -524,35 +524,49 @@ class RMPagBank {
     }
 
     updateInstallments() {
-        try {
-            let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
-            if (!numberInput) {
-                return;
-            }
-            
-            let cardNumber = numberInput.value;
-            let ccBin = cardNumber.replace(/\s/g, '').substring(0, 6);
-            let ccBinInput = document.getElementById('ricardomartins_pagbank_cc_cc_bin');
-            
-            if (!ccBinInput) {
-                return;
-            }
-            
-            // Only update if BIN changed and we have at least 6 digits
-            if (ccBin !== window.pb_cc_bin && ccBin.length === 6) {
-                window.pb_cc_bin = ccBin;
-                ccBinInput.value = ccBin;
-                if (this.config.debug) {
-                    console.log('PagBank: BIN detectado:', ccBin, '- Buscando parcelas...');
-                }
-                this.getInstallments();
-            }
-        } catch (e) {
-            console.error('PagBank: Erro ao atualizar parcelas:', e);
+        // Clear any pending timeout
+        if (this._updateInstallmentsTimeout) {
+            clearTimeout(this._updateInstallmentsTimeout);
         }
+        
+        // Debounce: wait 300ms before processing to avoid excessive calls
+        this._updateInstallmentsTimeout = setTimeout(() => {
+            try {
+                let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
+                if (!numberInput) {
+                    return;
+                }
+                
+                let cardNumber = numberInput.value;
+                let ccBin = cardNumber.replace(/\s/g, '').substring(0, 6);
+                let ccBinInput = document.getElementById('ricardomartins_pagbank_cc_cc_bin');
+                
+                if (!ccBinInput) {
+                    return;
+                }
+                
+                // Only update if BIN changed and we have at least 6 digits
+                if (ccBin !== window.pb_cc_bin && ccBin.length === 6) {
+                    window.pb_cc_bin = ccBin;
+                    ccBinInput.value = ccBin;
+                    if (this.config.debug) {
+                        console.log('PagBank: BIN detectado:', ccBin, '- Buscando parcelas...');
+                    }
+                    this.getInstallments();
+                }
+            } catch (e) {
+                console.error('PagBank: Erro ao atualizar parcelas:', e);
+            }
+        }, 300);
     }
 
     getInstallments() {
+        // Prevent multiple simultaneous calls
+        if (this._gettingInstallments) {
+            console.log('PagBank: getInstallments() já em execução, ignorando chamada duplicada.');
+            return;
+        }
+        
         let select = document.getElementById('ricardomartins_pagbank_cc_cc_installments');
         if (!select) {
             // Element not found yet, try again after a short delay
@@ -561,6 +575,9 @@ class RMPagBank {
             }, 200);
             return;
         }
+        
+        // Set flag to prevent concurrent calls
+        this._gettingInstallments = true;
         
         let ccBin = typeof window.pb_cc_bin === 'undefined' || window.pb_cc_bin.replace(/[^0-9]/g, '').length < 6 ? '555566' : window.pb_cc_bin;
         fetch(this.config.installments_endpoint, {
@@ -596,12 +613,17 @@ class RMPagBank {
                     option.text = text + additionalText;
                     select.appendChild(option);
                 }
+                
+                // Clear flag after successful completion
+                this._gettingInstallments = false;
             })
             .catch(() => {
                 alert('Error getting installments. Please try again.');
                 if (RMPagBankObj.config.debug) {
                     console.error('Error getting installments. Please try again.');
                 }
+                // Clear flag on error
+                this._gettingInstallments = false;
             });
     }
 
@@ -1124,7 +1146,9 @@ window.RMPagBank = RMPagBank;
                     });
                     
                     RMPagBankObj.addCardFieldsObserver();
-                    RMPagBankObj.getInstallments();
+                    // Don't call getInstallments() here - it will be called automatically
+                    // when the user types the card number via updateInstallments()
+                    // Calling it here causes infinite loops when the block is reloaded
                     
                     // Also reapply place order button events
                     // Use a small delay to ensure button is in DOM
