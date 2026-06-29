@@ -108,8 +108,9 @@ class RicardoMartins_PagBank_Model_Request_Builder_Customer
             return RicardoMartins_PagBank_Api_Connect_PhoneInterface::TYPE_MOBILE;
         }
 
-        $countTaxvatCharacters = strlen($taxvat);
-        if ($countTaxvatCharacters === 14) {
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+        if ($helper->isCnpjDocument($taxvat)) {
             return RicardoMartins_PagBank_Api_Connect_PhoneInterface::TYPE_BUSINESS;
         }
 

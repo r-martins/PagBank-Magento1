@@ -32,7 +32,7 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
         $helper = Mage::helper('ricardomartins_pagbank');
         $helper->cleanAdditionalInformation($info, 'cc_');
 
-        $info->setAdditionalInformation('tax_id', $data->getData('data_tax_id'));
+        $info->setAdditionalInformation('tax_id', $helper->normalizeDocument($data->getData('data_tax_id')));
 
         return $this;
     }

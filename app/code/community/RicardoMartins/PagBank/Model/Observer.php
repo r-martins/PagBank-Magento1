@@ -223,6 +223,10 @@ class RicardoMartins_PagBank_Model_Observer
             return;
         }
 
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
+        $taxvat = $helper->normalizeDocument($taxvat);
+
         // Get quote and ensure payment exists
         $quote = Mage::getSingleton('checkout/session')->getQuote();
         if (!$quote || !$quote->getId()) {

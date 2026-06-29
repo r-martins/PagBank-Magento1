@@ -18,20 +18,24 @@ function mask() {
                 .toUpperCase();
         },
         document(value, previousValue) {
-            value = value.replace(/\D+/g, '');
-            if (value.length > 11) {
-                return value
-                    .replace(/(\d{2})(\d)/, '$1.$2')
+            let raw = value.replace(/[.\/-]/g, '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+            const isCpf = raw.length <= 11 && /^[0-9]*$/.test(raw);
+
+            if (isCpf) {
+                return raw
                     .replace(/(\d{3})(\d)/, '$1.$2')
-                    .replace(/(\d{3})(\d)/, '$1/$2')
-                    .replace(/(\d{4})(\d)/, '$1-$2')
+                    .replace(/(\d{3})(\d)/, '$1.$2')
+                    .replace(/(\d{3})(\d{1,2})/, '$1-$2')
                     .replace(/(-\d{2})\d+?$/, '$1');
             }
-            return value
-                .replace(/(\d{3})(\d)/, '$1.$2')
-                .replace(/(\d{3})(\d)/, '$1.$2')
-                .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-                .replace(/(-\d{2})\d+?$/, '$1');
+
+            raw = raw.slice(0, 14);
+            return raw
+                .replace(/([A-Z0-9]{2})([A-Z0-9])/, '$1.$2')
+                .replace(/([A-Z0-9]{3})([A-Z0-9])/, '$1.$2')
+                .replace(/([A-Z0-9]{3})([A-Z0-9])/, '$1/$2')
+                .replace(/([A-Z0-9]{4})([A-Z0-9])/, '$1-$2')
+                .replace(/(-[A-Z0-9]{2})[A-Z0-9]+?$/, '$1');
         },
         creditCard (value, previousValue) {
             return value

@@ -47,12 +47,14 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
         }
 
         $info = $this->getInfoInstance();
+        /** @var RicardoMartins_PagBank_Helper_Data $helper */
+        $helper = Mage::helper('ricardomartins_pagbank');
         $info->setAdditionalInformation(self::CC_NUMBER_ENCRYPTED, $data->getData('cc_number_encrypted'));
         $info->setAdditionalInformation(self::CC_BRAND, $data->getData('cc_brand'));
         $info->setAdditionalInformation(self::CC_OWNER, $data->getData('cc_owner'));
         $info->setAdditionalInformation(self::CC_BIN, $data->getData('cc_bin'));
         $info->setAdditionalInformation(self::CC_INSTALLMENTS, $data->getData('cc_installments'));
-        $info->setAdditionalInformation(self::DOCUMENT, $data->getData('data_tax_id'));
+        $info->setAdditionalInformation(self::DOCUMENT, $helper->normalizeDocument($data->getData('data_tax_id')));
         $info->setAdditionalInformation(self::CC_PAGBANK_SESSION, $data->getData('cc_has_session'));
 
         if ($data->getData('cc_3ds_id')) {

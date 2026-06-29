@@ -344,10 +344,37 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Normalize CPF/CNPJ for API submission.
+     * Removes mask characters and keeps alphanumeric content (uppercase).
+     * CPF remains numeric (11 chars); CNPJ may be alphanumeric (14 chars).
+     *
+     * @param string|null $document
+     * @return string
+     */
+    public function normalizeDocument($document)
+    {
+        $document = $document !== null ? (string) $document : '';
+        $document = preg_replace('/[.\-\/]/', '', $document);
+
+        return strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $document));
+    }
+
+    /**
+     * Whether the normalized document is a CNPJ (14 characters).
+     *
+     * @param string|null $document
+     * @return bool
+     */
+    public function isCnpjDocument($document)
+    {
+        return strlen($this->normalizeDocument($document)) === 14;
+    }
+
+    /**
      * Get the document value from different sources
      *
      * @param $order
-     * @return array|string|string[]|null
+     * @return string
      */
     public function getDocumentValue($order)
     {
@@ -474,10 +501,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
                 break;
         }
 
-        // Ensure $document is a string to avoid PHP 8.1+ deprecation warning
-        $document = $document !== null ? (string)$document : '';
-
-        return preg_replace('/[^0-9]/','', $document);
+        return $this->normalizeDocument($document);
     }
 
     /**
