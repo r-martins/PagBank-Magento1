@@ -1,6 +1,7 @@
 <?php
 /**
  * @see RicardoMartins_PagBank_Block_Form_Info_Cc
+ * @var $this RicardoMartins_PagBank_Block_Form_Info_Cc
  */
 ?>
 <?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?>
@@ -18,17 +19,26 @@
     </tr>
 <?php if ($_specificInfo = $this->getSpecificInformation()):?>
     <?php foreach ($_specificInfo as $_label => $_value):?>
-        <?php if (strpos($_value, RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL) !== false): ?>
-            <p>
-                <a href="<?php echo $this->escapeUrl($_value);?>" target="_blank">
-                    <?php echo $this->escapeHtml($_label) ?>
-                </a>
-            </p>
+        <?php if (strpos((string) $_value, RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL) !== false
+            || (is_string($_value) && preg_match('#https?://(sandbox-)?app\.vindi\.com\.br/admin/charges/#', $_value))): ?>
+            <tr>
+                <td colspan="2">
+                    <a href="<?php echo $this->escapeUrl($_value);?>" target="_blank" rel="noopener noreferrer">
+                        <?php echo $this->escapeHtml($_label) ?>
+                    </a>
+                </td>
+            </tr>
             <?php continue; ?>
         <?php endif ?>
         <tr>
             <td><?php echo $this->escapeHtml($_label)?>:</td>
-            <td><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></td>
+            <td>
+                <?php if ($this->isCardSummaryMarker($_value)): ?>
+                    <?php echo $this->formatCardSummaryHtml($_value); ?>
+                <?php else: ?>
+                    <?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?>
+                <?php endif ?>
+            </td>
         </tr>
     <?php endforeach ?>
 <?php endif ?>

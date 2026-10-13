@@ -1,15 +1,21 @@
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/r-martins/PagBank-Magento1)](https://github.com/r-martins/PagBank-Magento1)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r-martins/PagBank-Magento1/develop)
-# Módulo PagBank(PagSeguro) Connect para Magento1
+# Módulo PB Integrações (antigo PagBank(PagSeguro) Connect) para Magento1
+## Integre sua loja com os principais provedores de pagamento do Brasil.
 ### Compatível com OpenMage e Maho Commerce
 ![Módulo PagBank para Magento 1, OpenMage ou Maho Commerce](https://i.ibb.co/wkqbjg2/Banner-Magento1-Pag-Bank-1544x500px.jpg?1=1)
 ## Nova Geração - Novas APIs, Novos Recursos, Mais Estabilidade
 Aceite mais de 30 cartões de crédito, PIX e boleto em sua loja [Magento 1.x](https://www.magenteiro.com/blog/magento-1/magento1-download/?utm_source=github&utm_content=pagbank-magento1), [OpenMage LTS](https://www.openmage.org/) ou [Maho Commerce](https://mahocommerce.com/?utm_source=github-rmartins-pagbank-magento1), usando o meio de pagamento mais aceito pelos brasileiros.
 
+Provedores aceitos: **Vindi** e **PagBank ¹**
+<br><small>¹ Até 5 de Novembro de 2026. [Saiba mais.](https://pbintegracoes.com/)</small>
+
+
 Chega de reprovações e chargebacks! Nosso novo módulo tem suporte a PIX transparente e [3D Secure](https://ajuda.pbintegracoes.com/hc/pt-br/articles/22375922278157-Autentica%C3%A7%C3%A3o-3DS-Sua-prote%C3%A7%C3%A3o-contra-Chargeback), alcançando até 99% de aprovação no cartão de crédito sem necessidade de antifraude.
 
-Agora usando as Novas APIs do PagBank.
+**A partir da 5.0.0**, o módulo aceita Connect Keys PagBank (`CON…`) e Vindi (`CONVD…`), com dual-partner e migração guiada. Detalhes: [`docs/OPENMAGE-5-DUAL-PARTNER.md`](docs/OPENMAGE-5-DUAL-PARTNER.md).
+
 
 A integração mais usada do Brasil, agora com mais recursos, mais estabilidade e ainda mais segurança.
 
@@ -68,7 +74,7 @@ Você pode usar [modman](https://github.com/colinmollenhour/modman) para instala
 - Limpe o cache do Magento
 
 # Configuração do Módulo PagBank(PagSeguro) Connect
-- Navegue até Lojas &gt; Configurações &gt; Vendas &gt; Formas de Pagamento &gt; **PagBank - Ricardo Martins**.
+- Navegue até Lojas &gt; Configurações &gt; Vendas &gt; Formas de Pagamento &gt; **PB Integrações - Ricardo Martins**.
     - Clique em "Obter Connect Key" ou "Obter Connect Key para Testes" e siga as instruções para obter sua Connect Key e preenche-la no campo indicado logo abaixo.
     - Salve as configurações e você está pronto para vender.
 - Se desejar, configure opções de parcelamento, e validade do boleto e código pix de acordo com suas necessidades.

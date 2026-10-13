@@ -1,6 +1,7 @@
 <?php
 /**
  * @see RicardoMartins_PagBank_Block_Form_Info_Cc
+ * @var $this RicardoMartins_PagBank_Block_Form_Info_Cc
  */
 ?>
 <p class="subtitle"><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></strong></p>
@@ -9,7 +10,13 @@
 <dl class="payment-info">
     <?php foreach ($_specificInfo as $_label => $_value):?>
         <dt><?php echo $this->escapeHtml($_label)?></dt>
-        <dd><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?></dd>
+        <dd>
+            <?php if ($this->isCardSummaryMarker($_value)): ?>
+                <?php echo $this->formatCardSummaryHtml($_value); ?>
+            <?php else: ?>
+                <?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true)))?>
+            <?php endif ?>
+        </dd>
     <?php endforeach ?>
 </dl>
 <?php endif ?>

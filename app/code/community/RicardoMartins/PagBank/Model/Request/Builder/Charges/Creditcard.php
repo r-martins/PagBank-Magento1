@@ -30,18 +30,29 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
 
-        $result = [];
+        $result = array();
         $storeId = $this->order->getStoreId();
         $payment = $this->order->getPayment();
+        $isVindi = $helper->isVindi($storeId);
 
         /** @var RicardoMartins_PagBank_Model_Request_Object_Holder $holder */
         $holder = Mage::getModel('ricardomartins_pagbank/request_object_holder');
         $holder->setName($payment->getAdditionalInformation('cc_owner'));
 
-        /** @var RicardoMartins_PagBank_Model_Request_Object_PaymentMethod_Card $card */
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card $card */
         $card = Mage::getModel('ricardomartins_pagbank/request_object_paymentmethod_card');
         $card->setHolder($holder->getData());
-        $card->setEncrypted($payment->getAdditionalInformation('cc_number_encrypted'));
+
+        if ($isVindi) {
+            $profileId = (int) $payment->getAdditionalInformation('payment_profile_id');
+            if ($profileId > 0) {
+                $card->setPaymentProfileId($profileId);
+            } else {
+                $card->setGatewayToken($payment->getAdditionalInformation('cc_number_encrypted'));
+            }
+        } else {
+            $card->setEncrypted($payment->getAdditionalInformation('cc_number_encrypted'));
+        }
 
         $selectedInstallments = (int) $payment->getAdditionalInformation('cc_installments');
 
@@ -52,26 +63,41 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
         $paymentMethod->setCapture(true);
         $paymentMethod->setCard($card->getData());
 
-        if ($helper->isCc3dsEnabled()) {
-            $authenticationMethodData = $this->getAuthenticationMethodData($payment);
-
-            if ($authenticationMethodData) {
-                $paymentMethod->setAuthenticationMethod($authenticationMethodData);
+        if ($isVindi) {
+            $profileId = (int) $payment->getAdditionalInformation('payment_profile_id');
+            if ($profileId > 0) {
+                $paymentMethod->setPaymentProfileId($profileId);
             }
+            $threeDsRaw = $payment->getAdditionalInformation('cc_3ds_payload');
+            if (is_string($threeDsRaw) && $threeDsRaw !== '') {
+                $decoded = json_decode($threeDsRaw, true);
+                if (is_array($decoded) && $decoded !== array()) {
+                    $paymentMethod->setType(
+                        RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface::TYPE_CREDIT_CARD_3DS
+                    );
+                    $paymentMethod->setThreeDs($decoded);
+                }
+            }
+        } else {
+            if ($helper->isCc3dsEnabled()) {
+                $authenticationMethodData = $this->getAuthenticationMethodData($payment);
+                if ($authenticationMethodData) {
+                    $paymentMethod->setAuthenticationMethod($authenticationMethodData);
+                }
+            }
+            $softDescriptor = Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/soft_descriptor', $storeId);
+            $paymentMethod->setSoftDescriptor($softDescriptor);
         }
 
-        $softDescriptor = Mage::getStoreConfig('payment/ricardomartins_pagbank_cc/soft_descriptor', $storeId);
-        $paymentMethod->setSoftDescriptor($softDescriptor);
-
         $totalAmount = $this->order->getBaseGrandTotal();
-        
+
         /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
         $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
-        
+
         if ($selectedInstallments > 1) {
             $creditCardBin = $payment->getAdditionalInformation('cc_bin');
             $isSandbox = $helper->isSandbox($storeId);
-            if ($isSandbox) {
+            if ($isSandbox && !$isVindi) {
                 $creditCardBin = $helper->getSandboxCcBin();
             }
 
@@ -104,19 +130,19 @@ class RicardoMartins_PagBank_Model_Request_Builder_Charges_Creditcard
                 $interest = Mage::getModel('ricardomartins_pagbank/request_object_interest');
                 $interest->setInstallments($installment['amount']['fees']['buyer']['interest']['installments']);
                 $interest->setTotal($installment['amount']['fees']['buyer']['interest']['total']);
-                
+
                 /** @var RicardoMartins_PagBank_Model_Request_Object_Buyer $buyer */
                 $buyer = Mage::getModel('ricardomartins_pagbank/request_object_buyer');
                 $buyer->setInterest($interest->getData());
-                
+
                 /** @var RicardoMartins_PagBank_Model_Request_Object_Fees $fees */
                 $fees = Mage::getModel('ricardomartins_pagbank/request_object_fees');
                 $fees->setBuyer($buyer->getData());
-                
+
                 $amount->setFees($fees->getData());
             }
         }
-        
+
         $amount->setValue($totalAmount);
 
         $currencyCode = 'BRL';

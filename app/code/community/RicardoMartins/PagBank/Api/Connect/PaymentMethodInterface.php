@@ -25,6 +25,12 @@ interface RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface
     const TYPE_CREDIT_CARD = 'CREDIT_CARD';
 
     /**
+     * Payment method type Credit Card with 3DS (API PB v1 / Vindi).
+     * Explicit type — never inferred from three_ds alone.
+     */
+    const TYPE_CREDIT_CARD_3DS = 'CREDIT_CARD_3DS';
+
+    /**
      * Installments number.
      * Required for credit card payments.
      * Receives an integer value.

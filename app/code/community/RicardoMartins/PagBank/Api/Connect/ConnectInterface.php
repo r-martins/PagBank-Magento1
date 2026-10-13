@@ -6,10 +6,32 @@
 interface RicardoMartins_PagBank_Api_Connect_ConnectInterface
 {
     /**
-     * WS URI
+     * Host base for legacy endpoint constants (WS_URI + path segments).
+     *
      * @var string
      */
     const WS_URI = 'https://ws.pbintegracoes.com/';
+
+    /**
+     * PagBank Connect v7 base URL (trailing slash). Used for all v7 API calls.
+     *
+     * @var string
+     */
+    const WS_CONNECT_BASE_URI = 'https://ws.pbintegracoes.com/pspro/v7/connect/';
+
+    /**
+     * API PB v1 base URL (trailing slash). Vindi / keys CONVD…
+     *
+     * @var string
+     */
+    const API_V1_URI = 'https://api.pbintegracoes.com/v1/';
+
+    /**
+     * cURL SSL certificate verification.
+     *
+     * @var bool
+     */
+    const CURL_SSL_VERIFY = true;
 
     /**
      * WS Endpoint
@@ -22,6 +44,18 @@ interface RicardoMartins_PagBank_Api_Connect_ConnectInterface
      * @var string
      */
     const WS_SDK_ENDPOINT = 'pspro/v7/connect/ws-sdk/';
+
+    /**
+     * Sandbox Prefix (Vindi).
+     * @var string
+     */
+    const VINDI_SANDBOX_PREFIX = 'CONVDSANDBOX';
+
+    /**
+     * Production Prefix (Vindi).
+     * @var string
+     */
+    const VINDI_PREFIX = 'CONVD';
 
     /**
      * Public Key WS Endpoint.
@@ -96,7 +130,7 @@ interface RicardoMartins_PagBank_Api_Connect_ConnectInterface
     const SANDBOX_PARAM = 'isSandbox=1';
 
     /**
-     * Sandbox Prefix.
+     * Sandbox Prefix (PagBank).
      * This prefix is used to indicate that the Connect Key is from a test account.
      * @var string
      */

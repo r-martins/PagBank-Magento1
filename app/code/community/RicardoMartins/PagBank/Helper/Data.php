@@ -8,6 +8,88 @@ if (!class_exists('Varien_Object', false) && class_exists('Maho\DataObject')) {
 class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
 {
     /**
+     * @param int|null $storeId
+     * @return RicardoMartins_PagBank_Model_Partner_Detector
+     */
+    public function getPartnerDetector($storeId = null)
+    {
+        return RicardoMartins_PagBank_Model_Partner_Detector::fromSettings($storeId);
+    }
+
+    /**
+     * @param int|null $storeId
+     * @return bool
+     */
+    public function isVindi($storeId = null)
+    {
+        return $this->getPartnerDetector($storeId)->isVindi();
+    }
+
+    /**
+     * Base URL for PagBank Connect v7 (trailing slash).
+     *
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getWsBaseUrl($storeId = null)
+    {
+        return rtrim(RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_CONNECT_BASE_URI, '/') . '/';
+    }
+
+    /**
+     * Base URL for API PB v1 (trailing slash).
+     *
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getApiV1BaseUrl($storeId = null)
+    {
+        return rtrim(RicardoMartins_PagBank_Api_Connect_ConnectInterface::API_V1_URI, '/') . '/';
+    }
+
+    /**
+     * Whether cURL should verify SSL certificates.
+     *
+     * @return bool
+     */
+    public function shouldVerifySsl()
+    {
+        return (bool) RicardoMartins_PagBank_Api_Connect_ConnectInterface::CURL_SSL_VERIFY;
+    }
+
+    /**
+     * Append query string safely.
+     *
+     * @param string $url
+     * @param string $query e.g. "debug=1" or "isSandbox=1"
+     * @return string
+     */
+    protected function appendQuery($url, $query)
+    {
+        if ($query === '' || $query === null) {
+            return $url;
+        }
+        return $url . (strpos($url, '?') === false ? '?' : '&') . $query;
+    }
+
+    /**
+     * PagBank sandbox query only (Vindi uses key prefix CONVDSANDBOX, not isSandbox).
+     *
+     * @param int|null $storeId
+     * @return string
+     */
+    protected function pagBankSandboxQuery($storeId = null)
+    {
+        if ($this->isVindi($storeId)) {
+            return '';
+        }
+        if ($this->isSandbox($storeId)) {
+            return RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        }
+        return '';
+    }
+
+    /**
      * Get the orders endpoint
      *
      * @param $storeId
@@ -15,12 +97,12 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getOrdersEndpoint($storeId = null)
     {
-        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_ORDERS;
-        if ($this->isSandbox($storeId)) {
-            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        if ($this->isVindi($storeId)) {
+            // Always request upstream debug so logs / support see partner hop.
+            return $this->appendQuery($this->getApiV1BaseUrl($storeId) . 'orders', 'debug=1');
         }
-
-        return $endpoint;
+        $endpoint = $this->getWsBaseUrl($storeId) . 'ws/orders';
+        return $this->appendQuery($endpoint, $this->pagBankSandboxQuery($storeId));
     }
 
     /**
@@ -31,30 +113,83 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getRefundEndpoint($chargeId, $storeId = null)
     {
-        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_CHARGES;
-        $endpoint .= '/';
-        $endpoint .= $chargeId;
-        $endpoint .= '/cancel';
-        if ($this->isSandbox($storeId)) {
-            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        if ($this->isVindi($storeId)) {
+            return $this->getApiV1BaseUrl($storeId) . 'charges/' . $chargeId . '/cancel';
         }
-
-        return $endpoint;
+        $endpoint = $this->getWsBaseUrl($storeId) . 'ws/charges/' . $chargeId . '/cancel';
+        return $this->appendQuery($endpoint, $this->pagBankSandboxQuery($storeId));
     }
+
     /**
-     * Get the public key endpoint
+     * Get the public key endpoint (PagBank only). Vindi uses tokenize/config.
      *
      * @param $storeId
      * @return string
      */
     public function getPublicKeyEndpoint($storeId = null)
     {
-        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PUBLIC_KEY;
-        if ($this->isSandbox($storeId)) {
-            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        if ($this->isVindi($storeId)) {
+            return $this->getApiV1BaseUrl($storeId) . 'tokenize/config';
         }
+        $endpoint = $this->getWsBaseUrl($storeId) . 'ws/public-keys';
+        return $this->appendQuery($endpoint, $this->pagBankSandboxQuery($storeId));
+    }
 
-        return $endpoint;
+    /**
+     * Tokenize config for Vindi (public key + payment_profiles URL).
+     *
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getTokenizeConfigEndpoint($storeId = null)
+    {
+        return $this->getApiV1BaseUrl($storeId) . 'tokenize/config';
+    }
+
+    /**
+     * Connect account info (email, accountId, status…) — v7 or API v1 by partner.
+     *
+     * @param int|null $storeId
+     * @param RicardoMartins_PagBank_Model_Partner_Detector|null $detector
+     * @return string
+     */
+    public function getConnectInfoEndpoint($storeId = null, $detector = null)
+    {
+        if ($detector === null) {
+            $detector = $this->getPartnerDetector($storeId);
+        }
+        if ($detector->isVindi()) {
+            return $this->getApiV1BaseUrl($storeId) . 'connectInfo';
+        }
+        return $this->getWsBaseUrl($storeId) . 'connectInfo';
+    }
+
+    /**
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getPaymentMethodsEndpoint($storeId = null)
+    {
+        return $this->getApiV1BaseUrl($storeId) . 'payment_methods';
+    }
+
+    /**
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getPaymentProfilesEndpoint($storeId = null)
+    {
+        return $this->getApiV1BaseUrl($storeId) . 'payment_profiles';
+    }
+
+    /**
+     * @param string $action setup|enroll|validate
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getThreeDsEndpoint($action, $storeId = null)
+    {
+        return $this->getApiV1BaseUrl($storeId) . 'three-d-secure/sessions/' . $action;
     }
 
     /**
@@ -65,12 +200,11 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getInterestEndpoint($storeId = null)
     {
-        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_INTEREST;
-        if ($this->isSandbox($storeId)) {
-            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        if ($this->isVindi($storeId)) {
+            return $this->getApiV1BaseUrl($storeId) . 'charges/fees/calculate';
         }
-
-        return $endpoint;
+        $endpoint = $this->getWsBaseUrl($storeId) . 'ws/charges/fees/calculate';
+        return $this->appendQuery($endpoint, $this->pagBankSandboxQuery($storeId));
     }
 
     /**
@@ -81,43 +215,34 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getPaymentInfoEndpoint($storeId = null)
     {
-        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PAYMENT_INFO . '/{pagbankOrderId}/';
-        if ($this->isSandbox($storeId)) {
-            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
+        if ($this->isVindi($storeId)) {
+            return $this->getApiV1BaseUrl($storeId) . 'orders/{pagbankOrderId}';
         }
-
-        return $endpoint;
+        $endpoint = $this->getWsBaseUrl($storeId) . 'ws/orders/{pagbankOrderId}/';
+        return $this->appendQuery($endpoint, $this->pagBankSandboxQuery($storeId));
     }
 
     /**
-     * Get the 3D Secure session endpoint
+     * Get the 3D Secure session endpoint (PagBank SDK only)
      *
      * @param $storeId
      * @return string
      */
     public function get3DSecureSessionEndpoint($storeId = null)
     {
-        $endpoint = RicardoMartins_PagBank_Api_Connect_ConnectInterface::CHECKOUT_SDK_SESSION_ENDPOINT;
-        if ($this->isSandbox($storeId)) {
-            return $endpoint . '?' . RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PARAM;
-        }
-
-        return $endpoint;
+        $endpoint = $this->getWsBaseUrl($storeId) . 'ws-sdk/checkout-sdk/sessions';
+        return $this->appendQuery($endpoint, $this->pagBankSandboxQuery($storeId));
     }
 
     /**
-     * Get if the connect key is from sandbox
+     * Get if the connect key is from sandbox (PagBank CONSANDBOX or Vindi CONVDSANDBOX)
      *
      * @param $storeId
      * @return bool
      */
     public function isSandbox($storeId = null)
     {
-        $connectKey = $this->getConnectKey($storeId);
-        if (strpos($connectKey, RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_PREFIX) !== false) {
-            return true;
-        }
-        return false;
+        return $this->getPartnerDetector($storeId)->isSandbox();
     }
 
     /**
@@ -128,6 +253,27 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     public function getSandboxCcBin()
     {
         return RicardoMartins_PagBank_Api_Connect_ConnectInterface::SANDBOX_CC_BIN;
+    }
+
+    /**
+     * Admin settings header: PB Integrações logo → pbintegracoes.com
+     *
+     * @return string
+     */
+    public function getAdminPartnersHeaderHtml()
+    {
+        $logo = Mage::getDesign()->getSkinUrl(
+            'images/ricardomartins/pagbank/logo-pbintegracoes.svg',
+            array('_area' => 'adminhtml')
+        );
+        $url = 'https://pbintegracoes.com/?utm_source=magentoadmin';
+
+        return '<div class="rm-pagbank-partners" style="margin:4px 0 12px;">'
+            . '<a href="' . $url . '" target="_blank" rel="noopener noreferrer" title="PB Integrações">'
+            . '<img src="' . htmlspecialchars($logo, ENT_QUOTES, 'UTF-8') . '" alt="PB Integrações" '
+            . 'style="display:block;height:40px;width:auto;max-width:220px;"/>'
+            . '</a>'
+            . '</div>';
     }
 
     /**
@@ -175,24 +321,19 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Check if the 3DS is enabled
+     * Whether notification proxy / alternative route is enabled.
+     * Vindi (API v1) always forwards notifications via our route — treat as enabled.
      *
-     * @param $storeId
-     * @return mixed
-     */    public function isProxyEnabled($storeId = null)
-    {
-        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/enable_proxy', $storeId);
-    }
-
-    /**
-     * Check if the STC mirror is enabled
-     *
-     * @param $storeId
+     * @param int|null $storeId
      * @return bool
      */
-    public function isStcMirrorEnabled($storeId = null)
+    public function isProxyEnabled($storeId = null)
     {
-        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/stc_mirror', $storeId);
+        if ($this->isVindi($storeId)) {
+            return true;
+        }
+
+        return Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/enable_proxy', $storeId);
     }
 
     /**
@@ -286,7 +427,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $email = strtolower($email);
         $hash = hash('md5', $email);
-        return "{$hash}@pagbankconnect.pag";
+        return "{$hash}@pbintegracoes.cc";
     }
 
     /**
@@ -302,15 +443,15 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         switch ($installmentsOptions) {
             case 'fixed':
                 return $this->getInstallmentsWithoutInterestNumber($storeId);
-            case 'buyer':
-                return 0;
             case 'min_total':
                 return $this->calculeInstallmentsNumberWithMinTotal(
                     $this->getInstallmentsMinAmount($storeId),
                     $amount
                 );
+            case 'buyer':
             default:
-                return null;
+                // "external" (PagBank account settings) no longer supported; treat as buyer.
+                return 0;
         }
     }
 
@@ -318,15 +459,19 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Get the headers for the API request
      *
+     * @param string|null $connectKey Override Bearer token (defaults to configured Connect Key)
      * @return string[]
      */
-    public function getHeaders()
+    public function getHeaders($connectKey = null)
     {
         $moduleVersion = (string)Mage::getConfig()->getModuleConfig('RicardoMartins_PagBank')->version;
         $mageVersion = Mage::getVersion();
+        $bearer = $connectKey !== null && $connectKey !== ''
+            ? $connectKey
+            : $this->getConnectKey();
 
         $headers = [
-            'Authorization: Bearer ' . $this->getConnectKey(),
+            'Authorization: Bearer ' . $bearer,
             'Accept: application/json',
             'Content-Type: application/json',
             'Api-Version: 4.0',
@@ -580,17 +725,46 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getConfigJs($storeId = null)
     {
+        $detector = $this->getPartnerDetector($storeId);
+        $capabilities = new RicardoMartins_PagBank_Model_Partner_Capabilities($detector);
+        $isVindi = $detector->isVindi();
+
+        $enabled3ds = $this->isCc3dsEnabled($storeId);
+        if ($isVindi) {
+            $enabled3ds = $enabled3ds && $capabilities->has3ds();
+        }
+
         $config = [
             'publicKey' => $this->getPublicKey($storeId),
+            'partner' => $detector->getPartner(),
+            'is_vindi' => $isVindi,
             'installments_endpoint' => $this->_getUrl('pagbank/ajax/getinstallments', ['_secure' => true]),
             'quotedata_endpoint' => $this->_getUrl('pagbank/ajax/getquotedata', ['_secure' => true]),
+            'vindi_payment_profile_endpoint' => $this->_getUrl('pagbank/ajax/vindipaymentprofile', ['_secure' => true]),
+            'vindi_3ds_setup_endpoint' => $this->_getUrl('pagbank/ajax/vindi3dssetup', ['_secure' => true]),
+            'vindi_3ds_enroll_endpoint' => $this->_getUrl('pagbank/ajax/vindi3dsenroll', ['_secure' => true]),
+            'vindi_3ds_validate_endpoint' => $this->_getUrl('pagbank/ajax/vindi3dsvalidate', ['_secure' => true]),
+            'vindi_3ds_return_url' => $this->_getUrl('pagbank/ajax/vindi3dsreturn', ['_secure' => true]),
+            'vindi_payment_profiles_url' => '',
+            'vindi_mpi_origin' => $detector->isSandbox()
+                ? 'https://sandbox-mpi.vindi.com.br'
+                : 'https://mpi.vindi.com.br',
             'placeorder_button' => $this->getPlaceOrderButton($storeId),
-            'enabled_3ds' => $this->isCc3dsEnabled($storeId),
-            'cc_3ds_allow_continue' => $this->allowContinueWithout3ds($storeId),
+            'enabled_3ds' => $enabled3ds,
+            'cc_3ds_allow_continue' => $isVindi ? false : $this->allowContinueWithout3ds($storeId),
             'environment' => $this->isSandbox($storeId) ? 'SANDBOX' : 'PROD',
-            'stc_mirror' => $this->isStcMirrorEnabled($storeId),
             'enable_proxy' => $this->isProxyEnabled($storeId),
         ];
+
+        if ($isVindi) {
+            $tokenize = $this->getCachedTokenizeConfig($storeId);
+            if (!empty($tokenize['public_key'])) {
+                $config['publicKey'] = $tokenize['public_key'];
+            }
+            if (!empty($tokenize['payment_profiles_url'])) {
+                $config['vindi_payment_profiles_url'] = $tokenize['payment_profiles_url'];
+            }
+        }
 
         try {
             $config['loader_url'] = Mage::getDesign()->getSkinUrl('images/ricardomartins/pagbank/ajax-loader.gif', ['_secure'=>true]);
@@ -599,6 +773,203 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return json_encode($config);
+    }
+
+    /**
+     * Cached GET connectInfo (authorizer email, account id, status…).
+     *
+     * @param string|null $connectKey
+     * @param int|null $storeId
+     * @return array
+     */
+    public function getCachedConnectInfo($connectKey = null, $storeId = null)
+    {
+        $key = $connectKey !== null ? trim((string) $connectKey) : (string) $this->getConnectKey($storeId);
+        if ($key === '') {
+            return array();
+        }
+
+        $detector = RicardoMartins_PagBank_Model_Partner_Detector::fromKey($key);
+        $cacheKey = 'pagbank_connectinfo_' . $detector->fingerprint();
+        $cache = Mage::app()->getCache();
+        $cached = $cache->load($cacheKey);
+        if ($cached) {
+            $decoded = @json_decode($cached, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        try {
+            $endpoint = $this->getConnectInfoEndpoint($storeId, $detector);
+            $resp = $this->placeConnectInfoRequest($endpoint, $key);
+            if (!is_array($resp) || empty($resp)) {
+                return array();
+            }
+            $cache->save(json_encode($resp), $cacheKey, array('ricardomartins_pagbank'), 3600);
+            return $resp;
+        } catch (Exception $e) {
+            $this->writeLog('connectInfo failed: ' . $e->getMessage());
+            return array();
+        }
+    }
+
+    /**
+     * Lightweight GET with explicit Connect Key (admin connectInfo display).
+     *
+     * @param string $endpoint
+     * @param string $connectKey
+     * @return array
+     */
+    protected function placeConnectInfoRequest($endpoint, $connectKey)
+    {
+        /** @var RicardoMartins_PagBank_Model_Api_Connect_Client $api */
+        // Use dedicated cURL so Authorization matches the key being displayed (may differ from config).
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $endpoint);
+        curl_setopt($ch, CURLOPT_HTTPGET, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders($connectKey));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $this->shouldVerifySsl() ? 2 : 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->shouldVerifySsl() ? 1 : 0);
+
+        if ($this->isDebugActive()) {
+            $this->writeLog('[GET] ' . $endpoint . ' (connectInfo)');
+        }
+
+        $raw = curl_exec($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($err) {
+            throw new Exception($err);
+        }
+
+        if ($this->isDebugActive()) {
+            $this->writeLog(sprintf(
+                '[GET] %s — HTTP %s (connectInfo)\nResponse: %s',
+                $endpoint,
+                $code,
+                is_string($raw) ? $raw : var_export($raw, true)
+            ));
+        }
+
+        $decoded = json_decode((string) $raw, true);
+        if ($code < 200 || $code >= 300 || !is_array($decoded)) {
+            throw new Exception('HTTP ' . $code);
+        }
+        return $decoded;
+    }
+
+    /**
+     * HTML snippet for Connect Key field comment (Woo-style account info).
+     *
+     * @param array $info
+     * @param RicardoMartins_PagBank_Model_Partner_Detector $detector
+     * @return string
+     */
+    public function formatConnectInfoHtml($info, $detector)
+    {
+        if (!is_array($info) || empty($info)) {
+            return '';
+        }
+
+        $branding = new RicardoMartins_PagBank_Model_Partner_Branding($detector);
+        $email = isset($info['authorizerEmail']) ? htmlspecialchars((string) $info['authorizerEmail'], ENT_QUOTES, 'UTF-8') : 'N/A';
+        $accountId = isset($info['accountId']) ? htmlspecialchars((string) $info['accountId'], ENT_QUOTES, 'UTF-8') : 'N/A';
+        $status = isset($info['status']) ? strtoupper((string) $info['status']) : 'UNKNOWN';
+        $sandbox = !empty($info['isSandbox']) || !empty($info['is_sandbox']);
+        $sandboxLabel = isset($info['isSandbox']) || isset($info['is_sandbox'])
+            ? ($sandbox ? 'Sim' : 'Não')
+            : 'Desconhecido';
+
+        $html = '<div class="rm-pagbank-connect-info" style="margin-top:6px;line-height:1.5;">';
+        $html .= htmlspecialchars($branding->accountLabel(), ENT_QUOTES, 'UTF-8') . ': <strong>' . $email . '</strong><br/>';
+        $html .= 'Account ID: <code>' . $accountId . '</code><br/>';
+        $html .= 'Status: <strong>' . htmlspecialchars($status, ENT_QUOTES, 'UTF-8') . '</strong><br/>';
+        if (!empty($info['partner'])) {
+            $html .= 'Partner: ' . htmlspecialchars((string) $info['partner'], ENT_QUOTES, 'UTF-8') . '<br/>';
+        }
+        if (!empty($info['template_code'])) {
+            $html .= 'Template: ' . htmlspecialchars((string) $info['template_code'], ENT_QUOTES, 'UTF-8') . '<br/>';
+        }
+        if (!$sandbox && !empty($info['expiresAt'])) {
+            $expires = date('d/m/Y', strtotime((string) $info['expiresAt']));
+            $html .= 'Expira em: ' . htmlspecialchars($expires, ENT_QUOTES, 'UTF-8') . ' <em>(renova automaticamente)</em><br/>';
+        }
+        $html .= 'Sandbox: ' . $sandboxLabel;
+        $html .= '</div>';
+
+        return $html;
+    }
+
+    /**
+     * Cached GET tokenize/config for Vindi (public API key for browser).
+     *
+     * @param int|null $storeId
+     * @return array
+     */
+    public function getCachedTokenizeConfig($storeId = null)
+    {
+        $detector = $this->getPartnerDetector($storeId);
+        if (!$detector->isVindi()) {
+            return array();
+        }
+        $cacheKey = 'pagbank_tokenize_' . $detector->fingerprint();
+        $cache = Mage::app()->getCache();
+        $cached = $cache->load($cacheKey);
+        if ($cached) {
+            $decoded = @json_decode($cached, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+        try {
+            /** @var RicardoMartins_PagBank_Model_Api_Connect_Client $api */
+            $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
+            $resp = $api->placeGetRequest($this->getTokenizeConfigEndpoint($storeId), array(), false);
+            $out = $this->parseTokenizeConfigResponse($resp);
+            $cache->save(json_encode($out), $cacheKey, array('ricardomartins_pagbank'), 3600);
+            return $out;
+        } catch (Exception $e) {
+            $this->writeLog('tokenize/config failed: ' . $e->getMessage());
+            return array();
+        }
+    }
+
+    /**
+     * Normalize tokenize/config JSON (API v1 uses public_api_key).
+     *
+     * @param array $resp
+     * @return array{public_key:string,payment_profiles_url:string}
+     */
+    public function parseTokenizeConfigResponse($resp)
+    {
+        if (!is_array($resp)) {
+            $resp = array();
+        }
+        $publicKey = '';
+        if (!empty($resp['public_api_key'])) {
+            $publicKey = (string) $resp['public_api_key'];
+        } elseif (!empty($resp['public_key'])) {
+            $publicKey = (string) $resp['public_key'];
+        } elseif (!empty($resp['publicKey'])) {
+            $publicKey = (string) $resp['publicKey'];
+        }
+
+        $profilesUrl = '';
+        if (!empty($resp['payment_profiles_url'])) {
+            $profilesUrl = (string) $resp['payment_profiles_url'];
+        } elseif (!empty($resp['payment_profiles']['url'])) {
+            $profilesUrl = (string) $resp['payment_profiles']['url'];
+        }
+
+        return array(
+            'public_key' => $publicKey,
+            'payment_profiles_url' => $profilesUrl,
+        );
     }
 
     /**
@@ -611,7 +982,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         switch ($fieldName) {
             case RicardoMartins_PagBank_Model_Method_Abstract::ORDER_ID:
-                return $this->__('PagBank Order ID');
+                return $this->__('Order ID');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND:
                 return $this->__('Card Brand');
             case RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4:
@@ -659,7 +1030,7 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Write something to pagbank.log
+     * Write something to var/log/pbintegracoes.log
      *
      * @param $obj mixed|string
      */
@@ -667,9 +1038,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if ($this->isDebugActive()) {
             if (is_string($obj)) {
-                Mage::log($obj, null, 'pagbank.log', true);
+                Mage::log($obj, null, 'pbintegracoes.log', true);
             } else {
-                Mage::log(var_export($obj, true), null, 'pagbank.log', true);
+                Mage::log(var_export($obj, true), null, 'pbintegracoes.log', true);
             }
         }
     }
@@ -818,12 +1189,16 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
 
         $info['RicardoMartins_PagBank']['version'] = (string)Mage::getConfig()
             ->getModuleConfig('RicardoMartins_PagBank')->version;
-        $info['RicardoMartins_PagBank']['connect_key'] = strlen($this->getConnectKey()) == 40 ? 'Good' : 'Wrong size';
-        $info['RicardoMartins_PagBank']['public_key'] = substr($this->getPublicKey(), 0, 50) . '...';
+        $detector = $this->getPartnerDetector();
+        $info['RicardoMartins_PagBank']['partner'] = $detector->getPartner();
+        $info['RicardoMartins_PagBank']['connect_key'] = $detector->fingerprint()
+            ? ('…' . $detector->fingerprint() . ' (' . strlen($this->getConnectKey()) . ' chars)')
+            : 'empty';
+        $info['RicardoMartins_PagBank']['public_key'] = substr((string) $this->getPublicKey(), 0, 50) . '...';
         $info['RicardoMartins_PagBank']['live_auth']['public_key'] = isset($liveAuth['public_key']) ? $liveAuth['public_key'] : 'Not available';
         $info['RicardoMartins_PagBank']['live_auth']['created_at'] = isset($liveAuth['created_at']) ? $liveAuth['created_at'] : 'Not available';
         $info['RicardoMartins_PagBank']['debug'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/debug');
-        $info['RicardoMartins_PagBank']['sandbox'] = Mage::getStoreConfigFlag('payment/ricardomartins_pagbank/sandbox');
+        $info['RicardoMartins_PagBank']['sandbox'] = $this->isSandbox();
         $info['RicardoMartins_PagBank']['settings'] = $this->getConfig();
 
         $info['RicardoMartins_PagBank']['compilation'] = $this->getCompilerState();
@@ -838,8 +1213,19 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
      */
     private function validateKey()
     {
+        if ($this->isVindi()) {
+            $tokenize = $this->getCachedTokenizeConfig();
+            if (empty($tokenize['public_key'])) {
+                return array('error' => 'Error on request tokenize/config (Vindi).');
+            }
+            return array(
+                'public_key' => substr($tokenize['public_key'], 0, 50) . '...',
+                'created_at' => 'tokenize/config',
+            );
+        }
+
         $response = null;
-        $url = RicardoMartins_PagBank_Api_Connect_ConnectInterface::WS_ENDPOINT_PUBLIC_KEY_VALIDATE;
+        $url = $this->getWsBaseUrl() . 'ws/public-keys/card';
         if ($this->isSandbox()) {
             $url .= '?isSandbox=1';
         }
@@ -849,35 +1235,35 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 45);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $this->shouldVerifySsl() ? 2 : 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->shouldVerifySsl() ? 1 : 0);
         libxml_use_internal_errors(true);
 
         try {
             $response = curl_exec($ch);
         } catch (\Exception $e) {
-            return [
+            return array(
                 'error' => 'Error on request the public key. ' . $e->getMessage()
-            ];
+            );
         }
 
         if (curl_error($ch)) {
-            return [
+            return array(
                 'error' => 'Error on request the public key.'
-            ];
+            );
         }
 
         $response = json_decode($response, true);
         if (!isset($response['public_key'])) {
-            return [
+            return array(
                 'error' => 'Error in the response of the public key.'
-            ];
+            );
         }
 
-        return [
+        return array(
             'public_key' => substr($response['public_key'], 0, 50) . '...',
-            'created_at' => $response['created_at']
-        ];
+            'created_at' => isset($response['created_at']) ? $response['created_at'] : 'Not available'
+        );
     }
 
     /**
@@ -919,7 +1305,6 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             'placeorder_button' => Mage::getStoreConfig('payment/ricardomartins_pagbank/placeorder_button', $storeId),
             'hash_email_active' => Mage::getStoreConfig('payment/ricardomartins_pagbank/hash_email_active', $storeId),
             'hide_order_items' => Mage::getStoreConfig('payment/ricardomartins_pagbank/hide_order_items', $storeId),
-            'stc_mirror' => Mage::getStoreConfig('payment/ricardomartins_pagbank/stc_mirror', $storeId),
             'jsdelivr_enabled' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_enabled', $storeId),
             'jsdelivr_minify' => Mage::getStoreConfig('payment/ricardomartins_pagbank/jsdelivr_minify', $storeId),
             'enable_proxy' => Mage::getStoreConfig('payment/ricardomartins_pagbank/enable_proxy', $storeId),

@@ -25,7 +25,7 @@ class RicardoMartins_PagBank_Model_Observer
         }
 
         if (preg_match('/^PUB[\w]{0,39}$/', $connectKey)) {
-            $link = '<a target="_blank" href="https://pbintegracoes.com/connect/autorizar/?utm_source=magentoadmin">obtenha uma Connect Key</a>';
+            $link = '<a target="_blank" href="https://pbintegracoes.com/autorizar/?utm_source=magentoadmin">obtenha uma Connect Key</a>';
             $msg = sprintf(
                 Mage::helper('ricardomartins_pagbank')->__(
                     'It looks like you entered a Public Key. To use the next generation of our integrations, %s for free.'
@@ -37,26 +37,45 @@ class RicardoMartins_PagBank_Model_Observer
             Mage::throwException($msg);
         }
 
-        $endpoint = $helper->getPublicKeyEndpoint();
-        $body = [
-            RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::TYPE => RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::TYPE_CARD
-        ];
+        $detector = $helper->getPartnerDetector();
+        /** @var RicardoMartins_PagBank_Model_Api_Connect_Client $api */
+        $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
 
         try {
-            /** @var RicardoMartins_PagBank_Model_Api_Connect_Client $api */
-            $api = Mage::getModel('ricardomartins_pagbank/api_connect_client');
+            if ($detector->isVindi()) {
+                // Vindi browser tokenize uses public_api_key from tokenize/config (not PagBank RSA).
+                $response = $api->placeGetRequest($helper->getTokenizeConfigEndpoint(), array(), false);
+                $parsed = $helper->parseTokenizeConfigResponse($response);
+                if ($parsed['public_key'] === '') {
+                    throw new Exception('tokenize/config sem public_api_key');
+                }
+                Mage::getConfig()->saveConfig(
+                    RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY_CONFIG_PATH,
+                    $parsed['public_key']
+                );
+                Mage::app()->getCache()->clean('matchingTag', array('ricardomartins_pagbank'));
+                return;
+            }
+
+            $endpoint = $helper->getPublicKeyEndpoint();
+            $body = array(
+                RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::TYPE => RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::TYPE_CARD
+            );
             $response = $api->placePostRequest($endpoint, $body);
             $publicKey = $response[RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY];
+            Mage::getConfig()->saveConfig(
+                RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY_CONFIG_PATH,
+                $publicKey
+            );
+            Mage::app()->getCache()->clean('matchingTag', array('ricardomartins_pagbank'));
         } catch (\Exception $e) {
-            $helper->writeLog(sprintf('Error generating public key: %s', $e->getMessage()));
+            $helper->writeLog(sprintf('Error validating Connect Key / public key: %s', $e->getMessage()));
+            if ($helper->isVindi()) {
+                throw new \Exception(
+                    $helper->__('Error validating Vindi Connect Key (tokenize/config): %s', $e->getMessage())
+                );
+            }
             throw new \Exception($helper->__('Error generating public key: %s', $e->getMessage()));
-        }
-
-        try {
-            Mage::getConfig()->saveConfig(RicardoMartins_PagBank_Api_Connect_PublicKeyInterface::PUBLIC_KEY_CONFIG_PATH, $publicKey);
-        } catch (\Exception $e) {
-            $helper->writeLog(sprintf('Error saving public key: %s', $e->getMessage()));
-            throw new \Exception($helper->__('Error saving public key: %s', $e->getMessage()));
         }
     }
 
@@ -73,12 +92,12 @@ class RicardoMartins_PagBank_Model_Observer
         $helper = Mage::helper('ricardomartins_pagbank');
 
         $additionalData = unserialize($payment->getAdditionalData());
+        if (!is_array($additionalData)) {
+            $additionalData = [];
+        }
 
+        // Card brand / last4 / expiry are rendered as "Cartão" + "Expiração" in the info template.
         $info = [
-            RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND,
-            RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4,
-            RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_MONTH,
-            RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_YEAR,
             RicardoMartins_PagBank_Model_Method_Cc::CC_OWNER,
             RicardoMartins_PagBank_Model_Method_Cc::CC_INSTALLMENTS
         ];
@@ -86,11 +105,34 @@ class RicardoMartins_PagBank_Model_Observer
         if (!$observer->getEvent()->getBlock()->getIsSecureMode()) {
             $info[] = RicardoMartins_PagBank_Model_Method_Abstract::ORDER_ID;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::CHARGE_ID;
-            $info[] = RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK;
+            // CHARGE_LINK handled below with partner-aware "Ver na Vindi" / "Ver no PagBank"
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::AUTHORIZATION_CODE;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::NSU;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION;
             $info[] = RicardoMartins_PagBank_Model_Method_Cc::CC_3DS_ID;
+        }
+
+        $last4 = $payment->getAdditionalInformation(RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4)
+            ?: ($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4] ?? '');
+        $brand = $payment->getAdditionalInformation(RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND)
+            ?: ($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND] ?? '');
+        $expMonth = $payment->getAdditionalInformation(RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_MONTH)
+            ?: ($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_MONTH] ?? '');
+        $expYear = $payment->getAdditionalInformation(RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_YEAR)
+            ?: ($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_YEAR] ?? '');
+
+        if ($last4 !== '' || $brand !== '') {
+            // Marker for template: last4|brand (HTML built in block/template)
+            $transport->setData(
+                $helper->__('Cartão'),
+                'CARD|' . $last4 . '|' . $brand
+            );
+        }
+        if ($expMonth !== '' && $expYear !== '') {
+            $transport->setData(
+                $helper->__('Expiração'),
+                sprintf('%02d/%04d', (int) $expMonth, (int) $expYear)
+            );
         }
 
         foreach ($info as $key) {
@@ -100,7 +142,64 @@ class RicardoMartins_PagBank_Model_Observer
                 $transport->setData($helper->getInfoLabels($key), $additionalData[$key]);
             }
         }
+
+        if (!$observer->getEvent()->getBlock()->getIsSecureMode()) {
+            /** @var RicardoMartins_PagBank_Helper_PaymentData $paymentData */
+            $paymentData = Mage::helper('ricardomartins_pagbank/paymentData');
+            $chargeId = (string) $paymentData->get($payment, 'charge_id', '');
+            if ($chargeId === '' && !empty($additionalData['charge_id'])) {
+                $chargeId = (string) $additionalData['charge_id'];
+            }
+
+            $partner = $paymentData->readPartner($payment);
+            if ($partner === '') {
+                $storedLink = !empty($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK])
+                    ? (string) $additionalData[RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK]
+                    : '';
+                if ($storedLink !== '' && strpos($storedLink, 'vindi.com.br') !== false) {
+                    $partner = RicardoMartins_PagBank_Model_Partner_Partner::VINDI;
+                } elseif (strpos($chargeId, 'CHAR_') === 0) {
+                    $partner = RicardoMartins_PagBank_Model_Partner_Partner::PAGBANK;
+                } else {
+                    $partner = RicardoMartins_PagBank_Model_Partner_Detector::fromSettings()->getPartner();
+                }
+            }
+            $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
+
+            $isSandbox = $this->isPaymentSandbox($payment, $additionalData);
+            $portalUrl = $branding->adminChargeUrl($chargeId, $isSandbox);
+            if (!$portalUrl && !empty($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK])) {
+                $portalUrl = (string) $additionalData[RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK];
+            }
+            if ($portalUrl) {
+                $transport->setData($helper->__($branding->viewChargeLabel()), $portalUrl);
+            }
+        }
+
         return $this;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order_Payment $payment
+     * @param array $additionalData
+     * @return bool
+     */
+    private function isPaymentSandbox($payment, array $additionalData)
+    {
+        /** @var RicardoMartins_PagBank_Helper_PaymentData $paymentData */
+        $paymentData = Mage::helper('ricardomartins_pagbank/paymentData');
+        $flag = $paymentData->get($payment, 'is_sandbox', '');
+        if ($flag === '' && isset($additionalData[RicardoMartins_PagBank_Model_Method_Abstract::IS_SANDBOX])) {
+            $flag = $additionalData[RicardoMartins_PagBank_Model_Method_Abstract::IS_SANDBOX];
+        }
+        if ($flag === '' && !empty($additionalData['pix'][RicardoMartins_PagBank_Model_Method_Abstract::IS_SANDBOX])) {
+            $flag = $additionalData['pix'][RicardoMartins_PagBank_Model_Method_Abstract::IS_SANDBOX];
+        }
+        if ($flag === '' && !empty($additionalData['billet'][RicardoMartins_PagBank_Model_Method_Abstract::IS_SANDBOX])) {
+            $flag = $additionalData['billet'][RicardoMartins_PagBank_Model_Method_Abstract::IS_SANDBOX];
+        }
+
+        return $flag === 'Yes' || $flag === true || $flag === 1 || $flag === '1';
     }
 
     /**
@@ -261,5 +360,45 @@ class RicardoMartins_PagBank_Model_Observer
         $payment->setAdditionalData(serialize($additionalData));
         
         $payment->save();
+    }
+
+    /**
+     * Admin CTA for PagBank → Vindi migration (display only — never hard-blocks).
+     *
+     * @param Varien_Event_Observer|Maho\Event\Observer $observer
+     * @return void
+     */
+    public function addMigrationNotice($observer)
+    {
+        if (!Mage::getSingleton('admin/session')->isLoggedIn()) {
+            return;
+        }
+
+        $detector = RicardoMartins_PagBank_Model_Partner_Detector::fromSettings();
+        if (!$detector->isPagBank() || $detector->getConnectKey() === '') {
+            return;
+        }
+
+        $session = Mage::getSingleton('adminhtml/session');
+        $flag = 'ricardomartins_pagbank_migration_notice';
+        if ($session->getData($flag)) {
+            return;
+        }
+        $session->setData($flag, true);
+
+        $url = RicardoMartins_PagBank_Model_Partner_Cutoff::MIGRATE_URL;
+        $past = RicardoMartins_PagBank_Model_Partner_Cutoff::isPast();
+        if ($past) {
+            $msg = 'PagBank — Ação necessária: o prazo para migrar sua Connect Key já passou. '
+                . 'Migre agora para continuar vendendo com melhores taxas. '
+                . '<a href="' . $url . '" target="_blank" rel="noopener">Migrar agora</a>';
+            $session->addError($msg);
+        } else {
+            $days = (int) floor(RicardoMartins_PagBank_Model_Partner_Cutoff::secondsRemaining() / 86400);
+            $msg = 'PagBank — Você tem cerca de ' . $days . ' dias para migrar sua Connect Key '
+                . '(prazo ' . RicardoMartins_PagBank_Model_Partner_Cutoff::SHORT . '). '
+                . '<a href="' . $url . '" target="_blank" rel="noopener">Migrar agora</a>';
+            $session->addNotice($msg);
+        }
     }
 }

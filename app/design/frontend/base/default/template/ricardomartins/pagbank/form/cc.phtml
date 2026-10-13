@@ -30,6 +30,9 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
         <input type="hidden" id="<?php echo $_code ?>_cc_bin" name="payment[cc_bin]" />
         <input type="hidden" id="<?php echo $_code ?>_cc_3ds_id" name="payment[cc_3ds_id]" />
         <input type="hidden" id="<?php echo $_code ?>_cc_has_session" name="payment[cc_has_session]" />
+        <input type="hidden" id="<?php echo $_code ?>_payment_profile_id" name="payment[payment_profile_id]" />
+        <input type="hidden" id="<?php echo $_code ?>_payment_company_code" name="payment[payment_company_code]" />
+        <input type="hidden" id="<?php echo $_code ?>_cc_3ds_payload" name="payment[cc_3ds_payload]" />
     </li>
     <li class="ricardomartins-pagbank-cc-exp-cvv-row">
         <div>
@@ -103,9 +106,9 @@ $pagbankHelper = Mage::helper('ricardomartins_pagbank');
     try {
         window.pagbankConfig = <?php echo $pagbankHelper->getConfigJs() ?>;
         window.pagbank3dSession = '<?php echo $this->getPagSeguroConnect3dSession() ?>';
-        console.log('PagBank: Variáveis globais definidas');
+        console.log('PB Integrações: Variáveis globais definidas');
     } catch (e) {
-        console.error('PagBank: Erro ao definir variáveis globais:', e);
+        console.error('PB Integrações: Erro ao definir variáveis globais:', e);
     }
     //]]>
 </script>

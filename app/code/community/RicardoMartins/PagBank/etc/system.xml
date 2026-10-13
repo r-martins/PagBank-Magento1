@@ -4,35 +4,21 @@
         <payment>
             <groups>
                 <ricardomartins_pagbank translate="label comment" module="adminhtml">
-                    <label>PagBank - Ricardo Martins</label>
-                    <comment><![CDATA[A forma mais fácil e segura de receber pagamentos. Uma solução completa para que você ofereça de forma simples e transparente o processamento dos pedidos em seu site.<br><br>
-                            
-                            Para utilizar o PagBank Connect, você precisa autorizar nossa aplicação e obter suas credenciais connect:<br><br>
-                            
-                            <a href="https://pbintegracoes.com/connect/autorizar?utm_source=magentoadmin" target="_blank" 
-                               style="display: inline-block; background: #f8f9fa; color: #495057; padding: 8px 16px; 
-                                      text-decoration: none; border: 1px solid #dee2e6; border-radius: 3px; 
-                                      font-weight: 500; margin-right: 8px; transition: all 0.2s;">
-                                Obter Connect Key
-                            </a>
-                            
-                            <a href="https://pbintegracoes.com/connect/sandbox?utm_source=magentoadmin" target="_blank" 
-                               style="display: inline-block; background: #f8f9fa; color: #495057; padding: 8px 16px; 
-                                      text-decoration: none; border: 1px solid #dee2e6; border-radius: 3px; 
-                                      font-weight: 500; margin-right: 8px; transition: all 0.2s;">
-                                Connect Key para Testes
-                            </a>
-                            
-                            <a href="https://ajuda.pbintegracoes.com/hc/pt-br/?utm_source=magentoadmin" target="_blank" 
-                               style="color: #6c757d; text-decoration: none; font-size: 13px; margin-left: 4px;">
-                                Central de Ajuda
-                            </a>]]></comment>
+                    <label>PB Integrações - Ricardo Martins</label>
                     <sort_order>6</sort_order>
                     <frontend_type>text</frontend_type>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
+                        <partners_header>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>ricardomartins_pagbank/adminhtml_system_config_form_field_partners</frontend_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </partners_header>
                         <connect_key translate="label">
                             <label>Connect Key</label>
                             <frontend_type>text</frontend_type>
@@ -62,15 +48,15 @@
                             <tooltip><![CDATA[Exemplos: <br/>por classe css: .btn-checkout <br/>por id: #btn-checkout. Você pode informar mais de um, separados por vírgula.]]></tooltip>
                         </placeorder_button>
                         <hash_email_active>
-                            <label>Use hash@pagbankconnect.pag instead of the buyer's email</label>
+                            <label>Use hash@pbintegracoes.cc instead of the buyer's email</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>35</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <tooltip>Using this feature can increase the number of denied orders and also prevents PagBank from sending emails about the order to the customer.</tooltip>
-                            <comment>Converts the buyer's email to hash@pagbankconnect.pag.</comment>
+                            <tooltip>Using this feature can increase the number of denied orders and also prevents the gateway from sending emails about the order to the customer.</tooltip>
+                            <comment>Converts the buyer's email to hash@pbintegracoes.cc.</comment>
                         </hash_email_active>
                         <hide_order_items>
                             <label>Hide order items</label>
@@ -80,21 +66,8 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <comment>Hide order items in the payment request sent to PagBank (required in credit card transactions).</comment>
+                            <comment>Hide order items in the payment request sent to the gateway (required in some cases).</comment>
                         </hide_order_items>
-                        <stc_mirror>
-                            <label>Use secondary CDN for static files?</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>40</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <comment><![CDATA[
-                            Ao habilitar esta opção, os arquivos estáticos do PagBank passam a ser chamados a partir de um CDN secundário. Recomendável para maior estabilidade e performance. <a href="//pagsegurotransparente.zendesk.com/hc/pt-br/articles/360061203711" target="_blank">Saiba mais</a>.
-                            ]]></comment>
-                            <tooltip>Os arquivos de stc.pagseguro.uol.com.br passarão a ser servidos à partir de stcpagseguro.ricardomartins.net.br.</tooltip>
-                        </stc_mirror>
                         <jsdelivr_enabled>
                             <label>Use CDN for JS delivery?</label>
                             <frontend_type>select</frontend_type>
@@ -125,25 +98,23 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <comment>Veja a saída de log em var/log/pagbank.log. É recomendável habilitar o log para obter informações sobre eventuais problemas.</comment>
+                            <comment>Veja a saída de log em var/log/pbintegracoes.log. É recomendável habilitar o log para obter informações sobre eventuais problemas.</comment>
                         </debug>
                         <enable_proxy translate="label">
                             <label>Rota Alternativa</label>
-                            <comment><![CDATA[Usar Rota alternativa (Proxy). <br/> Alguns hostings barram notificações enviadas pelo Pagbank. Ao marcar essa opção, as notificações serão enviadas por meio de um proxy para garantir a entrega por outra rota]]></comment>
+                            <comment><![CDATA[Usar Rota alternativa (Proxy). <br/> Alguns hostings barram notificações enviadas pelo gateway. Ao marcar essa opção, as notificações serão enviadas por meio de um proxy para garantir a entrega por outra rota]]></comment>
                             <frontend_type>select</frontend_type>
+                            <frontend_model>ricardomartins_pagbank/adminhtml_system_config_form_field_enableProxy</frontend_model>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
-                            <depends>
-                                <active>1</active>
-                            </depends>
                         </enable_proxy>
                     </fields>
                 </ricardomartins_pagbank>
                 <ricardomartins_pagbank_cc translate="label comment" module="adminhtml">
-                    <label>PagBank - Credit Card - Ricardo Martins</label>
+                    <label>PB Integrações - Credit Card - Ricardo Martins</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>7</sort_order>
                     <show_in_default>1</show_in_default>
@@ -185,6 +156,7 @@
                         <soft_descriptor translate="label">
                             <label>Soft Descriptor</label>
                             <frontend_type>text</frontend_type>
+                            <frontend_model>ricardomartins_pagbank/adminhtml_system_config_form_field_softDescriptor</frontend_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -195,8 +167,10 @@
                         </soft_descriptor>
                         <cc_3ds translate="label">
                             <label>Enable 3DS Authentication</label>
-                            <comment><![CDATA[Habilita a autenticação 3D Secure para compras com cartão de crédito. <br/> A autenticação 3D Secure é um protocolo de segurança que adiciona uma camada extra de proteção para compras online, <br/> e evita que chargebacks de compras não reconhecidas sejam cobrados do lojista. <br/>Para mais informações, consulte a <a href="https://pagsegurotransparente.zendesk.com/hc/pt-br/articles/22375922278157-Autentica%C3%A7%C3%A3o-3DS-Sua-prote%C3%A7%C3%A3o-contra-Chargeback" target="_blank">documentação</a>.]]></comment>
+                            <comment><model>ricardomartins_pagbank/system_config_cc3dsComment</model></comment>
                             <frontend_type>select</frontend_type>
+                            <frontend_model>ricardomartins_pagbank/adminhtml_system_config_form_field_cc3ds</frontend_model>
+                            <backend_model>ricardomartins_pagbank/system_config_backend_cc3ds</backend_model>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
@@ -208,7 +182,7 @@
                         </cc_3ds>
                         <cc_3ds_allow_continue translate="label">
                             <label>Allow order completion when 3DS is not supported</label>
-                            <comment><![CDATA[Alguns cartões não possuem suporte a autenticação 3D. <br/>Ao marcar esta opção, o cliente poderá concluir a compra mesmo que o cartão não suporte tal recurso ou se a obtenção da sessão 3D Secure junto ao PagBank falhar.]]></comment>
+                            <comment><![CDATA[Alguns cartões não possuem suporte a autenticação 3D. <br/>Ao marcar esta opção, o cliente poderá concluir a compra mesmo que o cartão não suporte tal recurso ou se a obtenção da sessão 3D Secure junto ao gateway falhar.]]></comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>60</sort_order>
@@ -283,7 +257,7 @@
                     </fields>
                 </ricardomartins_pagbank_cc>
                 <ricardomartins_pagbank_billet translate="label comment" module="adminhtml">
-                    <label>PagBank - Billet - Ricardo Martins</label>
+                    <label>PB Integrações - Billet - Ricardo Martins</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>8</sort_order>
                     <show_in_default>1</show_in_default>
@@ -324,6 +298,7 @@
                         </sort_order>
                         <expiration_time translate="label">
                             <label>Boleto expires in (days)</label>
+                            <comment><model>ricardomartins_pagbank/system_config_billetExpirationComment</model></comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
@@ -358,7 +333,7 @@
                     </fields>
                 </ricardomartins_pagbank_billet>
                 <ricardomartins_pagbank_pix translate="label comment" module="adminhtml">
-                    <label>PagBank - Pix - Ricardo Martins</label>
+                    <label>PB Integrações - Pix - Ricardo Martins</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>9</sort_order>
                     <show_in_default>1</show_in_default>
@@ -399,6 +374,7 @@
                         </sort_order>
                         <expiration_time translate="label">
                             <label>PIX Expiration Time (minutes)</label>
+                            <comment><model>ricardomartins_pagbank/system_config_pixExpirationComment</model></comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>

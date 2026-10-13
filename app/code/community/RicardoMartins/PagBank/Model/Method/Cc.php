@@ -60,6 +60,15 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
         if ($data->getData('cc_3ds_id')) {
             $info->setAdditionalInformation(self::CC_3DS_ID, $data->getData('cc_3ds_id'));
         }
+        if ($data->getData('payment_profile_id')) {
+            $info->setAdditionalInformation('payment_profile_id', (int) $data->getData('payment_profile_id'));
+        }
+        if ($data->getData('payment_company_code')) {
+            $info->setAdditionalInformation('payment_company_code', $data->getData('payment_company_code'));
+        }
+        if ($data->getData('cc_3ds_payload')) {
+            $info->setAdditionalInformation('cc_3ds_payload', $data->getData('cc_3ds_payload'));
+        }
 
         return $this;
     }
@@ -73,35 +82,53 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
      */
     public function order($payment, $amount)
     {
+        /** @var RicardoMartins_PagBank_Helper_PaymentData $paymentData */
+        $paymentData = Mage::helper('ricardomartins_pagbank/paymentData');
+        $paymentData->stampPartner($payment, $this->getOrder()->getStoreId());
+
         $response = $this->ccPayment($this->getOrder());
         $charges = $response['charges'][0];
         $paymetResponse = $charges['payment_response'];
         $paymetMethod = $charges['payment_method'];
 
         $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
+        if (!is_array($addData)) {
+            $addData = array();
+        }
         $addData[self::ORDER_ID] = $response['id'];
+        $partner = $paymentData->resolveWritePartner($payment);
+        $addData[$paymentData->physicalKey('order_id', $partner)] = $response['id'];
 
         if ($charges['payment_response']['code'] == 20000) {
-            $addData[self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
+            $addData[self::IS_SANDBOX] = !empty($response['is_sandbox']) ? 'Yes' : 'No';
 
-            $card = $paymetMethod['card'];
-            $addData[self::CC_BRAND] = $card['brand'];
-            $addData[self::CC_LAST_4] = $card['last_digits'];
-            $addData[self::CC_EXP_MONTH] = $card['exp_month'];
-            $addData[self::CC_EXP_YEAR] = $card['exp_year'];
-            $addData[self::CC_OWNER] = $card['holder']['name'];
-            $addData[self::CC_INSTALLMENTS] = $paymetMethod['installments'];
+            $card = isset($paymetMethod['card']) ? $paymetMethod['card'] : array();
+            $addData[self::CC_BRAND] = isset($card['brand']) ? $card['brand'] : $payment->getAdditionalInformation(self::CC_BRAND);
+            $addData[self::CC_LAST_4] = isset($card['last_digits']) ? $card['last_digits'] : '';
+            $addData[self::CC_EXP_MONTH] = isset($card['exp_month']) ? $card['exp_month'] : '';
+            $addData[self::CC_EXP_YEAR] = isset($card['exp_year']) ? $card['exp_year'] : '';
+            $addData[self::CC_OWNER] = isset($card['holder']['name'])
+                ? $card['holder']['name']
+                : $payment->getAdditionalInformation(self::CC_OWNER);
+            $addData[self::CC_INSTALLMENTS] = isset($paymetMethod['installments'])
+                ? $paymetMethod['installments']
+                : $payment->getAdditionalInformation(self::CC_INSTALLMENTS);
             $addData[self::CHARGE_ID] = $charges['id'];
+            $addData[$paymentData->physicalKey('charge_id', $partner)] = $charges['id'];
             $addData[self::STATUS_PAGBANK] = $charges[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] ?: '';
 
-            $paymentRawData = $paymetResponse['raw_data'];
-            $addData[self::AUTHORIZATION_CODE] = $paymentRawData['authorization_code'];
-            $addData[self::NSU] = $paymentRawData['nsu'];
+            $paymentRawData = isset($paymetResponse['raw_data']) ? $paymetResponse['raw_data'] : array();
+            $addData[self::AUTHORIZATION_CODE] = isset($paymentRawData['authorization_code'])
+                ? $paymentRawData['authorization_code'] : '';
+            $addData[self::NSU] = isset($paymentRawData['nsu']) ? $paymentRawData['nsu'] : '';
 
-            if (isset($response['is_sandbox']) && !$response['is_sandbox']) {
-                $chargeIdWithoutPrefix = str_replace('CHAR_', '', $addData[self::CHARGE_ID]);
-                $transactionLink = RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL . $chargeIdWithoutPrefix;
-                $addData['charge_link'] = $transactionLink;
+            $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
+            $portalUrl = $branding->adminChargeUrl(
+                $charges['id'],
+                !empty($response['is_sandbox'])
+            );
+            if ($portalUrl) {
+                $addData[self::CHARGE_LINK] = $portalUrl;
             }
 
             $payment->setAdditionalData(serialize($addData));

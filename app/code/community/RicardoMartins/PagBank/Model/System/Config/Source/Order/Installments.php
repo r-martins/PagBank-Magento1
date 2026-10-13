@@ -6,10 +6,6 @@ class RicardoMartins_PagBank_Model_System_Config_Source_Order_Installments
     {
         return [
             [
-                'value' => 'external',
-                'label' => Mage::helper('ricardomartins_pagbank')->__('Follow PagBank account settings (default)')
-            ],
-            [
                 'value' => 'buyer',
                 'label' => Mage::helper('ricardomartins_pagbank')->__('Interest paid by the buyer')
             ],

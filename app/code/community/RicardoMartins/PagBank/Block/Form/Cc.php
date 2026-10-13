@@ -68,7 +68,8 @@ class RicardoMartins_PagBank_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
 
-        if (!$helper->isCc3dsEnabled()) {
+        // Vindi 3DS uses MPI proxies, not PagBank checkout-sdk sessions.
+        if ($helper->isVindi() || !$helper->isCc3dsEnabled()) {
             return $session;
         }
 

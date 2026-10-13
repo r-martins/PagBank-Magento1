@@ -44,11 +44,18 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
      */
     public function order($payment, $amount)
     {
+        /** @var RicardoMartins_PagBank_Helper_PaymentData $paymentDataHelper */
+        $paymentDataHelper = Mage::helper('ricardomartins_pagbank/paymentData');
+        $paymentDataHelper->stampPartner($payment, $this->getOrder()->getStoreId());
+
         $response = $this->pixPayment($this->getOrder());
 
         $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
+        if (!is_array($addData)) {
+            $addData = array();
+        }
         $addData[self::ORDER_ID] = $response['id'];
-        $addData['pix'][self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
+        $addData['pix'][self::IS_SANDBOX] = !empty($response['is_sandbox']) ? 'Yes' : 'No';
 
         if (isset($response['qr_codes'])) {
             $qrCodes = $response['qr_codes'][0];
@@ -144,9 +151,8 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
     private function addChargeLinkToPaymentAdditionalData($payment, $charge)
     {
         $addData = unserialize($payment->getAdditionalData());
-        $isSandbox = $addData['pix'][self::IS_SANDBOX] == 'Yes';
-        if ($isSandbox) {
-            return;
+        if (!is_array($addData)) {
+            $addData = array();
         }
 
         if (!isset($charge['id'])) {
@@ -154,9 +160,16 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
         }
 
         $addData['charge_id'] = $charge['id'];
-        $chargeIdWithoutPrefix = str_replace('CHAR_', '', $addData['charge_id']);
-        $transactionLink = RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL . $chargeIdWithoutPrefix;
-        $addData['charge_link'] = $transactionLink;
+
+        $isSandbox = !empty($addData['pix'][self::IS_SANDBOX]) && $addData['pix'][self::IS_SANDBOX] === 'Yes';
+        /** @var RicardoMartins_PagBank_Helper_PaymentData $paymentData */
+        $paymentData = Mage::helper('ricardomartins_pagbank/paymentData');
+        $partner = $paymentData->resolveWritePartner($payment);
+        $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
+        $portalUrl = $branding->adminChargeUrl($charge['id'], $isSandbox);
+        if ($portalUrl) {
+            $addData['charge_link'] = $portalUrl;
+        }
 
         $payment->setAdditionalData(serialize($addData));
         $payment->save();

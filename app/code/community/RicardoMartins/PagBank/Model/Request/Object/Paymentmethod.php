@@ -126,4 +126,26 @@ class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod extends Varien_O
     {
         return $this->setData(RicardoMartins_PagBank_Api_Connect_PaymentMethodInterface::AUTHENTICATION_METHOD, $authenticationMethod);
     }
+
+    /**
+     * Vindi / API v1: payment_profile_id on payment_method.
+     *
+     * @param int $paymentProfileId
+     * @return RicardoMartins_PagBank_Model_Request_Object_Paymentmethod
+     */
+    public function setPaymentProfileId($paymentProfileId)
+    {
+        return $this->setData('payment_profile_id', (int) $paymentProfileId);
+    }
+
+    /**
+     * Vindi / API v1: three_ds payload (only with type CREDIT_CARD_3DS).
+     *
+     * @param array $threeDs
+     * @return RicardoMartins_PagBank_Model_Request_Object_Paymentmethod
+     */
+    public function setThreeDs(array $threeDs)
+    {
+        return $this->setData('three_ds', $threeDs);
+    }
 }

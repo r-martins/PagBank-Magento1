@@ -32,13 +32,14 @@
 <?php endif; ?>
 <?php if ($_specificInfo = $this->getSpecificInformation()):?>
     <?php foreach ($_specificInfo as $_label => $_value):?>
-        <?php if (strpos($_value, RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL) !== false): ?>
-            <p>
-                <a href="<?php echo $this->escapeUrl($_value);?>" target="_blank">
-                    <?php echo $this->escapeHtml($_label) ?>
-                </a>
-            </p>
-            <?php continue; ?>
-        <?php endif ?>
+            <?php if (strpos((string) $_value, RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL) !== false
+                || (is_string($_value) && preg_match('#https?://(sandbox-)?app\.vindi\.com\.br/admin/charges/#', $_value))): ?>
+                <p>
+                    <a href="<?php echo $this->escapeUrl($_value);?>" target="_blank" rel="noopener noreferrer">
+                        <?php echo $this->escapeHtml($_label) ?>
+                    </a>
+                </p>
+                <?php continue; ?>
+            <?php endif ?>
     <?php endforeach ?>
 <?php endif ?>

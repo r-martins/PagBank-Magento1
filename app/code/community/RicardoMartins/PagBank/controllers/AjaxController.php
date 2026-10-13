@@ -138,4 +138,70 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
         $this->getResponse()->setHeader('Content-type', 'application/json', true);
         return $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
     }
+
+    /**
+     * Vindi: create private payment_profile from gateway_token (3DS path).
+     */
+    public function vindiPaymentProfileAction()
+    {
+        $this->_vindiJsonProxy('createPaymentProfile');
+    }
+
+    public function vindi3dsSetupAction()
+    {
+        $this->_vindiJsonProxy('threeDsSetup');
+    }
+
+    public function vindi3dsEnrollAction()
+    {
+        $this->_vindiJsonProxy('threeDsEnroll');
+    }
+
+    public function vindi3dsValidateAction()
+    {
+        $this->_vindiJsonProxy('threeDsValidate');
+    }
+
+    /**
+     * Challenge return page — posts TransactionId to parent.
+     */
+    public function vindi3dsReturnAction()
+    {
+        $txid = $this->getRequest()->getParam('TransactionId', '');
+        $safe = Mage::helper('core')->jsQuoteEscape($txid);
+        $html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>3DS</title></head><body>'
+            . '<script>'
+            . 'try{if(window.parent&&window.parent!==window){'
+            . 'window.parent.postMessage({source:"rm-pagbank-vindi-3ds",TransactionId:"' . $safe . '"},"*");'
+            . '}}catch(e){}'
+            . '</script>'
+            . '<p>Autenticação concluída. Você pode fechar esta janela.</p>'
+            . '</body></html>';
+        $this->getResponse()->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+        $this->getResponse()->setBody($html);
+    }
+
+    /**
+     * @param string $method
+     */
+    protected function _vindiJsonProxy($method)
+    {
+        $this->getResponse()->setHeader('Content-type', 'application/json', true);
+        try {
+            /** @var RicardoMartins_PagBank_Model_Vindi_Ajax $vindi */
+            $vindi = Mage::getModel('ricardomartins_pagbank/vindi_ajax');
+            $body = $vindi->jsonBody();
+            $result = $vindi->$method($body);
+            $this->getResponse()->setBody(Mage::helper('core')->jsonEncode(array(
+                'success' => true,
+                'data' => $result,
+            )));
+        } catch (Exception $e) {
+            $this->getResponse()->setHttpResponseCode(400);
+            $this->getResponse()->setBody(Mage::helper('core')->jsonEncode(array(
+                'success' => false,
+                'message' => $e->getMessage(),
+            )));
+        }
+    }
 }

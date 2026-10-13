@@ -3,11 +3,11 @@
 class RicardoMartins_PagBank_Model_Api_Connect_Client
 {
     /**
-     * Place a POST request to the PagBank API
+     * Place a POST request to the gateway API
      *
-     * @param $endpoint
-     * @param $params
-     * @param bool $log
+     * @param string $endpoint
+     * @param array $params
+     * @param bool $log Unused when debug is on — request/response always logged then
      * @return mixed
      * @throws Mage_Core_Exception
      */
@@ -17,11 +17,11 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
     }
 
     /**
-     * Place a GET request to the PagBank API
+     * Place a GET request to the gateway API
      *
-     * @param $endpoint
+     * @param string $endpoint
      * @param array $params
-     * @param bool $log
+     * @param bool $log Unused when debug is on — request/response always logged then
      * @return mixed
      * @throws Mage_Core_Exception
      */
@@ -31,10 +31,10 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
     }
 
     /**
-     * Place a request to the PagBank API
+     * Place a request to the gateway API
      *
-     * @param $type
-     * @param $endpoint
+     * @param int $type CURLOPT_POST|CURLOPT_HTTPGET
+     * @param string $endpoint
      * @param array $params
      * @param bool $log
      * @return mixed
@@ -44,116 +44,134 @@ class RicardoMartins_PagBank_Model_Api_Connect_Client
     {
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
-        $paramsString = json_encode($params);
+        if (!is_array($params)) {
+            $params = array();
+        }
 
-        $helper->writeLog(
-            $helper->__('Sending request to %s with the parameters: %s', $endpoint, $paramsString)
-        );
+        $method = ($type == CURLOPT_HTTPGET) ? 'GET' : 'POST';
+        $bodyJson = $params ? json_encode($params, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : '';
+        $requestUrl = $endpoint;
 
         $ch = curl_init();
 
         if ($type == CURLOPT_HTTPGET) {
-            $paramsString = http_build_query($params);
-            $endpoint = strpos($endpoint, '?') === false ? "{$endpoint}?" : "{$endpoint}&";
-            $endpoint = $endpoint . $paramsString;
+            $query = http_build_query($params);
+            if ($query !== '') {
+                $requestUrl .= (strpos($endpoint, '?') === false ? '?' : '&') . $query;
+            }
+            curl_setopt($ch, CURLOPT_HTTPGET, true);
         }
 
         if ($type == CURLOPT_POST) {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $paramsString);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $bodyJson !== '' ? $bodyJson : '[]');
+            curl_setopt($ch, CURLOPT_POST, true);
         }
 
-        curl_setopt($ch, $type, count($params));
-        curl_setopt($ch, CURLOPT_URL, $endpoint);
+        curl_setopt($ch, CURLOPT_URL, $requestUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 45);
         curl_setopt($ch, CURLOPT_ENCODING, '');
         curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $helper->shouldVerifySsl() ? 2 : 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $helper->shouldVerifySsl() ? 1 : 0);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $helper->getHeaders());
-        $response = '';
 
+        $shouldLog = $helper->isDebugActive() || $log;
+        if ($shouldLog) {
+            $helper->writeLog(sprintf(
+                '[%s] %s%s',
+                $method,
+                $requestUrl,
+                $bodyJson !== '' ? "\nBody: " . $bodyJson : ''
+            ));
+        }
+
+        $rawResponse = '';
         try {
-            $response = curl_exec($ch);
-            if ($log) {
-                $helper->writeLog(
-                    $helper->__('Request to PagBank %s: %s', $endpoint, $paramsString)
-                );
-                $helper->writeLog(
-                    $helper->__('Response from the request to %s: %s', $endpoint, $response)
-                );
-            }
+            $rawResponse = curl_exec($ch);
         } catch (Exception $e) {
-            $helper->writeLog(
-                $helper->__('Failure in communication with PagBank: %s', $e->getMessage())
-            );
+            $helper->writeLog('Failure in communication with the gateway: ' . $e->getMessage());
             Mage::throwException(
-                $helper->__('Failure in communication with PagBank: %s', $e->getMessage())
+                $helper->__('Failure in communication with the gateway: %s', $e->getMessage())
             );
         }
 
-        if (curl_error($ch)) {
-            $helper->writeLog(
-                $helper->__('Failure when trying to send parameters to PagBank: %s (%s)', curl_error($ch), curl_errno($ch))
-            );
+        $curlErr = curl_error($ch);
+        $curlErrno = curl_errno($ch);
+        $info = curl_getinfo($ch);
+        $httpCode = isset($info['http_code']) ? (int) $info['http_code'] : 0;
+
+        if ($curlErr) {
+            $helper->writeLog(sprintf(
+                '[%s] %s — cURL error %s: %s',
+                $method,
+                $requestUrl,
+                $curlErrno,
+                $curlErr
+            ));
             throw new \Mage_Payment_Model_Info_Exception(
-                $helper->__('Failure when trying to send parameters to PagBank: %s (%s)', curl_error($ch), curl_errno($ch))
+                $helper->__('Failure when trying to send parameters to the gateway: %s (%s)', $curlErr, $curlErrno)
             );
         }
 
-        $response = json_decode($response, true);
+        if ($shouldLog) {
+            $helper->writeLog(sprintf(
+                '[%s] %s — HTTP %s\nResponse: %s',
+                $method,
+                $requestUrl,
+                $httpCode,
+                is_string($rawResponse) ? $rawResponse : var_export($rawResponse, true)
+            ));
+        }
+
+        $response = json_decode((string) $rawResponse, true);
+        if (!is_array($response)) {
+            $response = array();
+        }
 
         $isSandbox = false;
-        $parsedParams = parse_url($endpoint, PHP_URL_QUERY);
+        $parsedParams = parse_url($requestUrl, PHP_URL_QUERY);
         if ($parsedParams) {
             parse_str($parsedParams, $parsedStr);
             $isSandbox = isset($parsedStr['isSandbox']) && $parsedStr['isSandbox'] == 1;
         }
+        if (!$isSandbox && $helper->isSandbox()) {
+            $isSandbox = true;
+        }
 
         $response['is_sandbox'] = $isSandbox;
 
-        $info = curl_getinfo($ch);
-        $httpCode = $info['http_code'];
         if ($httpCode != 200 && $httpCode != 201) {
-            $errors = "";
-            if ($response['error_messages']) {
+            $errors = '';
+            if (!empty($response['error_messages'])) {
                 $errors = $helper->handleErrorMessages($response['error_messages']);
-                $helper->writeLog(
-                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
-                );
+                $helper->writeLog('API error: ' . $errors);
                 throw new \Mage_Payment_Model_Info_Exception(
-                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to the gateway: %s', $errors)
                 );
             }
 
-            if ($response['message']) {
+            if (!empty($response['message'])) {
                 $errors = $response['message'];
-                $helper->writeLog(
-                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
-                );
+                $helper->writeLog('API error: ' . $errors);
                 Mage::throwException(
-                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to the gateway: %s', $errors)
                 );
             }
             if ($httpCode == 401) {
                 $errors = $helper->__('Invalid or expired Connect Key');
-                $helper->writeLog(
-                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
-                );
+                $helper->writeLog('API error: ' . $errors);
                 throw new \Mage_Payment_Model_Info_Exception(
-                    $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
+                    $helper->__('Failure when trying to send parameters to the gateway: %s', $errors)
                 );
             }
 
-            // Fallback — log
             $errors = var_export($response, true);
-            $helper->writeLog(
-                $helper->__('Failure when trying to send parameters to PagBank: %s', $errors)
-            );
+            $helper->writeLog('API error (HTTP ' . $httpCode . '): ' . $errors);
             throw new \Mage_Payment_Model_Info_Exception(
-                $helper->__('Failure when trying to send parameters to PagBank: Consulte o pagbank.log')
+                $helper->__('Failure when trying to send parameters to the gateway: see pbintegracoes.log')
             );
         }
 

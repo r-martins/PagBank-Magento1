@@ -1,7 +1,7 @@
 RMPagBank = Class.create();
 RMPagBank.prototype = {
     initialize: function (config, pagseguro_connect_3d_session) {
-        console.log('PagBank: Inicializando módulo de cartão de crédito');
+        console.log('PB Integrações: Inicializando módulo de cartão de crédito');
         this.config = config;
         this.formElementAndSubmit = false;
         this.addCardFieldsObserver();
@@ -20,7 +20,7 @@ RMPagBank.prototype = {
     placeOrderEvent: function () {
         let methodForm = $$('#payment_form_ricardomartins_pagbank_cc');
         if (!methodForm.length) {
-            console.log('PagBank: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
+            console.log('PB Integrações: Não há métodos de pagamento habilitados em exibição. Execução abortada.');
             return;
         }
 
@@ -55,7 +55,7 @@ RMPagBank.prototype = {
         let buttons = ['#onestepcheckout-place-order-button', '.btn-checkout', '#payment-buttons-container .button', '#checkout-onepage-buttom'];
         let configuredButton = this.config.placeorder_button;
         if (configuredButton) {
-            console.log('PagBank: botão configurado encontrado.', configuredButton);
+            console.log('PB Integrações: botão configurado encontrado.', configuredButton);
             configuredButton = configuredButton.split(',');
             buttons.push(...configuredButton);
 
@@ -169,9 +169,6 @@ RMPagBank.prototype = {
         let brandInput = document.getElementById('ricardomartins_pagbank_cc_cc_brand');
         let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
         let urlPrefix = 'https://stc.pagseguro.uol.com.br/';
-        if (this.config.stc_mirror) {
-            urlPrefix = 'https://stcpagseguro.ricardomartins.net.br/';
-        }
         let flagSrc = urlPrefix + 'public/img/payment-methods-flags/68x30/{brand}.png';
         let style = 'background-image: url(' + flagSrc + ');' +
             'background-repeat: no-repeat;' +
@@ -498,7 +495,7 @@ RMPagBank.prototype = {
                     if (result.authenticationStatus === 'AUTHENTICATED') {
                         //O cliente foi autenticado com sucesso, dessa forma o pagamento foi autorizado.
                         card3dsInput.value = result.id;
-                        console.debug('PagBank: 3DS Autenticado ou Sem desafio');
+                        console.debug('PB Integrações: 3DS Autenticado ou Sem desafio');
                         this.enablePlaceOrderButton();
                         this.disablePageLoader();
                         RMPagBankObj.proceedCheckout = true;
@@ -512,7 +509,7 @@ RMPagBank.prototype = {
                     //A autenticação 3DS não ocorreu, isso pode ter ocorrido por falhas na comunicação com emissor ou bandeira, ou algum controle que não possibilitou a geração do 3DS id, essa transação não terá um retorno de status de autenticação e seguirá como uma transação sem 3DS.
                     //O cliente pode seguir adiante sem 3Ds (exceto débito)
                     if (this.config.cc_3ds_allow_continue) {
-                        console.debug('PagBank: 3DS não suportado pelo cartão. Continuando sem 3DS.');
+                        console.debug('PB Integrações: 3DS não suportado pelo cartão. Continuando sem 3DS.');
                         RMPagBankObj.proceedCheckout = true;
                         this.enablePlaceOrderButton();
                         this.disablePageLoader();
@@ -524,7 +521,7 @@ RMPagBank.prototype = {
                     return false;
                 case 'REQUIRE_CHALLENGE':
                     //É um status intermediário que é retornando em casos que o banco emissor solicita desafios, é importante para identificar que o desafio deve ser exibido.
-                    console.debug('PagBank: REQUIRE_CHALLENGE - O desafio está sendo exibido pelo banco.');
+                    console.debug('PB Integrações: REQUIRE_CHALLENGE - O desafio está sendo exibido pelo banco.');
                     this.enablePlaceOrderButton();
                     this.disablePageLoader();
                     break;
@@ -532,7 +529,7 @@ RMPagBank.prototype = {
         }).catch((err) => {
             if (err instanceof PagSeguro.PagSeguroError) {
                 console.error(err);
-                console.debug('PagBank: ' + err.detail);
+                console.debug('PB Integrações: ' + err.detail);
                 let errMsgs = err.detail.errorMessages.map(error => RMPagBankObj.pagBankParseErrorMessage(error)).join('\n');
                 alert('Falha na requisição de autenticação 3D.\n' + errMsgs);
                 this.enablePlaceOrderButton();
@@ -613,7 +610,7 @@ RMPagBank.prototype = {
             }
 
             if (RMPagBankObj.config.debug) {
-                console.error('PagBank: Botão configurado não encontrado (' + RMPagBankObj.config.placeorder_button + '). Verifique as configurações do módulo.');
+                console.error('PB Integrações: Botão configurado não encontrado (' + RMPagBankObj.config.placeorder_button + '). Verifique as configurações do módulo.');
             }
         }
     },

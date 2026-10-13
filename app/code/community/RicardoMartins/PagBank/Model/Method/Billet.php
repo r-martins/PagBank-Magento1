@@ -46,16 +46,23 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
      */
     public function order($payment, $amount)
     {
+        /** @var RicardoMartins_PagBank_Helper_PaymentData $paymentDataHelper */
+        $paymentDataHelper = Mage::helper('ricardomartins_pagbank/paymentData');
+        $paymentDataHelper->stampPartner($payment, $this->getOrder()->getStoreId());
+
         $response = $this->billetPayment($this->getOrder());
         $charges = $response['charges'][0];
         $pay = $charges['payment_method']['boleto'];
         $links = $charges['links'];
 
         $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
+        if (!is_array($addData)) {
+            $addData = array();
+        }
         $addData[self::ORDER_ID] = $response['id'];
 
         if ($charges['payment_response']['code'] == 20000) {
-            $addData['billet'][self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
+            $addData['billet'][self::IS_SANDBOX] = !empty($response['is_sandbox']) ? 'Yes' : 'No';
 
             foreach ($links as $link) {
                 if ($link['media'] == 'application/pdf') {
@@ -70,10 +77,11 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
             $addData['billet']['due_date'] = $pay['due_date'];
             $addData['charge_id'] = $charges['id'];
 
-            if (isset($response['is_sandbox']) && !$response['is_sandbox']) {
-                $chargeIdWithoutPrefix = str_replace('CHAR_', '', $addData['charge_id']);
-                $transactionLink = RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL . $chargeIdWithoutPrefix;
-                $addData['charge_link'] = $transactionLink;
+            $partner = $paymentDataHelper->resolveWritePartner($payment);
+            $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
+            $portalUrl = $branding->adminChargeUrl($charges['id'], !empty($response['is_sandbox']));
+            if ($portalUrl) {
+                $addData['charge_link'] = $portalUrl;
             }
 
             $payment->setAdditionalData(serialize($addData));

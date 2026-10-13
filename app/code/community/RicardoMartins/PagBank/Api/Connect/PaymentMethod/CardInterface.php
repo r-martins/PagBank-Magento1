@@ -24,6 +24,16 @@ interface RicardoMartins_PagBank_Api_Connect_PaymentMethod_CardInterface
     const ENCRYPTED = 'encrypted';
 
     /**
+     * Vindi gateway_token from public payment_profiles (API PB v1).
+     */
+    const GATEWAY_TOKEN = 'gateway_token';
+
+    /**
+     * Vindi payment_profile id (after 3DS / saved card).
+     */
+    const PAYMENT_PROFILE_ID = 'payment_profile_id';
+
+    /**
      * Credit card expiration month.
      * Receives an integer with the card expiration month.
      * Characters limit: 1 or 2 characters.

@@ -74,4 +74,28 @@ class RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card extends Var
     {
         return $this->setData(RicardoMartins_PagBank_Api_Connect_PaymentMethod_CardInterface::HOLDER, $holder);
     }
+
+    /**
+     * @param string|null $gatewayToken
+     * @return RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card
+     */
+    public function setGatewayToken($gatewayToken)
+    {
+        return $this->setData(
+            RicardoMartins_PagBank_Api_Connect_PaymentMethod_CardInterface::GATEWAY_TOKEN,
+            $gatewayToken
+        );
+    }
+
+    /**
+     * @param int|null $paymentProfileId
+     * @return RicardoMartins_PagBank_Model_Request_Object_Paymentmethod_Card
+     */
+    public function setPaymentProfileId($paymentProfileId)
+    {
+        return $this->setData(
+            RicardoMartins_PagBank_Api_Connect_PaymentMethod_CardInterface::PAYMENT_PROFILE_ID,
+            $paymentProfileId
+        );
+    }
 }

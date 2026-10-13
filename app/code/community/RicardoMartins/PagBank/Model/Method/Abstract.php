@@ -164,7 +164,16 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
     {
         $order = $payment->getOrder();
         $additionalData = @unserialize($payment->getAdditionalData());
-        $chargeId = isset($additionalData['charge_id']) ? $additionalData['charge_id'] : null;
+        $chargeId = null;
+        if (is_array($additionalData)) {
+            if (!empty($additionalData['charge_id'])) {
+                $chargeId = $additionalData['charge_id'];
+            } elseif (!empty($additionalData['pb_charge_id'])) {
+                $chargeId = $additionalData['pb_charge_id'];
+            } elseif (!empty($additionalData['pagbank_charge_id'])) {
+                $chargeId = $additionalData['pagbank_charge_id'];
+            }
+        }
 
         if (!$chargeId) {
             Mage::throwException($this->_getHelper()->__('Não foi possível localizar o ID da transação para reembolso.'));
