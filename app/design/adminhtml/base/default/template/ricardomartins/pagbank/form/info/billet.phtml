@@ -26,16 +26,20 @@
         <?php echo $this->escapeHtml($info['formatted_barcode']) ?>
     </p>
     <p><b><?php echo $this->__('Billet expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
+    <?php if (!empty($info['payment_link_boleto_pdf'])): ?>
     <p>
         <a href="<?php echo $this->escapeUrl($info['payment_link_boleto_pdf']);?>" target="_blank">
-            <?php echo $this->__('Download billet file') ?>
+            <?php echo $this->__('Download PDF') ?>
         </a>
     </p>
+    <?php endif; ?>
+    <?php if (!empty($info['payment_link_boleto_image'])): ?>
     <p>
         <a href="<?php echo $this->escapeUrl($info['payment_link_boleto_image']);?>" target="_blank">
             <?php echo $this->__('Print billet file') ?>
         </a>
     </p>
+    <?php endif; ?>
 <?php endif; ?>
 <?php if ($_specificInfo = $this->getSpecificInformation()):?>
     <?php foreach ($_specificInfo as $_label => $_value):?>

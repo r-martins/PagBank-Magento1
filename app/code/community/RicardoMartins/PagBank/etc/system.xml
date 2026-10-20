@@ -169,9 +169,8 @@
                             <label>Enable 3DS Authentication</label>
                             <comment><model>ricardomartins_pagbank/system_config_cc3dsComment</model></comment>
                             <frontend_type>select</frontend_type>
-                            <frontend_model>ricardomartins_pagbank/adminhtml_system_config_form_field_cc3ds</frontend_model>
                             <backend_model>ricardomartins_pagbank/system_config_backend_cc3ds</backend_model>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <source_model>ricardomartins_pagbank/system_config_source_cc3dsYesno</source_model>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
@@ -310,6 +309,7 @@
                         </expiration_time>
                         <instruction_line_one translate="label">
                             <label>Instructions (line one)</label>
+                            <comment><model>ricardomartins_pagbank/system_config_billetInstructionComment</model></comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
@@ -321,6 +321,7 @@
                         </instruction_line_one>
                         <instruction_line_two translate="label">
                             <label>Instructions (line two)</label>
+                            <comment><model>ricardomartins_pagbank/system_config_billetInstructionComment</model></comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>60</sort_order>
                             <show_in_default>1</show_in_default>

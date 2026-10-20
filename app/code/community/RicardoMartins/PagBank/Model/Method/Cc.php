@@ -87,9 +87,9 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
         $paymentData->stampPartner($payment, $this->getOrder()->getStoreId());
 
         $response = $this->ccPayment($this->getOrder());
-        $charges = $response['charges'][0];
-        $paymetResponse = $charges['payment_response'];
-        $paymetMethod = $charges['payment_method'];
+        $charges = isset($response['charges'][0]) ? $response['charges'][0] : array();
+        $paymetResponse = isset($charges['payment_response']) ? $charges['payment_response'] : array();
+        $paymetMethod = isset($charges['payment_method']) ? $charges['payment_method'] : array();
 
         $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
         if (!is_array($addData)) {
@@ -99,7 +99,22 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
         $partner = $paymentData->resolveWritePartner($payment);
         $addData[$paymentData->physicalKey('order_id', $partner)] = $response['id'];
 
-        if ($charges['payment_response']['code'] == 20000) {
+        $paymentResponseCode = isset($paymetResponse['code']) ? $paymetResponse['code'] : null;
+        $chargeStatus = isset($charges['status'])
+            ? $charges['status']
+            : (isset($response['status']) ? $response['status'] : '');
+        // PagBank: 20000 = approved. Vindi antifraud may return WAITING + 20002 ("Em Monitoramento")
+        // with HTTP 201 — charge exists; webhook/cron will move to PAID or DECLINED.
+        $acceptedStatuses = array(
+            RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_PAID,
+            RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_WAITING,
+            RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_IN_ANALYSIS,
+            RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_AUTHORIZED,
+        );
+        $paymentAccepted = ($paymentResponseCode == 20000)
+            || in_array($chargeStatus, $acceptedStatuses, true);
+
+        if ($paymentAccepted) {
             $addData[self::IS_SANDBOX] = !empty($response['is_sandbox']) ? 'Yes' : 'No';
 
             $card = isset($paymetMethod['card']) ? $paymetMethod['card'] : array();
@@ -115,7 +130,7 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
                 : $payment->getAdditionalInformation(self::CC_INSTALLMENTS);
             $addData[self::CHARGE_ID] = $charges['id'];
             $addData[$paymentData->physicalKey('charge_id', $partner)] = $charges['id'];
-            $addData[self::STATUS_PAGBANK] = $charges[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] ?: '';
+            $addData[self::STATUS_PAGBANK] = $chargeStatus;
 
             $paymentRawData = isset($paymetResponse['raw_data']) ? $paymetResponse['raw_data'] : array();
             $addData[self::AUTHORIZATION_CODE] = isset($paymentRawData['authorization_code'])
@@ -134,8 +149,41 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
             $payment->setAdditionalData(serialize($addData));
             $payment->save();
         } else {
+            $reason = isset($paymetResponse['message']) && $paymetResponse['message'] !== ''
+                ? $paymetResponse['message']
+                : '';
+            $declinedStatuses = array(
+                RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_DECLINED,
+                RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_CANCELED,
+                RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_DENIED,
+            );
+            $isDeclined = in_array($chargeStatus, $declinedStatuses, true)
+                || $paymentResponseCode == 20001;
+
+            if ($isDeclined) {
+                // Hard decline/cancel — do not suggest "try again later" (implies outage).
+                $statusLabel = $chargeStatus !== ''
+                    ? $chargeStatus
+                    : RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_DECLINED;
+                $statusHint = 'DECLINED';
+                if ($statusLabel === RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_CANCELED) {
+                    $statusHint = 'CANCELED';
+                } elseif ($statusLabel === RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_DENIED) {
+                    $statusHint = 'DENIED';
+                }
+                $helper = $this->_getHelper();
+                $message = $helper->__('Payment failed!')
+                    . "\n" . $helper->__('Status: %s (%s)', $statusLabel, $helper->__($statusHint));
+                if ($reason !== '') {
+                    $message .= "\n" . $this->_getHelper()->__('Reason: %s.', $reason);
+                }
+                Mage::throwException($message);
+            }
+
+            $fallback = $reason !== '' ? $reason : ($chargeStatus !== '' ? $chargeStatus : 'unknown');
             Mage::throwException($this->_getHelper()->__(
-                "Erro no pagamento!\nMotivo: " . $paymetResponse['message'] . ".\nPor favor tente novamente mais tarde!"
+                "Payment error!\nReason: %s.\nPlease check your card details or use another payment method.",
+                $fallback
             ));
         }
 

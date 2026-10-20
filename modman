@@ -23,7 +23,6 @@ app/code/community/RicardoMartins/PagBank/Api/Connect/PaymentMethodInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/PhoneInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/PhoneInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/PublicKeyInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/PublicKeyInterface.php
 app/code/community/RicardoMartins/PagBank/Api/Connect/ResponseInterface.php app/code/community/RicardoMartins/PagBank/Api/Connect/ResponseInterface.php
-app/code/community/RicardoMartins/PagBank/Block/Adminhtml/System/Config/Form/Field/Cc3ds.php app/code/community/RicardoMartins/PagBank/Block/Adminhtml/System/Config/Form/Field/Cc3ds.php
 app/code/community/RicardoMartins/PagBank/Block/Adminhtml/System/Config/Form/Field/EnableProxy.php app/code/community/RicardoMartins/PagBank/Block/Adminhtml/System/Config/Form/Field/EnableProxy.php
 app/code/community/RicardoMartins/PagBank/Block/Adminhtml/System/Config/Form/Field/Partners.php app/code/community/RicardoMartins/PagBank/Block/Adminhtml/System/Config/Form/Field/Partners.php
 app/code/community/RicardoMartins/PagBank/Block/Adminhtml/System/Config/Form/Field/SoftDescriptor.php app/code/community/RicardoMartins/PagBank/Block/Adminhtml/System/Config/Form/Field/SoftDescriptor.php
@@ -50,6 +49,7 @@ app/code/community/RicardoMartins/PagBank/Model/Partner/Cutoff.php app/code/comm
 app/code/community/RicardoMartins/PagBank/Model/Partner/Detector.php app/code/community/RicardoMartins/PagBank/Model/Partner/Detector.php
 app/code/community/RicardoMartins/PagBank/Model/Partner/Partner.php app/code/community/RicardoMartins/PagBank/Model/Partner/Partner.php
 app/code/community/RicardoMartins/PagBank/Model/Payment/Notification.php app/code/community/RicardoMartins/PagBank/Model/Payment/Notification.php
+app/code/community/RicardoMartins/PagBank/Model/Pix/QrImage.php app/code/community/RicardoMartins/PagBank/Model/Pix/QrImage.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Billet.php app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Billet.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Creditcard.php app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Creditcard.php
 app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Pix.php app/code/community/RicardoMartins/PagBank/Model/Request/Builder/Charges/Pix.php
@@ -78,9 +78,11 @@ app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod/Qrc
 app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod.php app/code/community/RicardoMartins/PagBank/Model/Request/Object/Paymentmethod.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Backend/Cc3ds.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Backend/Cc3ds.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/BilletExpirationComment.php app/code/community/RicardoMartins/PagBank/Model/System/Config/BilletExpirationComment.php
+app/code/community/RicardoMartins/PagBank/Model/System/Config/BilletInstructionComment.php app/code/community/RicardoMartins/PagBank/Model/System/Config/BilletInstructionComment.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Cc3dsComment.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Cc3dsComment.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Comment.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Comment.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/PixExpirationComment.php app/code/community/RicardoMartins/PagBank/Model/System/Config/PixExpirationComment.php
+app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Cc3dsYesno.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Cc3dsYesno.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Connect/Ccbrand.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Connect/Ccbrand.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Customer/Document.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Customer/Document.php
 app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Order/Installments.php app/code/community/RicardoMartins/PagBank/Model/System/Config/Source/Order/Installments.php
@@ -88,6 +90,7 @@ app/code/community/RicardoMartins/PagBank/Model/System/Config/VindiAdminNotes.ph
 app/code/community/RicardoMartins/PagBank/Model/Vindi/Ajax.php app/code/community/RicardoMartins/PagBank/Model/Vindi/Ajax.php
 app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php app/code/community/RicardoMartins/PagBank/controllers/AjaxController.php
 app/code/community/RicardoMartins/PagBank/controllers/NotificationController.php app/code/community/RicardoMartins/PagBank/controllers/NotificationController.php
+app/code/community/RicardoMartins/PagBank/controllers/PixController.php app/code/community/RicardoMartins/PagBank/controllers/PixController.php
 app/code/community/RicardoMartins/PagBank/controllers/TestController.php app/code/community/RicardoMartins/PagBank/controllers/TestController.php
 app/code/community/RicardoMartins/PagBank/etc/config.xml app/code/community/RicardoMartins/PagBank/etc/config.xml
 app/code/community/RicardoMartins/PagBank/etc/system.xml app/code/community/RicardoMartins/PagBank/etc/system.xml
@@ -124,7 +127,6 @@ skin/adminhtml/base/default/images/ricardomartins/pagbank/credit-cards/paypal.sv
 skin/adminhtml/base/default/images/ricardomartins/pagbank/credit-cards/unknown.svg skin/adminhtml/base/default/images/ricardomartins/pagbank/credit-cards/unknown.svg
 skin/adminhtml/base/default/images/ricardomartins/pagbank/credit-cards/visa.svg skin/adminhtml/base/default/images/ricardomartins/pagbank/credit-cards/visa.svg
 skin/adminhtml/base/default/images/ricardomartins/pagbank/logo-pbintegracoes.svg skin/adminhtml/base/default/images/ricardomartins/pagbank/logo-pbintegracoes.svg
-skin/adminhtml/base/default/images/ricardomartins/pagbank/vindi/icon.svg skin/adminhtml/base/default/images/ricardomartins/pagbank/vindi/icon.svg
 skin/adminhtml/base/default/images/ricardomartins/pagbank/vindi/logo-vindi.svg skin/adminhtml/base/default/images/ricardomartins/pagbank/vindi/logo-vindi.svg
 skin/frontend/base/default/css/ricardomartins/pagbank/styles.css skin/frontend/base/default/css/ricardomartins/pagbank/styles.css
 skin/frontend/base/default/images/ricardomartins/pagbank/ajax-loader.gif skin/frontend/base/default/images/ricardomartins/pagbank/ajax-loader.gif

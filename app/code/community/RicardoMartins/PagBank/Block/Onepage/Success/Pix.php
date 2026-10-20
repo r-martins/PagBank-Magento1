@@ -23,7 +23,17 @@ class RicardoMartins_PagBank_Block_Onepage_Success_Pix extends Mage_Checkout_Blo
      */
     public function getPaymentQrcodeImage()
     {
-        return $this->getAdditionalData()['pix']['qrcode_image'];
+        $order = $this->getCurrentOrder();
+        $remote = isset($this->getAdditionalData()['pix']['qrcode_image'])
+            ? (string) $this->getAdditionalData()['pix']['qrcode_image']
+            : '';
+        if ($remote === '') {
+            return null;
+        }
+
+        /** @var RicardoMartins_PagBank_Model_Pix_QrImage $qrImage */
+        $qrImage = Mage::getModel('ricardomartins_pagbank/pix_qrImage');
+        return $qrImage->displayUrl($order, $remote);
     }
 
     /**

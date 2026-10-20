@@ -23,8 +23,12 @@
         <p><strong><?php echo $this->__('Your billet expires in %s', $this->escapeHtml($this->formatDate($this->getExpirationDate()))) ?></strong></p>
     </div>
     <div class="actions-toolbar">
-        <a href="<?php echo $this->escapeUrl($this->getPaymentLinkBilletPdf()) ?>" target="_blank" class="button action primary"><?php echo $this->__('Download billet file') ?></a>
-        <a href="<?php echo $this->escapeUrl($this->getPaymentLinkBilletImage()) ?>" target="_blank" class="button action primary"><?php echo $this->__('Print billet file') ?></a>
+        <?php if ($pdf = $this->getPaymentLinkBilletPdf()): ?>
+        <a href="<?php echo $this->escapeUrl($pdf) ?>" target="_blank" class="button action primary"><?php echo $this->__('Download PDF') ?></a>
+        <?php endif; ?>
+        <?php if ($image = $this->getPaymentLinkBilletImage()): ?>
+        <a href="<?php echo $this->escapeUrl($image) ?>" target="_blank" class="button action primary"><?php echo $this->__('Print billet file') ?></a>
+        <?php endif; ?>
     </div>
 </div>
 <?php endif; ?>

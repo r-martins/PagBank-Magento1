@@ -52,8 +52,12 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
 
         $response = $this->billetPayment($this->getOrder());
         $charges = $response['charges'][0];
-        $pay = $charges['payment_method']['boleto'];
-        $links = $charges['links'];
+        $pay = $charges['payment_method']['boleto'] ?? [];
+        // Prefer charge links; Vindi/API v1 may only nest PDF under payment_method.boleto.links
+        $links = $charges['links'] ?? ($pay['links'] ?? []);
+        if (!is_array($links)) {
+            $links = [];
+        }
 
         $addData = unserialize($this->getOrder()->getPayment()->getAdditionalData());
         if (!is_array($addData)) {
@@ -61,20 +65,39 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
         }
         $addData[self::ORDER_ID] = $response['id'];
 
-        if ($charges['payment_response']['code'] == 20000) {
+        $paymentResponseCode = $charges['payment_response']['code'] ?? null;
+        $chargeStatus = $charges['status'] ?? '';
+        $hasBarcode = !empty($pay['barcode']);
+        // PagBank: payment_response.code 20000. Vindi/API v1 may omit it — barcode + WAITING/PAID is success.
+        $boletoIssued = ($paymentResponseCode == 20000)
+            || ($hasBarcode && in_array($chargeStatus, ['WAITING', 'PAID'], true));
+
+        if ($boletoIssued) {
             $addData['billet'][self::IS_SANDBOX] = !empty($response['is_sandbox']) ? 'Yes' : 'No';
 
             foreach ($links as $link) {
-                if ($link['media'] == 'application/pdf') {
+                if (!is_array($link)) {
+                    continue;
+                }
+                if (($link['media'] ?? '') == 'application/pdf' || ($link['rel'] ?? '') === 'BOLETO.PDF') {
                     $addData['billet']['payment_link_boleto_pdf'] = $link['href'];
                 }
-                if ($link['media'] == 'image/png') {
+                if (($link['media'] ?? '') == 'image/png' || ($link['rel'] ?? '') === 'BOLETO.PNG') {
                     $addData['billet']['payment_link_boleto_image'] = $link['href'];
                 }
             }
+            // Fallback: top-level links from API v1 boleto response
+            if (empty($addData['billet']['payment_link_boleto_pdf']) && !empty($response['links']) && is_array($response['links'])) {
+                foreach ($response['links'] as $link) {
+                    if (is_array($link) && (($link['rel'] ?? '') === 'BOLETO.PDF' || ($link['media'] ?? '') === 'application/pdf')) {
+                        $addData['billet']['payment_link_boleto_pdf'] = $link['href'];
+                        break;
+                    }
+                }
+            }
             $addData['billet']['barcode'] = $pay['barcode'];
-            $addData['billet']['formatted_barcode'] = $pay['formatted_barcode'];
-            $addData['billet']['due_date'] = $pay['due_date'];
+            $addData['billet']['formatted_barcode'] = $pay['formatted_barcode'] ?? $pay['barcode'];
+            $addData['billet']['due_date'] = $pay['due_date'] ?? null;
             $addData['charge_id'] = $charges['id'];
 
             $partner = $paymentDataHelper->resolveWritePartner($payment);

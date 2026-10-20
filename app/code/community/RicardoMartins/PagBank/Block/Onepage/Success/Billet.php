@@ -31,7 +31,9 @@ class RicardoMartins_PagBank_Block_Onepage_Success_Billet extends Mage_Checkout_
      */
     public function getPaymentLinkBilletPdf()
     {
-        return $this->getAdditionalData()['billet']['payment_link_boleto_pdf'];
+        $billet = $this->getAdditionalData()['billet'] ?? [];
+        $url = $billet['payment_link_boleto_pdf'] ?? null;
+        return $url !== '' ? $url : null;
     }
 
     /**
@@ -39,7 +41,9 @@ class RicardoMartins_PagBank_Block_Onepage_Success_Billet extends Mage_Checkout_
      */
     public function getPaymentLinkBilletImage()
     {
-        return $this->getAdditionalData()['billet']['payment_link_boleto_image'];
+        $billet = $this->getAdditionalData()['billet'] ?? [];
+        $url = $billet['payment_link_boleto_image'] ?? null;
+        return $url !== '' ? $url : null;
     }
 
     /**

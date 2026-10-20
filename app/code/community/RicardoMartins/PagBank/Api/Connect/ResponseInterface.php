@@ -35,10 +35,14 @@ interface RicardoMartins_PagBank_Api_Connect_ResponseInterface
     const STATUS_PAID = 'PAID';
 
     /**
-     * Charge waiting status.
-     * PagBang is analyzing the transaction.
+     * Charge in analysis (PagBank risk analysis).
      */
     const STATUS_IN_ANALYSIS = 'IN_ANALYSIS';
+
+    /**
+     * Charge waiting (PIX/boleto unpaid, or Vindi card under antifraud monitoring).
+     */
+    const STATUS_WAITING = 'WAITING';
 
     /**
      * Charge declined status.

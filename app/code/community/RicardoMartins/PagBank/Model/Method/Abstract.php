@@ -38,7 +38,8 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
                 $this->approveOrder($payment);
                 break;
             case RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_IN_ANALYSIS:
-                $comment = "Payment is in analysis in the gateway.";
+            case RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_WAITING:
+                $comment = "Payment is in analysis/waiting at the gateway. Status: {$status}.";
                 break;
         }
 

@@ -57,20 +57,30 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
         $addData[self::ORDER_ID] = $response['id'];
         $addData['pix'][self::IS_SANDBOX] = !empty($response['is_sandbox']) ? 'Yes' : 'No';
 
-        if (isset($response['qr_codes'])) {
+        if (!empty($response['qr_codes'][0]) && is_array($response['qr_codes'][0])) {
             $qrCodes = $response['qr_codes'][0];
-            $addData['pix'][self::IS_SANDBOX] = $response['is_sandbox'] ? 'Yes' : 'No';
+            $addData['pix'][self::IS_SANDBOX] = !empty($response['is_sandbox']) ? 'Yes' : 'No';
 
-            foreach ($qrCodes['links'] as $link) {
-                if ($link['media'] == 'image/png') {
+            $links = isset($qrCodes['links']) && is_array($qrCodes['links']) ? $qrCodes['links'] : array();
+            foreach ($links as $link) {
+                if (!is_array($link) || empty($link['href'])) {
+                    continue;
+                }
+                // PagBank may send media=image/png; Vindi/API v1 uses rel=QRCODE.PNG (often without media).
+                $media = isset($link['media']) ? (string) $link['media'] : '';
+                $rel = isset($link['rel']) ? strtoupper((string) $link['rel']) : '';
+                if ($media === 'image/png' || $rel === 'QRCODE.PNG' || $rel === 'QRCODE.SVG') {
                     $addData['pix']['qrcode_image'] = $link['href'];
                 }
             }
-            $addData['pix']['payment_id'] = $qrCodes['id'];
-            $addData['pix']['qrcode_text'] = $qrCodes['text'];
-            $addData['pix']['due_date'] = $qrCodes['expiration_date'];
+            $addData['pix']['payment_id'] = isset($qrCodes['id']) ? $qrCodes['id'] : $response['id'];
+            $addData['pix']['qrcode_text'] = isset($qrCodes['text']) ? $qrCodes['text'] : null;
+            $addData['pix']['due_date'] = isset($qrCodes['expiration_date']) ? $qrCodes['expiration_date'] : null;
+            $addData['pix']['created_at'] = isset($response['created_at']) ? $response['created_at'] : null;
 
-            $addData['pix']['created_at'] = $response['created_at'];
+            if (empty($addData['pix']['qrcode_text']) && empty($addData['pix']['qrcode_image'])) {
+                Mage::throwException($this->_getHelper()->__("Erro na geração do QR Code!.\nPor favor tente novamente mais tarde!"));
+            }
 
             $payment->setAdditionalData(serialize($addData));
             $payment->setSkipOrderProcessing(true);

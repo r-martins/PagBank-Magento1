@@ -25,8 +25,14 @@ class RicardoMartins_PagBank_Block_Form_Info_Pix extends Mage_Payment_Block_Info
         $payment = $order->getPayment();
         $additionalData = $payment->getAdditionalData();
         $additionalData = unserialize($additionalData);
-        if (isset($additionalData['pix'])) {
-            return $additionalData['pix'];
+        if (isset($additionalData['pix']) && is_array($additionalData['pix'])) {
+            $pix = $additionalData['pix'];
+            if (!empty($pix['qrcode_image'])) {
+                /** @var RicardoMartins_PagBank_Model_Pix_QrImage $qrImage */
+                $qrImage = Mage::getModel('ricardomartins_pagbank/pix_qrImage');
+                $pix['qrcode_image'] = $qrImage->displayUrl($order, (string) $pix['qrcode_image']);
+            }
+            return $pix;
         }
 
         return null;

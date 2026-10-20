@@ -21,7 +21,7 @@
         <?php endforeach ?>
     <?php endif ?>
     <div class="pix-qr-container">
-        <img src="<?php echo $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?php echo $this->__('Scan the code below with your bank\'s app.') ?>" width="200px" />
+        <img src="<?php echo $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?php echo $this->__('Scan the code below with your bank\'s app.') ?>" width="100" height="100" style="width:100px;height:100px;max-width:100px;" />
     </div>
     <p class="qrcode">
         <?php echo $this->__('Pix Code:') ?>
