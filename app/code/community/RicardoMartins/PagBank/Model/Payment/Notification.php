@@ -13,8 +13,13 @@ class RicardoMartins_PagBank_Model_Payment_Notification
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
 
-        $incrementId = $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID];
+        $incrementId = isset($charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID])
+            ? $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID]
+            : null;
         try {
+            if (!$incrementId) {
+                throw new Exception('Missing reference_id in notification charge');
+            }
             $order = Mage::getModel('sales/order')->loadByIncrementId($incrementId);
             if (!$order->getId()) {
                 throw new Exception("Order {$incrementId} not found");
