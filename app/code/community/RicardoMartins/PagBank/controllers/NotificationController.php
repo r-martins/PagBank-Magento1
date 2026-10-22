@@ -55,7 +55,19 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
         }
         $charges = $body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGES];
         $charge = $charges[0];
-        $orderIncrementId = $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID];
+        // PagBank Connect may put reference_id on the charge; API v1 / Vindi keep it on the order.
+        $orderIncrementId = null;
+        if (!empty($body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID])) {
+            $orderIncrementId = $body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID];
+        } elseif (!empty($charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID])) {
+            $orderIncrementId = $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID];
+        }
+        if (!$orderIncrementId) {
+            $this->getResponse()->setHttpResponseCode(400);
+            $this->getResponse()->setBody('Missing reference_id in PagBank response.');
+            return;
+        }
+        $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID] = $orderIncrementId;
 
         $alreadyReceived = Mage::app()->getCache()->load($orderIncrementId);
         if ($alreadyReceived) {
