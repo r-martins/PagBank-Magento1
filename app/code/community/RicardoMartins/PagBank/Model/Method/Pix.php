@@ -93,8 +93,8 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
             $partner = $paymentDataHelper->resolveWritePartner($payment);
             $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
             $portalUrl = $branding->adminPortalUrl(
-                $addData['partner_bill_id'] ?? null,
-                $addData['charge_id'] ?? null,
+                isset($addData['partner_bill_id']) ? $addData['partner_bill_id'] : null,
+                isset($addData['charge_id']) ? $addData['charge_id'] : null,
                 !empty($response['is_sandbox'])
             );
             if ($portalUrl) {
@@ -196,7 +196,7 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
         $partner = $paymentData->resolveWritePartner($payment);
         $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
         $portalUrl = $branding->adminPortalUrl(
-            $addData['partner_bill_id'] ?? null,
+            isset($addData['partner_bill_id']) ? $addData['partner_bill_id'] : null,
             $charge['id'],
             $isSandbox
         );

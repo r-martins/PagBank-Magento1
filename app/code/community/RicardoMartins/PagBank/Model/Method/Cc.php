@@ -142,7 +142,7 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
 
             $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
             $portalUrl = $branding->adminPortalUrl(
-                $addData['partner_bill_id'] ?? null,
+                isset($addData['partner_bill_id']) ? $addData['partner_bill_id'] : null,
                 $charges['id'],
                 !empty($response['is_sandbox'])
             );

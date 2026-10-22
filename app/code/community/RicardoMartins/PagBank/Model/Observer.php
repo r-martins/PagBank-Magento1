@@ -113,13 +113,17 @@ class RicardoMartins_PagBank_Model_Observer
         }
 
         $last4 = $payment->getAdditionalInformation(RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4)
-            ?: ($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4] ?? '');
+            ?: (isset($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4])
+                ? $additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_LAST_4] : '');
         $brand = $payment->getAdditionalInformation(RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND)
-            ?: ($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND] ?? '');
+            ?: (isset($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND])
+                ? $additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_BRAND] : '');
         $expMonth = $payment->getAdditionalInformation(RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_MONTH)
-            ?: ($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_MONTH] ?? '');
+            ?: (isset($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_MONTH])
+                ? $additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_MONTH] : '');
         $expYear = $payment->getAdditionalInformation(RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_YEAR)
-            ?: ($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_YEAR] ?? '');
+            ?: (isset($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_YEAR])
+                ? $additionalData[RicardoMartins_PagBank_Model_Method_Cc::CC_EXP_YEAR] : '');
 
         if ($last4 !== '' || $brand !== '') {
             // Marker for template: last4|brand (HTML built in block/template)
