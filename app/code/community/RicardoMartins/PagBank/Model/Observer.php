@@ -150,6 +150,10 @@ class RicardoMartins_PagBank_Model_Observer
             if ($chargeId === '' && !empty($additionalData['charge_id'])) {
                 $chargeId = (string) $additionalData['charge_id'];
             }
+            $billId = '';
+            if (!empty($additionalData['partner_bill_id'])) {
+                $billId = (string) $additionalData['partner_bill_id'];
+            }
 
             $partner = $paymentData->readPartner($payment);
             if ($partner === '') {
@@ -167,7 +171,7 @@ class RicardoMartins_PagBank_Model_Observer
             $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
 
             $isSandbox = $this->isPaymentSandbox($payment, $additionalData);
-            $portalUrl = $branding->adminChargeUrl($chargeId, $isSandbox);
+            $portalUrl = $branding->adminPortalUrl($billId, $chargeId, $isSandbox);
             if (!$portalUrl && !empty($additionalData[RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK])) {
                 $portalUrl = (string) $additionalData[RicardoMartins_PagBank_Model_Method_Cc::CHARGE_LINK];
             }

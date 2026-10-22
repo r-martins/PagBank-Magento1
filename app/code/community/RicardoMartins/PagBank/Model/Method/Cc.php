@@ -131,6 +131,9 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
             $addData[self::CHARGE_ID] = $charges['id'];
             $addData[$paymentData->physicalKey('charge_id', $partner)] = $charges['id'];
             $addData[self::STATUS_PAGBANK] = $chargeStatus;
+            if (!empty($response['partner_bill_id'])) {
+                $addData['partner_bill_id'] = $response['partner_bill_id'];
+            }
 
             $paymentRawData = isset($paymetResponse['raw_data']) ? $paymetResponse['raw_data'] : array();
             $addData[self::AUTHORIZATION_CODE] = isset($paymentRawData['authorization_code'])
@@ -138,7 +141,8 @@ class RicardoMartins_PagBank_Model_Method_Cc extends RicardoMartins_PagBank_Mode
             $addData[self::NSU] = isset($paymentRawData['nsu']) ? $paymentRawData['nsu'] : '';
 
             $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
-            $portalUrl = $branding->adminChargeUrl(
+            $portalUrl = $branding->adminPortalUrl(
+                $addData['partner_bill_id'] ?? null,
                 $charges['id'],
                 !empty($response['is_sandbox'])
             );

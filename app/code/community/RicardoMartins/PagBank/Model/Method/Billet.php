@@ -99,10 +99,17 @@ class RicardoMartins_PagBank_Model_Method_Billet extends RicardoMartins_PagBank_
             $addData['billet']['formatted_barcode'] = $pay['formatted_barcode'] ?? $pay['barcode'];
             $addData['billet']['due_date'] = $pay['due_date'] ?? null;
             $addData['charge_id'] = $charges['id'];
+            if (!empty($response['partner_bill_id'])) {
+                $addData['partner_bill_id'] = $response['partner_bill_id'];
+            }
 
             $partner = $paymentDataHelper->resolveWritePartner($payment);
             $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
-            $portalUrl = $branding->adminChargeUrl($charges['id'], !empty($response['is_sandbox']));
+            $portalUrl = $branding->adminPortalUrl(
+                $addData['partner_bill_id'] ?? null,
+                $charges['id'],
+                !empty($response['is_sandbox'])
+            );
             if ($portalUrl) {
                 $addData['charge_link'] = $portalUrl;
             }

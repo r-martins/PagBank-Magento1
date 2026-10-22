@@ -77,9 +77,28 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
             $addData['pix']['qrcode_text'] = isset($qrCodes['text']) ? $qrCodes['text'] : null;
             $addData['pix']['due_date'] = isset($qrCodes['expiration_date']) ? $qrCodes['expiration_date'] : null;
             $addData['pix']['created_at'] = isset($response['created_at']) ? $response['created_at'] : null;
+            if (!empty($response['partner_bill_id'])) {
+                $addData['partner_bill_id'] = $response['partner_bill_id'];
+            }
+            if (!empty($response['charges'][0]['id'])) {
+                $addData['charge_id'] = $response['charges'][0]['id'];
+            } elseif (!empty($response['partner_charge_id'])) {
+                $addData['charge_id'] = $response['partner_charge_id'];
+            }
 
             if (empty($addData['pix']['qrcode_text']) && empty($addData['pix']['qrcode_image'])) {
                 Mage::throwException($this->_getHelper()->__("Erro na geração do QR Code!.\nPor favor tente novamente mais tarde!"));
+            }
+
+            $partner = $paymentDataHelper->resolveWritePartner($payment);
+            $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
+            $portalUrl = $branding->adminPortalUrl(
+                $addData['partner_bill_id'] ?? null,
+                $addData['charge_id'] ?? null,
+                !empty($response['is_sandbox'])
+            );
+            if ($portalUrl) {
+                $addData['charge_link'] = $portalUrl;
             }
 
             $payment->setAdditionalData(serialize($addData));
@@ -176,7 +195,11 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
         $paymentData = Mage::helper('ricardomartins_pagbank/paymentData');
         $partner = $paymentData->resolveWritePartner($payment);
         $branding = RicardoMartins_PagBank_Model_Partner_Branding::forOrderPartner($partner);
-        $portalUrl = $branding->adminChargeUrl($charge['id'], $isSandbox);
+        $portalUrl = $branding->adminPortalUrl(
+            $addData['partner_bill_id'] ?? null,
+            $charge['id'],
+            $isSandbox
+        );
         if ($portalUrl) {
             $addData['charge_link'] = $portalUrl;
         }

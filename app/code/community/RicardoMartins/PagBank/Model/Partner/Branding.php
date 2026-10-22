@@ -91,6 +91,24 @@ class RicardoMartins_PagBank_Model_Partner_Branding
     }
 
     /**
+     * Vindi admin bill URL (fatura). Prefer this over charges for unpaid PIX/boleto.
+     *
+     * @param string $billId
+     * @param bool $isSandbox
+     * @return string|null
+     */
+    public function adminBillUrl($billId, $isSandbox)
+    {
+        $billId = trim((string) $billId);
+        if ($billId === '' || !$this->detector->isVindi()) {
+            return null;
+        }
+
+        $host = $isSandbox ? 'sandbox-app.vindi.com.br' : 'app.vindi.com.br';
+        return 'https://' . $host . '/admin/bills/' . rawurlencode($billId);
+    }
+
+    /**
      * Admin portal URL for a charge, or null when not linkable (PagBank sandbox).
      *
      * @param string $chargeId
@@ -116,5 +134,23 @@ class RicardoMartins_PagBank_Model_Partner_Branding
         $transaction = str_replace('CHAR_', '', $chargeId);
         return RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL
             . '/' . rawurlencode($transaction);
+    }
+
+    /**
+     * Prefer Vindi bill URL (works for unpaid PIX/boleto); charge as fallback / PagBank.
+     *
+     * @param string|null $billId
+     * @param string|null $chargeId
+     * @param bool $isSandbox
+     * @return string|null
+     */
+    public function adminPortalUrl($billId, $chargeId, $isSandbox)
+    {
+        $billUrl = $this->adminBillUrl($billId, $isSandbox);
+        if ($billUrl) {
+            return $billUrl;
+        }
+
+        return $this->adminChargeUrl((string) $chargeId, $isSandbox);
     }
 }
