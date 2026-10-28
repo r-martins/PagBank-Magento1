@@ -224,9 +224,20 @@ class RicardoMartins_PagBank_Model_Observer
         if ($method instanceof RicardoMartins_PagBank_Model_Method_Cc) {
             try {
                 $additionalData = unserialize($payment->getAdditionalData());
-                $statusPagbank = $additionalData['status_pagbank'];
+                $statusPagbank = is_array($additionalData) && !empty($additionalData['status_pagbank'])
+                    ? $additionalData['status_pagbank']
+                    : null;
                 if ($statusPagbank) {
                     $method->handleNotification($order, $statusPagbank);
+                    // Magento ACTION_ORDER defaults state=processing while CC order_status may be pending
+                    // (PB-1081). Keep unpaid antifraud orders on pending_payment/pending_payment.
+                    // setData/setStatus avoids a blank status-history row from setState(..., $status).
+                    if ($statusPagbank === RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_WAITING
+                        || $statusPagbank === RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_IN_ANALYSIS
+                    ) {
+                        $order->setData('state', Mage_Sales_Model_Order::STATE_PENDING_PAYMENT)
+                            ->setStatus(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
+                    }
                 }
             } catch (\Exception $e) {
                 $helper = Mage::helper('ricardomartins_pagbank');
@@ -236,7 +247,8 @@ class RicardoMartins_PagBank_Model_Observer
 
         if ($method instanceof RicardoMartins_PagBank_Model_Method_Pix || $method instanceof RicardoMartins_PagBank_Model_Method_Billet) {
             try {
-                $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
+                $order->setData('state', Mage_Sales_Model_Order::STATE_PENDING_PAYMENT)
+                    ->setStatus(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT);
             } catch (\Exception $e) {
                 $helper = Mage::helper('ricardomartins_pagbank');
                 $helper->writeLog(sprintf('Error handling PagBank return: %s', $e->getMessage()));

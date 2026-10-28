@@ -145,3 +145,4 @@ skin/frontend/base/default/images/ricardomartins/pagbank/credit-cards/paypal.svg
 skin/frontend/base/default/images/ricardomartins/pagbank/credit-cards/unknown.svg skin/frontend/base/default/images/ricardomartins/pagbank/credit-cards/unknown.svg
 skin/frontend/base/default/images/ricardomartins/pagbank/credit-cards/visa.svg skin/frontend/base/default/images/ricardomartins/pagbank/credit-cards/visa.svg
 skin/frontend/base/default/js/ricardomartins/pagbank/copy-button.js skin/frontend/base/default/js/ricardomartins/pagbank/copy-button.js
+skin/frontend/base/default/js/ricardomartins/pagbank/pix-confirmation.js skin/frontend/base/default/js/ricardomartins/pagbank/pix-confirmation.js

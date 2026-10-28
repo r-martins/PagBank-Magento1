@@ -182,6 +182,66 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
     }
 
     /**
+     * PIX success-page poll: order status for the last checkout order (PB-1083).
+     * Mirrors Woo ?wc-api=wc_order_status — only the browser that placed the order may query.
+     *
+     * @return void
+     */
+    public function orderStatusAction()
+    {
+        $this->getResponse()->setHeader('Content-Type', 'application/json', true);
+        $coreHelper = Mage::helper('core');
+
+        $incrementId = $this->getRequest()->getParam('order_id');
+        $sessionIncrementId = Mage::getSingleton('checkout/session')->getLastRealOrderId();
+
+        if (!$incrementId || !$sessionIncrementId
+            || (string) $incrementId !== (string) $sessionIncrementId
+        ) {
+            $this->getResponse()->setHttpResponseCode(403);
+            $this->getResponse()->setBody($coreHelper->jsonEncode(array(
+                'success' => false,
+                'message' => 'Forbidden',
+            )));
+            return;
+        }
+
+        $order = Mage::getModel('sales/order')->loadByIncrementId($incrementId);
+        if (!$order->getId()) {
+            $this->getResponse()->setHttpResponseCode(404);
+            $this->getResponse()->setBody($coreHelper->jsonEncode(array(
+                'success' => false,
+                'message' => 'Order not found',
+            )));
+            return;
+        }
+
+        if ($order->getPayment()->getMethod() !== RicardoMartins_PagBank_Model_Method_Pix::METHOD_CODE) {
+            $this->getResponse()->setHttpResponseCode(400);
+            $this->getResponse()->setBody($coreHelper->jsonEncode(array(
+                'success' => false,
+                'message' => 'Invalid payment method',
+            )));
+            return;
+        }
+
+        $state = $order->getState();
+        $status = $order->getStatus();
+        $paid = in_array($state, array(
+            Mage_Sales_Model_Order::STATE_PROCESSING,
+            Mage_Sales_Model_Order::STATE_COMPLETE,
+        ), true);
+
+        // Woo-compatible shape: response.data is the status string.
+        $this->getResponse()->setBody($coreHelper->jsonEncode(array(
+            'success' => true,
+            'data' => $status,
+            'state' => $state,
+            'paid' => $paid,
+        )));
+    }
+
+    /**
      * @param string $method
      */
     protected function _vindiJsonProxy($method)

@@ -62,6 +62,44 @@ class RicardoMartins_PagBank_Block_Onepage_Success_Pix extends Mage_Checkout_Blo
     }
 
     /**
+     * Increment ID for PIX status polling on the success page (PB-1083).
+     *
+     * @return string|null
+     */
+    public function getOrderIncrementId()
+    {
+        $order = $this->getCurrentOrder();
+        return $order ? $order->getIncrementId() : null;
+    }
+
+    /**
+     * AJAX URL to poll Magento order status after PIX payment (PB-1083).
+     *
+     * @return string
+     */
+    public function getOrderStatusUrl()
+    {
+        return $this->getUrl('pagbank/ajax/orderStatus', array('_secure' => true));
+    }
+
+    /**
+     * Whether the order is already paid (e.g. webhook arrived before page render).
+     *
+     * @return bool
+     */
+    public function isPaymentConfirmed()
+    {
+        $order = $this->getCurrentOrder();
+        if (!$order) {
+            return false;
+        }
+        return in_array($order->getState(), array(
+            Mage_Sales_Model_Order::STATE_PROCESSING,
+            Mage_Sales_Model_Order::STATE_COMPLETE,
+        ), true);
+    }
+
+    /**
      * @return mixed
      */
     private function getAdditionalData()

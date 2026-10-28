@@ -35,7 +35,8 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
                 break;
             case RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_PAID:
                 $comment = "Payment status received from the gateway is: {$status}.";
-                $this->approveOrder($payment);
+                $this->approveOrder($payment, $comment);
+                $comment = '';
                 break;
             case RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_IN_ANALYSIS:
             case RicardoMartins_PagBank_Api_Connect_ResponseInterface::STATUS_WAITING:
@@ -43,11 +44,30 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
                 break;
         }
 
-        if ($comment) {
+        if ($comment && !$this->isDuplicateHistoryComment($order, $comment)) {
             $order->addStatusHistoryComment($comment);
         }
 
         $order->save();
+    }
+
+    /**
+     * Avoid repeating the same consecutive status history comment (PB-1081).
+     *
+     * @param Mage_Sales_Model_Order $order
+     * @param string $comment
+     * @return bool
+     */
+    protected function isDuplicateHistoryComment($order, $comment)
+    {
+        $history = $order->getStatusHistoryCollection();
+        if (!$history) {
+            return false;
+        }
+        foreach ($history as $item) {
+            return trim((string) $item->getComment()) === trim((string) $comment);
+        }
+        return false;
     }
 
     /**
@@ -89,11 +109,12 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
     /**
      * Approve the order
      *
-     * @param $payment
+     * @param Mage_Sales_Model_Order_Payment $payment
+     * @param string $comment Status history comment (e.g. PAID from gateway)
      * @return void
      * @throws Mage_Core_Exception|Throwable
      */
-    protected function approveOrder($payment)
+    protected function approveOrder($payment, $comment = '')
     {
         $order = $payment->getOrder();
 
@@ -126,17 +147,31 @@ class RicardoMartins_PagBank_Model_Method_Abstract extends Mage_Payment_Model_Me
             }
         }
         
-        /** @var Mage_Sales_Model_Order_Payment $invoice */
+        /** @var Mage_Sales_Model_Order_Invoice $invoice */
         $invoice = $order->prepareInvoice();
-        $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE);
+        // Gateway already captured; CAPTURE_ONLINE would call payment->capture() (PIX has no canCapture).
+        $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
         $invoice->register()->pay();
-        $invoice->sendEmail(true);
+        try {
+            $invoice->sendEmail(true);
+        } catch (Exception $e) {
+            Mage::helper('ricardomartins_pagbank')->writeLog(
+                sprintf('Invoice email failed for order #%s: %s', $order->getIncrementId(), $e->getMessage())
+            );
+        }
         $order->addStatusHistoryComment(sprintf('Fatura #%s criada com sucesso.', $invoice->getIncrementId()));
 
         $invoice->save();
         $payment->save();
 
-        $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING, true);
+        if ($comment === '') {
+            $comment = 'Payment status received from the gateway is: PAID.';
+        }
+        $order->setState(
+            Mage_Sales_Model_Order::STATE_PROCESSING,
+            Mage_Sales_Model_Order::STATE_PROCESSING,
+            $comment
+        );
 
         $order->save();
     }

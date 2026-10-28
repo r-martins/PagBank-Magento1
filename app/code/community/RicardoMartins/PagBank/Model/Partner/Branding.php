@@ -153,4 +153,25 @@ class RicardoMartins_PagBank_Model_Partner_Branding
 
         return $this->adminChargeUrl((string) $chargeId, $isSandbox);
     }
+
+    /**
+     * Whether a payment-info value is a PagBank/Vindi admin portal URL (render as link).
+     * Vindi may use /admin/bills/ (PIX/boleto) or /admin/charges/.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    public static function isAdminPortalUrl($value)
+    {
+        if (!is_string($value) || $value === '') {
+            return false;
+        }
+        if (strpos($value, RicardoMartins_PagBank_Api_Connect_ConnectInterface::PAGBANK_TRANSACTION_DETAILS_URL) !== false) {
+            return true;
+        }
+        return (bool) preg_match(
+            '#https?://(sandbox-)?app\.vindi\.com\.br/admin/(charges|bills)/#',
+            $value
+        );
+    }
 }
