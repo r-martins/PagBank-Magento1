@@ -2,6 +2,9 @@
 
 class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller_Front_Action
 {
+    const CACHE_KEY_PREFIX = 'pagbank_notif_';
+    const CACHE_TTL = 60;
+
     /**
      * Receives the notification from PagBank and processes it.
      *
@@ -69,13 +72,22 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
         }
         $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::REFERENCE_ID] = $orderIncrementId;
 
-        $alreadyReceived = Mage::app()->getCache()->load($orderIncrementId);
-        if ($alreadyReceived) {
+        $chargeStatus = isset($charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS])
+            ? (string) $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS]
+            : '';
+        $orderStatus = isset($body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS])
+            ? (string) $body[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS]
+            : '';
+        $resolvedStatus = $notificationModel->resolveNotificationStatus($chargeStatus, $orderStatus);
+        $charge[RicardoMartins_PagBank_Api_Connect_ResponseInterface::CHARGE_STATUS] = $resolvedStatus;
+
+        $cacheKey = self::CACHE_KEY_PREFIX . $orderIncrementId;
+        $cachedStatus = Mage::app()->getCache()->load($cacheKey);
+        if ($cachedStatus !== false && $cachedStatus === $resolvedStatus) {
             $this->getResponse()->setHttpResponseCode(400);
             $this->getResponse()->setBody('Notificação já recebida a menos de 1 minuto.');
             return;
         }
-        Mage::app()->getCache()->save('in_progress', $orderIncrementId, ['ricardomartins_pagbank_notification'], 60);
 
         /** @var RicardoMartins_PagBank_Helper_Data $helper */
         $helper = Mage::helper('ricardomartins_pagbank');
@@ -83,6 +95,13 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
             'Notificação recebida do PagBank com os parâmetros:'
             . var_export($this->getRequest()->getParams(), true)
             . var_export($rawBody, true)
+            . sprintf(
+                "\nResolved status=%s (charge=%s, order=%s) for reference_id=%s",
+                $resolvedStatus,
+                $chargeStatus,
+                $orderStatus,
+                $orderIncrementId
+            )
         );
 
         $hash = Mage::helper('core')->getHash($orderIncrementId);
@@ -100,6 +119,13 @@ class RicardoMartins_PagBank_NotificationController extends Mage_Core_Controller
             $this->getResponse()->setBody('Falha ao processar notificação. Veja pbintegracoes.log para mais detalhes.');
             return;
         }
+
+        Mage::app()->getCache()->save(
+            $resolvedStatus,
+            $cacheKey,
+            array('ricardomartins_pagbank_notification'),
+            self::CACHE_TTL
+        );
 
         $this->getResponse()->setBody('Notificação recebida para o pedido ' . $orderIncrementId);
     }
