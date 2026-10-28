@@ -10,8 +10,10 @@
      data-order-id="<?php echo $this->escapeHtml($this->getOrderIncrementId()) ?>"
      data-status-url="<?php echo $this->escapeUrl($this->getOrderStatusUrl()) ?>"
      data-poll-interval="10000"
-     data-poll-timeout="600000">
-    <div class="pix-payment"<?php if ($confirmed): ?> style="display: none;"<?php endif; ?>>
+     data-poll-timeout="600000"
+     data-label-waiting="<?php echo $this->escapeHtml($this->__('Awaiting payment...')) ?>"
+     data-label-confirmed="<?php echo $this->escapeHtml($this->__('Payment confirmed')) ?>">
+    <div class="pix-payment-details"<?php if ($confirmed): ?> style="display: none;"<?php endif; ?>>
         <h2><?php echo $this->__('Pay your Pix') ?></h2>
         <p><?php echo $this->__('Scan the code below with your bank\'s app.') ?></p>
         <div class="pix-qr-container">
@@ -46,9 +48,15 @@
             </p>
         </div>
     </div>
-    <div class="pix-payment-confirmed"<?php if (!$confirmed): ?> style="display: none;"<?php endif; ?>>
-        <h2><?php echo $this->__('Payment Confirmed') ?></h2>
-        <p><?php echo $this->__('Your payment was confirmed successfully.') ?></p>
+    <div class="pix-payment-status <?php echo $confirmed ? 'is-confirmed' : 'is-waiting'; ?>"
+         role="status"
+         aria-live="polite">
+        <span class="pix-status-dot" aria-hidden="true"></span>
+        <span class="pix-status-text">
+            <?php echo $confirmed
+                ? $this->__('Payment confirmed')
+                : $this->__('Awaiting payment...') ?>
+        </span>
     </div>
 </div>
 <?php endif; ?>

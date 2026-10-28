@@ -1,6 +1,7 @@
 /**
  * PIX success-page status polling (PB-1083).
- * Same behaviour as Woo pix-instructions.php: poll every 10s for up to 10 minutes.
+ * Same behaviour as Woo / GHL: poll every 10s for up to 10 minutes,
+ * then switch the waiting badge to the green confirmed state.
  */
 document.addEventListener('DOMContentLoaded', function () {
   var root = document.getElementById('pagbank-pix-success');
@@ -8,9 +9,13 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-  var confirmedEl = root.querySelector('.pix-payment-confirmed');
-  var paymentEl = root.querySelector('.pix-payment');
-  if (confirmedEl && confirmedEl.style.display !== 'none' && paymentEl && paymentEl.style.display === 'none') {
+  var detailsEl = root.querySelector('.pix-payment-details');
+  var statusEl = root.querySelector('.pix-payment-status');
+  var statusTextEl = root.querySelector('.pix-status-text');
+  var labelWaiting = root.getAttribute('data-label-waiting') || 'Awaiting payment...';
+  var labelConfirmed = root.getAttribute('data-label-confirmed') || 'Payment confirmed';
+
+  if (statusEl && statusEl.classList.contains('is-confirmed')) {
     return;
   }
 
@@ -26,11 +31,15 @@ document.addEventListener('DOMContentLoaded', function () {
   var url = statusUrl + separator + 'order_id=' + encodeURIComponent(orderId);
 
   function showConfirmed() {
-    if (paymentEl) {
-      paymentEl.style.display = 'none';
+    if (detailsEl) {
+      detailsEl.style.display = 'none';
     }
-    if (confirmedEl) {
-      confirmedEl.style.display = 'block';
+    if (statusEl) {
+      statusEl.classList.remove('is-waiting');
+      statusEl.classList.add('is-confirmed');
+    }
+    if (statusTextEl) {
+      statusTextEl.textContent = labelConfirmed;
     }
   }
 

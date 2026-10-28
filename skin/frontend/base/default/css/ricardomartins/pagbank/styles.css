@@ -58,13 +58,47 @@
     max-width: 100%;
 }
 
-.pix-payment-confirmed {
-    text-align: center;
-    margin: 20px 0;
+.pix-payment-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px auto 8px;
+    padding: 8px 16px;
+    width: fit-content;
+    max-width: 100%;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
 }
 
-.pix-payment-confirmed h2 {
-    color: #2e7d32;
+.pix-payment-status.is-waiting {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.pix-payment-status.is-confirmed {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.pix-status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.pix-payment-status.is-waiting .pix-status-dot {
+    animation: pagbank-pix-pulse-dot 1.2s ease-in-out infinite;
+}
+
+@keyframes pagbank-pix-pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.85); }
 }
 
 .billet-container {
