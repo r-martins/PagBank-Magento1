@@ -4,39 +4,51 @@
  */
 ?>
 <?php if ($this->isVisible()): ?>
-<div class="ricardomartins-pagbank-success">
-    <h2><?php echo $this->__('Pay your Pix') ?></h2>
-    <p><?php echo $this->__('Scan the code below with your bank\'s app.') ?></p>
-    <div class="pix-qr-container">
-        <img src="<?php echo $this->escapeUrl($this->getPaymentQrcodeImage()); ?>" class="pix-qr" alt="PIX QrCode" title="<?php echo $this->__('Scan the code below with your bank\'s app.') ?>"/>
-    </div>
-    <p><?php echo $this->escapeHtml($this->__('Or if you prefer, copy and paste the code below into your bank\'s application using PIX with Copy and Paste mode.')) ?></p>
-    <div class="code-container">
-        <label for="qrcode">
-            <?php echo $this->__('Pix Code:') ?>
-        </label>
-        <div class="code-content">
-            <span>
-                <input type="text" id="qrcode" class="payment-code" value="<?php echo $this->escapeHtml($this->getPaymentTextPix()) ?>" readonly="readonly"/>
-                <img src="<?php echo $this->getSkinUrl('images/ricardomartins/pagbank/copy-icon.svg'); ?>" alt="<?php echo $this->__('Copy') ?>" title="<?php echo $this->__('Copy') ?>" class="copy-btn"/>
-            </span>
-            <p class="copied" style="display: none"><?php echo $this->__('Copied ✔') ?></p>
+<?php $confirmed = $this->isPaymentConfirmed(); ?>
+<div class="ricardomartins-pagbank-success"
+     id="pagbank-pix-success"
+     data-order-id="<?php echo $this->escapeHtml($this->getOrderIncrementId()) ?>"
+     data-status-url="<?php echo $this->escapeUrl($this->getOrderStatusUrl()) ?>"
+     data-poll-interval="10000"
+     data-poll-timeout="600000">
+    <div class="pix-payment"<?php if ($confirmed): ?> style="display: none;"<?php endif; ?>>
+        <h2><?php echo $this->__('Pay your Pix') ?></h2>
+        <p><?php echo $this->__('Scan the code below with your bank\'s app.') ?></p>
+        <div class="pix-qr-container">
+            <img src="<?php echo $this->escapeUrl($this->getPaymentQrcodeImage()); ?>" class="pix-qr" alt="PIX QrCode" title="<?php echo $this->__('Scan the code below with your bank\'s app.') ?>"/>
+        </div>
+        <p><?php echo $this->escapeHtml($this->__('Or if you prefer, copy and paste the code below into your bank\'s application using PIX with Copy and Paste mode.')) ?></p>
+        <div class="code-container">
+            <label for="qrcode">
+                <?php echo $this->__('Pix Code:') ?>
+            </label>
+            <div class="code-content">
+                <span>
+                    <input type="text" id="qrcode" class="payment-code" value="<?php echo $this->escapeHtml($this->getPaymentTextPix()) ?>" readonly="readonly"/>
+                    <img src="<?php echo $this->getSkinUrl('images/ricardomartins/pagbank/copy-icon.svg'); ?>" alt="<?php echo $this->__('Copy') ?>" title="<?php echo $this->__('Copy') ?>" class="copy-btn"/>
+                </span>
+                <p class="copied" style="display: none"><?php echo $this->__('Copied ✔') ?></p>
+            </div>
+        </div>
+        <div class="pix-exiration-container">
+            <p>
+                <strong>
+                    <?php echo $this->__('Your Pix code expires in %s',
+                        $this->escapeHtml(
+                                $this->formatDate(
+                                        $this->getExpirationDate(),
+                                        'short',
+                                        true
+                                )
+                        )
+                    ) ?>
+                </strong>
+            </p>
         </div>
     </div>
-    <div class="pix-exiration-container">
-        <p>
-            <strong>
-                <?php echo $this->__('Your Pix code expires in %s',
-                    $this->escapeHtml(
-                            $this->formatDate(
-                                    $this->getExpirationDate(),
-                                    'short',
-                                    true
-                            )
-                    )
-                ) ?>
-            </strong>
-        </p>
+    <div class="pix-payment-confirmed"<?php if (!$confirmed): ?> style="display: none;"<?php endif; ?>>
+        <h2><?php echo $this->__('Payment Confirmed') ?></h2>
+        <p><?php echo $this->__('Your payment was confirmed successfully.') ?></p>
     </div>
 </div>
 <?php endif; ?>

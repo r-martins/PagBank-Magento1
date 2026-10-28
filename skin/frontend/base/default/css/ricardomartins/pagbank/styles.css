@@ -58,6 +58,15 @@
     max-width: 100%;
 }
 
+.pix-payment-confirmed {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pix-payment-confirmed h2 {
+    color: #2e7d32;
+}
+
 .billet-container {
     margin-bottom: 30px;
 }
