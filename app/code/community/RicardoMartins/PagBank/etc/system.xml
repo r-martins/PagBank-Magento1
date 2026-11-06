@@ -4,7 +4,7 @@
         <payment>
             <groups>
                 <ricardomartins_pagbank translate="label comment" module="adminhtml">
-                    <label>PB Integrações - Ricardo Martins</label>
+                    <label>PB Integrações</label>
                     <sort_order>6</sort_order>
                     <frontend_type>text</frontend_type>
                     <show_in_default>1</show_in_default>
@@ -114,7 +114,7 @@
                     </fields>
                 </ricardomartins_pagbank>
                 <ricardomartins_pagbank_cc translate="label comment" module="adminhtml">
-                    <label>PB Integrações - Credit Card - Ricardo Martins</label>
+                    <label>PB Integrações - Credit Card</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>7</sort_order>
                     <show_in_default>1</show_in_default>
@@ -256,7 +256,7 @@
                     </fields>
                 </ricardomartins_pagbank_cc>
                 <ricardomartins_pagbank_billet translate="label comment" module="adminhtml">
-                    <label>PB Integrações - Billet - Ricardo Martins</label>
+                    <label>PB Integrações - Billet</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>8</sort_order>
                     <show_in_default>1</show_in_default>
@@ -334,7 +334,7 @@
                     </fields>
                 </ricardomartins_pagbank_billet>
                 <ricardomartins_pagbank_pix translate="label comment" module="adminhtml">
-                    <label>PB Integrações - Pix - Ricardo Martins</label>
+                    <label>PB Integrações - Pix</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>9</sort_order>
                     <show_in_default>1</show_in_default>
