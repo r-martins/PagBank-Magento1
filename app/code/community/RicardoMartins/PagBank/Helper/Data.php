@@ -1065,8 +1065,9 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
         $scriptBlock = Mage::app()->getLayout()->createBlock('core/text', "ricardomartins.pagbank.js");
         $secure = Mage::getStoreConfigFlag('web/secure/use_in_frontend');
 
+        // data-cfasync=false: avoid Cloudflare Rocket Loader breaking payment JS order.
         $scripts = sprintf(
-            '<script type="text/javascript" src="%s"></script>',
+            '<script type="text/javascript" src="%s" data-cfasync="false"></script>',
             Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS, $secure) . 'ricardomartins/pagbank/mask.js'
         );
 
@@ -1083,15 +1084,22 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $scriptBlock = Mage::app()->getLayout()->createBlock('core/text', "ricardomartins.pagbank.cc.js");
         $secure = Mage::getStoreConfigFlag('web/secure/use_in_frontend');
+        $moduleJs = $this->getModuleJsUrl($secure);
 
-        $scripts = sprintf(
-            '
-                <script type="text/javascript" src="%s"></script>
-                <script type="text/javascript" src="%s"></script>
-                ',
-            'https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js',
-            $this->getModuleJsUrl($secure)
-        );
+        // Vindi tokenizes via public/payment_profiles — PagSeguro checkout-sdk is unused and must not run.
+        if ($this->isVindi()) {
+            $scripts = sprintf(
+                '<script type="text/javascript" src="%s" data-cfasync="false"></script>',
+                $moduleJs
+            );
+        } else {
+            $scripts = sprintf(
+                '<script type="text/javascript" src="%s" data-cfasync="false"></script>
+                <script type="text/javascript" src="%s" data-cfasync="false"></script>',
+                'https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js',
+                $moduleJs
+            );
+        }
 
         $scriptBlock->setText($scripts);
         return $scriptBlock;

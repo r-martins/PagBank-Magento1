@@ -726,6 +726,16 @@ class RMPagBank {
     }
 
     encryptCard() {
+        // Vindi must never use PagSeguro.encryptCard (public key is not PUB…).
+        if (this.config && this.config.is_vindi) {
+            console.error('PB Integrações: encryptCard() chamado com is_vindi=true — abortando.');
+            return false;
+        }
+        if (typeof PagSeguro === 'undefined' || typeof PagSeguro.encryptCard !== 'function') {
+            alert('SDK PagBank não carregado. Recarregue a página e tente novamente.');
+            return false;
+        }
+
         if (RMPagBankObj.config.debug) {
             console.debug('Encrypting card');
         }
