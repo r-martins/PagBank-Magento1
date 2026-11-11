@@ -5,9 +5,12 @@
 ?>
 <p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (PagBank - Ricardo Martins)</strong></p>
 <?php if($info = $this->getPixAdditionalData()): ?>
+    <?php if (!empty($info['qrcode_image'])): ?>
     <div class="pix-qr-container">
         <img src="<?php echo $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?php echo $this->__('Scan the code below with your bank\'s app.') ?>" width="200px"/>
     </div>
+    <?php endif ?>
+    <?php if (!empty($info['qrcode_text'])): ?>
     <div class="code-container">
         <label for="qrcode">
             <?php echo $this->__('Pix Code:') ?>
@@ -20,6 +23,8 @@
             <p class="copied" style="display: none"><?php echo $this->__('Copied ✔') ?></p>
         </div>
     </div>
+    <?php endif ?>
+    <?php if (!empty($info['due_date'])): ?>
     <p>
         <b>
             <?php echo $this->__(
@@ -28,4 +33,5 @@
             ) ?>
         </b>
     </p>
+    <?php endif ?>
 <?php endif; ?>

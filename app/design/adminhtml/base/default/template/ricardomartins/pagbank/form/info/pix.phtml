@@ -5,12 +5,14 @@
 ?>
 <p><strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?> (PagBank - Ricardo Martins)</strong></p>
 <?php if($info = $this->getPixAdditionalData()): ?>
+    <?php if (!empty($info['is_sandbox'])): ?>
     <p>
         <strong>
             <?php echo $this->__('Is Sandbox') ?>:
             <?php echo $this->__($this->escapeHtml($info['is_sandbox'])) ?>
         </strong>
     </p>
+    <?php endif ?>
     <?php if ($_specificInfo = $this->getSpecificInformation()):?>
         <?php foreach ($_specificInfo as $_label => $_value):?>
             <?php if ($_value === RicardoMartins_PagBank_Model_Method_Cc::CC_PAGBANK_SESSION) continue ?>
@@ -21,15 +23,21 @@
             </p>
         <?php endforeach ?>
     <?php endif ?>
+    <?php if (!empty($info['qrcode_image'])): ?>
     <div class="pix-qr-container">
         <img src="<?php echo $this->escapeUrl($info['qrcode_image']); ?>" class="pix-qr" alt="PIX QrCode" title="<?php echo $this->__('Scan the code below with your bank\'s app.') ?>" width="100" height="100" style="width:100px;height:100px;max-width:100px;" />
     </div>
+    <?php endif ?>
+    <?php if (!empty($info['qrcode_text'])): ?>
     <p class="qrcode">
         <?php echo $this->__('Pix Code:') ?>
         <br>
         <?php echo $this->escapeHtml($info['qrcode_text']) ?>
     </p>
+    <?php endif ?>
+    <?php if (!empty($info['due_date'])): ?>
     <p><b><?php echo $this->__('Pix code expiration: %s', $this->escapeHtml($this->formatDateFromString($info['due_date']))) ?></b></p>
+    <?php endif ?>
 <?php endif; ?>
 <?php if ($_specificInfo = $this->getSpecificInformation()):?>
     <?php foreach ($_specificInfo as $_label => $_value):?>
