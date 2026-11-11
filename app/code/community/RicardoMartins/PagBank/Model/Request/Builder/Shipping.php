@@ -13,6 +13,11 @@ class RicardoMartins_PagBank_Model_Request_Builder_Shipping
     const SHIPPING_ADDRESS = 'address';
 
     /**
+     * Shipping amount (centavos in amount.value) — used by API v1 / Vindi as Frete line
+     */
+    const SHIPPING_AMOUNT = 'amount';
+
+    /**
      * @var Mage_Sales_Model_Order $order
      */
     protected $order;
@@ -69,6 +74,12 @@ class RicardoMartins_PagBank_Model_Request_Builder_Shipping
         }
 
         $result[self::SHIPPING][self::SHIPPING_ADDRESS] = $address->getData();
+
+        /** @var RicardoMartins_PagBank_Model_Request_Object_Amount $amount */
+        $amount = Mage::getModel('ricardomartins_pagbank/request_object_amount');
+        $amount->setValue($this->order->getBaseShippingAmount());
+        $amount->setCurrency(RicardoMartins_PagBank_Api_Connect_AmountInterface::CURRENCY_BRL);
+        $result[self::SHIPPING][self::SHIPPING_AMOUNT] = $amount->getData();
 
         return $result;
     }
