@@ -772,6 +772,16 @@ class RicardoMartins_PagBank_Helper_Data extends Mage_Core_Helper_Abstract
             $config['loader_url'] = '';
         }
 
+        // Local card brand icons (avoid stc.pagseguro.uol.com.br CDN / network errors).
+        try {
+            $config['card_flags_base_url'] = Mage::getDesign()->getSkinUrl(
+                'images/ricardomartins/pagbank/credit-cards/',
+                array('_secure' => true)
+            );
+        } catch (Exception $e) {
+            $config['card_flags_base_url'] = '';
+        }
+
         return json_encode($config);
     }
 

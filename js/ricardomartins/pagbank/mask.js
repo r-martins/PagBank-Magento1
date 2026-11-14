@@ -50,23 +50,42 @@ function mask() {
         }
     };
 
+    function remaskCreditCardNumber() {
+        const numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
+        if (!numberInput || !numberInput.value) {
+            return;
+        }
+        numberInput.value = masks.creditCard(numberInput.value, '');
+    }
+
     document.querySelectorAll('input[data-js]').forEach($input => {
+        if ($input.dataset.pagbankMaskBound === '1') {
+            return;
+        }
+
         const field = $input.dataset.js;
         if (!field || !masks[field]) return;
 
         let previousValue = $input.value;
         const applyMask = (e) => {
             let value = e.target.value;
-            if(e.type == 'focusout') {
+            if (e.type == 'focusout') {
                 value = value.trimStart().trimEnd();
             }
             e.target.value = masks[field](value, previousValue);
             previousValue = value;
+
+            // Magento validate-cc-type (if present elsewhere) strips spaces from the PAN.
+            // After leaving expiry/CVV/etc., restore the card number mask.
+            if (e.type === 'focusout' && field !== 'creditCard') {
+                remaskCreditCardNumber();
+            }
         };
 
         $input.addEventListener('input', applyMask, false);
         $input.addEventListener('focusout', applyMask, false);
         $input.addEventListener('focusin', applyMask, false);
+        $input.dataset.pagbankMaskBound = '1';
     });
 }
 

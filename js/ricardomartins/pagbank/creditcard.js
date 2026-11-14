@@ -423,20 +423,50 @@ class RMPagBank {
         return result;
     }
 
+    /**
+     * Map getCardTypes().type → local skin SVG filename (without extension).
+     */
+    resolveCardFlagFile(brandType) {
+        const map = {
+            dinnersclub: 'diners',
+            dinersclub: 'diners',
+            diners: 'diners',
+            american_express: 'amex',
+            amex: 'amex',
+            mastercard: 'mastercard',
+            visa: 'visa',
+            elo: 'elo',
+            hipercard: 'hipercard',
+            aura: 'aura',
+            discover: 'discover',
+            jcb: 'jcb',
+            maestro: 'maestro',
+            laser: 'laser'
+        };
+        const key = String(brandType || '').toLowerCase();
+        return map[key] || 'unknown';
+    }
+
     setBrand() {
         let brandInput = document.getElementById('ricardomartins_pagbank_cc_cc_brand');
         let numberInput = document.getElementById('ricardomartins_pagbank_cc_cc_number');
-        let urlPrefix = 'https://stc.pagseguro.uol.com.br/';
-        let flagSrc = urlPrefix + 'public/img/payment-methods-flags/68x30/{brand}.png';
-        let style = `background-image: url(${flagSrc});background-repeat: no-repeat;background-position: calc(100% - 5px) center;background-size: auto calc(100% - 6px);`;
+        let baseUrl = (this.config && this.config.card_flags_base_url)
+            ? String(this.config.card_flags_base_url)
+            : '';
+        if (baseUrl && baseUrl.slice(-1) !== '/') {
+            baseUrl += '/';
+        }
 
         let ccNumber = numberInput.value.replace(/\s/g, '');
-
         let cardTypes = this.getCardTypes(ccNumber);
         if (cardTypes.length > 0) {
-            style = style.replace(/{brand}/g, cardTypes[0].type);
-            numberInput.style = style;
-            brandInput.value = cardTypes[0].type;
+            const brandType = cardTypes[0].type;
+            const file = this.resolveCardFlagFile(brandType);
+            brandInput.value = brandType;
+            if (baseUrl) {
+                const flagSrc = baseUrl + file + '.svg';
+                numberInput.style = `background-image: url(${flagSrc});background-repeat: no-repeat;background-position: calc(100% - 5px) center;background-size: auto calc(100% - 6px);`;
+            }
             if (this.config.debug) {
                 console.debug("Bandeira armazenada com sucesso");
             }
