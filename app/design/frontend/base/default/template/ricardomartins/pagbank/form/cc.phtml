@@ -100,9 +100,18 @@ $_pagbankConfigAttr = str_replace(
                 <?php echo $this->__('Installments') ?>
             </label>
             <div class="input-box">
+                <?php $_installmentPlans = $this->getInstallmentPlans(); ?>
                 <select name="payment[cc_installments]" id="<?php echo $_code ?>_cc_installments" class="required-entry">
-                    <option value="1"><?php echo $this->__('1x of %s (without interest)', $_grandTotal) ?></option>
-                    <option value=""><?php echo $this->__('Enter the credit card number...') ?></option>
+                    <?php if (!empty($_installmentPlans)): ?>
+                        <?php foreach ($_installmentPlans as $_plan): ?>
+                            <option value="<?php echo (int) $_plan['installments'] ?>">
+                                <?php echo $this->escapeHtml($this->formatInstallmentOptionLabel($_plan)) ?>
+                            </option>
+                        <?php endforeach ?>
+                    <?php else: ?>
+                        <option value="1"><?php echo $this->__('1x of %s (without interest)', $_grandTotal) ?></option>
+                        <option value=""><?php echo $this->__('Enter the credit card number...') ?></option>
+                    <?php endif ?>
                 </select>
             </div>
         </div>

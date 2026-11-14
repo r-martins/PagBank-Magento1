@@ -32,9 +32,17 @@ class RicardoMartins_PagBank_AjaxController extends Mage_Core_Controller_Front_A
 
         try {
             $response = $api->placeGetRequest($endpoint, $installments);
+            if (!isset($response['payment_methods']['credit_card']) || !is_array($response['payment_methods']['credit_card'])) {
+                Mage::throwException('Unexpected fees/calculate response: missing credit_card plans');
+            }
             $creditCard = reset($response['payment_methods']['credit_card']);
+            if (!is_array($creditCard) || empty($creditCard['installment_plans']) || !is_array($creditCard['installment_plans'])) {
+                Mage::throwException('Unexpected fees/calculate response: empty installment_plans');
+            }
             $installmentsPlans = $creditCard['installment_plans'];
         } catch (Exception $e) {
+            // Fallback to 1x keeps checkout usable, but log so "parcelas voltaram pra 1x" is diagnosable.
+            $helper->writeLog('getInstallments fallback to 1x: ' . $e->getMessage());
             $installmentsPlans = [
                 [
                     'installments' => 1,

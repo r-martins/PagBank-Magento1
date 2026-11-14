@@ -4,7 +4,8 @@ class RMPagBank {
         this.config = config;
         this.formElementAndSubmit = false;
         this.addCardFieldsObserver();
-        this.getInstallments();
+        // Pre-calculate with a generic BIN so the select is not stuck on HTML default 1x.
+        this.getInstallments(true);
 
         if (pagseguro_connect_3d_session !== '' && this.config.enabled_3ds) {
             const sessionInput = document.getElementById('ricardomartins_pagbank_cc_cc_has_session');
@@ -861,26 +862,46 @@ class RMPagBank {
         }, 300);
     }
 
-    getInstallments() {
-        // Prevent multiple simultaneous calls
+    /**
+     * @param {boolean} [allowDefaultBin=false] Use generic BIN 555555 when card BIN is unknown (page load).
+     */
+    getInstallments(allowDefaultBin) {
+        // If a request is in flight, queue one refresh with the latest BIN instead of dropping it.
         if (this._gettingInstallments) {
-            console.log('PB Integrações: getInstallments() já em execução, ignorando chamada duplicada.');
+            this._installmentsQueued = true;
+            this._installmentsQueuedAllowDefault = !!allowDefaultBin;
+            console.log('PB Integrações: getInstallments() em execução — nova busca enfileirada.');
             return;
         }
-        
+
         let select = document.getElementById('ricardomartins_pagbank_cc_cc_installments');
         if (!select) {
             // Element not found yet, try again after a short delay
             setTimeout(() => {
-                this.getInstallments();
+                this.getInstallments(allowDefaultBin);
             }, 200);
             return;
         }
-        
-        // Set flag to prevent concurrent calls
+
+        let ccBin = typeof window.pb_cc_bin === 'undefined'
+            ? ''
+            : String(window.pb_cc_bin).replace(/[^0-9]/g, '');
+        if (ccBin.length >= 6) {
+            ccBin = ccBin.substring(0, 6);
+        } else if (allowDefaultBin) {
+            ccBin = '555555';
+        } else {
+            return;
+        }
+
         this._gettingInstallments = true;
-        
-        let ccBin = typeof window.pb_cc_bin === 'undefined' || window.pb_cc_bin.replace(/[^0-9]/g, '').length < 6 ? '555566' : window.pb_cc_bin;
+        this._installmentsQueued = false;
+        this._installmentsQueuedAllowDefault = false;
+        if (!this._installmentsRequestId) {
+            this._installmentsRequestId = 0;
+        }
+        const requestId = ++this._installmentsRequestId;
+
         fetch(this.config.installments_endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -888,11 +909,23 @@ class RMPagBank {
         })
             .then(response => response.text())
             .then(response => {
+                if (requestId !== this._installmentsRequestId) {
+                    return; // Stale response — a newer BIN request superseded this one.
+                }
                 if (RMPagBankObj.config.debug) {
                     console.debug('Installments response:', response);
                 }
 
                 response = JSON.parse(response);
+                if (!Array.isArray(response) || response.length === 0) {
+                    throw new Error('Empty installments response');
+                }
+
+                // Re-query select: OSC may have replaced the payment form meanwhile.
+                select = document.getElementById('ricardomartins_pagbank_cc_cc_installments');
+                if (!select) {
+                    return;
+                }
 
                 select.innerHTML = '';
 
@@ -914,17 +947,27 @@ class RMPagBank {
                     option.text = text + additionalText;
                     select.appendChild(option);
                 }
-                
-                // Clear flag after successful completion
-                this._gettingInstallments = false;
             })
-            .catch(() => {
-                alert('Error getting installments. Please try again.');
-                if (RMPagBankObj.config.debug) {
-                    console.error('Error getting installments. Please try again.');
+            .catch((e) => {
+                if (requestId !== this._installmentsRequestId) {
+                    return;
                 }
-                // Clear flag on error
+                // Keep existing options on failure (do not collapse a full list back to HTML 1x via alert-only path).
+                if (RMPagBankObj.config.debug) {
+                    console.error('Error getting installments. Please try again.', e);
+                }
+            })
+            .then(() => {
+                if (requestId !== this._installmentsRequestId) {
+                    return;
+                }
                 this._gettingInstallments = false;
+                if (this._installmentsQueued) {
+                    const queuedAllowDefault = !!this._installmentsQueuedAllowDefault;
+                    this._installmentsQueued = false;
+                    this._installmentsQueuedAllowDefault = false;
+                    this.getInstallments(queuedAllowDefault);
+                }
             });
     }
 
@@ -1447,10 +1490,21 @@ window.RMPagBank = RMPagBank;
                     });
                     
                     RMPagBankObj.addCardFieldsObserver();
-                    // Don't call getInstallments() here - it will be called automatically
-                    // when the user types the card number via updateInstallments()
-                    // Calling it here causes infinite loops when the block is reloaded
-                    
+                    // OSC/shipping refresh replaces the <select> with the HTML default (1x).
+                    // Re-fetch when we already know the BIN so parcels do not disappear.
+                    const knownBin = typeof window.pb_cc_bin === 'undefined'
+                        ? ''
+                        : String(window.pb_cc_bin).replace(/[^0-9]/g, '');
+                    if (knownBin.length >= 6) {
+                        window.pb_cc_bin = knownBin.substring(0, 6);
+                        RMPagBankObj._gettingInstallments = false;
+                        RMPagBankObj.getInstallments();
+                    } else {
+                        // Form recreated with HTML default 1x — pre-calculate again.
+                        RMPagBankObj._gettingInstallments = false;
+                        RMPagBankObj.getInstallments(true);
+                    }
+
                     // Also reapply place order button events
                     // Use a small delay to ensure button is in DOM
                     setTimeout(() => {
