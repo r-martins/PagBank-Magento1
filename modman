@@ -108,7 +108,6 @@ app/design/frontend/base/default/template/ricardomartins/pagbank/form/info/pix.p
 app/design/frontend/base/default/template/ricardomartins/pagbank/form/pix.phtml app/design/frontend/base/default/template/ricardomartins/pagbank/form/pix.phtml
 app/etc/modules/RicardoMartins_PagBank.xml app/etc/modules/RicardoMartins_PagBank.xml
 app/locale/pt_BR/RicardoMartins_PagBank.csv app/locale/pt_BR/RicardoMartins_PagBank.csv
-js/ricardomartins/pagbank/creditcard-moip.js js/ricardomartins/pagbank/creditcard-moip.js
 js/ricardomartins/pagbank/creditcard.js js/ricardomartins/pagbank/creditcard.js
 js/ricardomartins/pagbank/mask.js js/ricardomartins/pagbank/mask.js
 js/ricardomartins/pagbank/moip-place-order-compatibility.js js/ricardomartins/pagbank/moip-place-order-compatibility.js
