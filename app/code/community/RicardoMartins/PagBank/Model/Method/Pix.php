@@ -76,7 +76,23 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
             $addData['pix']['payment_id'] = isset($qrCodes['id']) ? $qrCodes['id'] : $response['id'];
             $addData['pix']['qrcode_text'] = isset($qrCodes['text']) ? $qrCodes['text'] : null;
             $addData['pix']['due_date'] = isset($qrCodes['expiration_date']) ? $qrCodes['expiration_date'] : null;
-            $addData['pix']['created_at'] = isset($response['created_at']) ? $response['created_at'] : null;
+            // Vindi/API v1 order responses often omit created_at; never leave null
+            // (cron used to treat strtotime(null) as epoch and cancel immediately).
+            if (!empty($response['created_at'])) {
+                $addData['pix']['created_at'] = $response['created_at'];
+            } else {
+                try {
+                    $tzName = Mage::app()->getStore($order->getStoreId())
+                        ->getConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE);
+                } catch (Exception $e) {
+                    $tzName = 'America/Sao_Paulo';
+                }
+                if (!$tzName) {
+                    $tzName = 'America/Sao_Paulo';
+                }
+                $createdAt = new DateTime('now', new DateTimeZone($tzName));
+                $addData['pix']['created_at'] = $createdAt->format(DateTime::ATOM);
+            }
             if (!empty($response['partner_bill_id'])) {
                 $addData['partner_bill_id'] = $response['partner_bill_id'];
             }
