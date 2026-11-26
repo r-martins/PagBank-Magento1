@@ -82,15 +82,12 @@ class RicardoMartins_PagBank_Model_Method_Pix extends RicardoMartins_PagBank_Mod
                 $addData['pix']['created_at'] = $response['created_at'];
             } else {
                 try {
-                    $tzName = Mage::app()->getStore($order->getStoreId())
+                    $tzName = Mage::app()->getStore($this->getOrder()->getStoreId())
                         ->getConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_TIMEZONE);
+                    $createdAt = new DateTime('now', new DateTimeZone($tzName ?: 'America/Sao_Paulo'));
                 } catch (Exception $e) {
-                    $tzName = 'America/Sao_Paulo';
+                    $createdAt = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
                 }
-                if (!$tzName) {
-                    $tzName = 'America/Sao_Paulo';
-                }
-                $createdAt = new DateTime('now', new DateTimeZone($tzName));
                 $addData['pix']['created_at'] = $createdAt->format(DateTime::ATOM);
             }
             if (!empty($response['partner_bill_id'])) {
